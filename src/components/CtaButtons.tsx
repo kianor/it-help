@@ -1,20 +1,26 @@
 import { site } from "@/config/site";
 
-export function CallButton({ className = "btn-primary" }: { className?: string }) {
+export function CallButton({
+  label,
+  className = "btn-primary",
+}: {
+  label: string;
+  className?: string;
+}) {
   return (
     <a href={`tel:${site.phone}`} className={className}>
       <PhoneIcon />
-      Bel of app me
+      {label}
     </a>
   );
 }
 
 export function WhatsAppButton({
+  label,
   className = "btn-secondary",
-  label = "Stuur een WhatsApp",
 }: {
+  label: string;
   className?: string;
-  label?: string;
 }) {
   return (
     <a

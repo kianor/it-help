@@ -1,11 +1,22 @@
 "use client";
 
 import { useState } from "react";
-import { contactServiceOptions } from "@/config/services";
+import type { Dict } from "@/i18n";
+import type { Locale } from "@/i18n/config";
 
 type Status = "idle" | "busy" | "sent" | "error";
 
-export function ContactForm() {
+export function ContactForm({
+  lang,
+  labels,
+  serviceOptions,
+  privacyHref,
+}: {
+  lang: Locale;
+  labels: Dict["contactPage"]["form"];
+  serviceOptions: readonly string[];
+  privacyHref: string;
+}) {
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
 
@@ -19,18 +30,18 @@ export function ContactForm() {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify({ ...data, lang }),
       });
       if (res.ok) {
         setStatus("sent");
         form.reset();
       } else {
         const body = await res.json().catch(() => null);
-        setError(body?.error || "Er ging iets mis. Bel of app me gerust rechtstreeks.");
+        setError(body?.error || labels.error);
         setStatus("error");
       }
     } catch {
-      setError("Er ging iets mis. Bel of app me gerust rechtstreeks.");
+      setError(labels.error);
       setStatus("error");
     }
   }
@@ -38,8 +49,8 @@ export function ContactForm() {
   if (status === "sent") {
     return (
       <div className="rounded-xl border border-cobalt/30 bg-cobalt/5 p-8 text-center" role="status">
-        <p className="text-2xl font-bold font-display">Verstuurd.</p>
-        <p className="mt-2 text-lg">Ik bel of app je vandaag nog terug.</p>
+        <p className="font-display text-2xl font-bold">{labels.sentTitle}</p>
+        <p className="mt-2 text-lg">{labels.sentText}</p>
       </div>
     );
   }
@@ -54,39 +65,39 @@ export function ContactForm() {
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="label" htmlFor="name">Naam *</label>
+          <label className="label" htmlFor="name">{labels.name}</label>
           <input className="input" id="name" name="name" required maxLength={100} autoComplete="name" />
         </div>
         <div>
-          <label className="label" htmlFor="phone">Telefoon *</label>
+          <label className="label" htmlFor="phone">{labels.phone}</label>
           <input className="input" id="phone" name="phone" type="tel" required maxLength={30} autoComplete="tel" />
         </div>
       </div>
 
       <div>
-        <label className="label" htmlFor="email">E-mail (optioneel, voor een bevestiging)</label>
+        <label className="label" htmlFor="email">{labels.email}</label>
         <input className="input" id="email" name="email" type="email" maxLength={200} autoComplete="email" />
       </div>
 
       <div>
-        <label className="label" htmlFor="service">Waarover gaat het? *</label>
+        <label className="label" htmlFor="service">{labels.service}</label>
         <select className="input" id="service" name="service" required defaultValue="">
-          <option value="" disabled>Kies een dienst</option>
-          {contactServiceOptions.map((o) => (
+          <option value="" disabled>{labels.servicePlaceholder}</option>
+          {serviceOptions.map((o) => (
             <option key={o} value={o}>{o}</option>
           ))}
         </select>
       </div>
 
       <div>
-        <label className="label" htmlFor="message">Je bericht *</label>
+        <label className="label" htmlFor="message">{labels.message}</label>
         <textarea
           className="input min-h-32"
           id="message"
           name="message"
           required
           maxLength={3000}
-          placeholder="Beschrijf kort het probleem of je plannen. Merk en type van het toestel helpt ook."
+          placeholder={labels.messagePlaceholder}
         />
       </div>
 
@@ -97,11 +108,11 @@ export function ContactForm() {
       )}
 
       <button type="submit" className="btn-primary w-full sm:w-auto" disabled={status === "busy"}>
-        {status === "busy" ? "Versturen..." : "Verstuur je aanvraag"}
+        {status === "busy" ? labels.sending : labels.send}
       </button>
       <p className="text-xs text-steel">
-        Je gegevens worden alleen gebruikt om je te helpen. Zie de{" "}
-        <a href="/privacy" className="underline hover:text-cobalt">privacyverklaring</a>.
+        {labels.privacyNote}{" "}
+        <a href={privacyHref} className="underline hover:text-cobalt">{labels.privacyLink}</a>.
       </p>
     </form>
   );

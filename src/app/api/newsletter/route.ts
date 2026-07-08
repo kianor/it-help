@@ -6,6 +6,7 @@ import { mailNewsletterConfirm } from "@/lib/mail";
 const schema = z.object({
   email: z.string().trim().email().max(200),
   website: z.string().optional(), // honeypot
+  lang: z.enum(["nl", "en", "fr"]).optional(),
 });
 
 export async function POST(req: NextRequest) {
@@ -29,10 +30,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true });
   }
 
-  const sub = upsertSubscriber(parsed.data.email);
+  const sub = upsertSubscriber(parsed.data.email, parsed.data.lang);
   // Dubbele opt-in: pas na klik op de mail-link staat de inschrijving vast.
   if (!sub.confirmed_at) {
-    await mailNewsletterConfirm(sub.email, sub.token);
+    await mailNewsletterConfirm(sub.email, sub.token, sub.lang);
   }
 
   return NextResponse.json({ ok: true });

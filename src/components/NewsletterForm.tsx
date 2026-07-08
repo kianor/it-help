@@ -1,10 +1,18 @@
 "use client";
 
 import { useState } from "react";
+import type { Dict } from "@/i18n";
+import type { Locale } from "@/i18n/config";
 
 type Status = "idle" | "busy" | "sent" | "error";
 
-export function NewsletterForm() {
+export function NewsletterForm({
+  lang,
+  labels,
+}: {
+  lang: Locale;
+  labels: Dict["newsletter"];
+}) {
   const [status, setStatus] = useState<Status>("idle");
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -16,7 +24,7 @@ export function NewsletterForm() {
       const res = await fetch("/api/newsletter", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify({ ...data, lang }),
       });
       setStatus(res.ok ? "sent" : "error");
       if (res.ok) form.reset();
@@ -28,35 +36,33 @@ export function NewsletterForm() {
   if (status === "sent") {
     return (
       <p className="rounded-lg bg-cobalt/5 px-4 py-3 text-sm font-medium" role="status">
-        Bijna klaar. Check je mailbox en klik op de bevestigingslink.
+        {labels.done}
       </p>
     );
   }
 
   return (
-    <form onSubmit={onSubmit} className="flex flex-col gap-2 sm:flex-row">
+    <form onSubmit={onSubmit} className="flex flex-col gap-2">
       <div className="absolute -left-[9999px]" aria-hidden="true">
         <label htmlFor="nb-website">Website</label>
         <input id="nb-website" name="website" type="text" tabIndex={-1} autoComplete="off" />
       </div>
-      <label htmlFor="nb-email" className="sr-only">E-mailadres</label>
+      <label htmlFor="nb-email" className="sr-only">E-mail</label>
       <input
-        className="input sm:max-w-xs"
+        className="input"
         id="nb-email"
         name="email"
         type="email"
         required
         maxLength={200}
-        placeholder="jouw@mailadres.be"
+        placeholder={labels.placeholder}
         autoComplete="email"
       />
       <button type="submit" className="btn-secondary" disabled={status === "busy"}>
-        {status === "busy" ? "Bezig..." : "Hou me op de hoogte"}
+        {status === "busy" ? labels.busy : labels.submit}
       </button>
       {status === "error" && (
-        <p className="text-sm text-signal sm:self-center" role="alert">
-          Lukte niet. Probeer straks nog eens.
-        </p>
+        <p className="text-sm text-signal" role="alert">{labels.error}</p>
       )}
     </form>
   );

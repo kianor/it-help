@@ -27,6 +27,7 @@ function migrate(db: Database.Database) {
       email TEXT,
       service TEXT NOT NULL,
       message TEXT NOT NULL,
+      lang TEXT NOT NULL DEFAULT 'nl',
       status TEXT NOT NULL DEFAULT 'nieuw',
       created_at TEXT NOT NULL DEFAULT (datetime('now'))
     );
@@ -39,6 +40,7 @@ function migrate(db: Database.Database) {
       device TEXT NOT NULL,
       service TEXT NOT NULL,
       price TEXT,
+      lang TEXT NOT NULL DEFAULT 'nl',
       status TEXT NOT NULL DEFAULT 'ontvangen',
       review_requested_at TEXT,
       created_at TEXT NOT NULL DEFAULT (datetime('now'))
@@ -54,6 +56,7 @@ function migrate(db: Database.Database) {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       email TEXT NOT NULL UNIQUE,
       token TEXT NOT NULL,
+      lang TEXT NOT NULL DEFAULT 'nl',
       confirmed_at TEXT,
       unsubscribed_at TEXT,
       created_at TEXT NOT NULL DEFAULT (datetime('now'))
@@ -118,6 +121,7 @@ export type ContactRequest = {
   email: string | null;
   service: string;
   message: string;
+  lang: string;
   status: string;
   created_at: string;
 };
@@ -128,12 +132,13 @@ export function insertRequest(r: {
   email?: string;
   service: string;
   message: string;
+  lang?: string;
 }) {
   getDb()
     .prepare(
-      "INSERT INTO requests (name, phone, email, service, message) VALUES (?, ?, ?, ?, ?)"
+      "INSERT INTO requests (name, phone, email, service, message, lang) VALUES (?, ?, ?, ?, ?, ?)"
     )
-    .run(r.name, r.phone, r.email || null, r.service, r.message);
+    .run(r.name, r.phone, r.email || null, r.service, r.message, r.lang || "nl");
 }
 
 export function listRequests(): ContactRequest[] {
@@ -156,6 +161,7 @@ export type Job = {
   device: string;
   service: string;
   price: string | null;
+  lang: string;
   status: string;
   review_requested_at: string | null;
   created_at: string;
@@ -179,12 +185,12 @@ export const JOB_STATUSES = [
 ] as const;
 
 function newJobCode(): string {
-  // Leesbaar en onmogelijk te raden: WB-XXXXXX (zonder verwarrende tekens)
+  // Leesbaar en onmogelijk te raden: RIT-XXXXXXXX (zonder verwarrende tekens)
   const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
   let code = "";
   const bytes = crypto.randomBytes(8);
   for (let i = 0; i < 8; i++) code += alphabet[bytes[i] % alphabet.length];
-  return `WB-${code}`;
+  return `RIT-${code}`;
 }
 
 export function createJob(j: {
@@ -194,12 +200,13 @@ export function createJob(j: {
   device: string;
   service: string;
   price?: string;
+  lang?: string;
 }): Job {
   const d = getDb();
   const code = newJobCode();
   const info = d
     .prepare(
-      "INSERT INTO jobs (code, customer_name, customer_email, customer_phone, device, service, price) VALUES (?, ?, ?, ?, ?, ?, ?)"
+      "INSERT INTO jobs (code, customer_name, customer_email, customer_phone, device, service, price, lang) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
     )
     .run(
       code,
@@ -208,10 +215,12 @@ export function createJob(j: {
       j.customer_phone || null,
       j.device,
       j.service,
-      j.price || null
+      j.price || null,
+      j.lang || "nl"
     );
+  // Geen vrije tekst bij de eerste stap: het statuslabel wordt per taal vertaald.
   d.prepare(
-    "INSERT INTO job_updates (job_id, status, message) VALUES (?, 'ontvangen', 'Toestel ontvangen en ingeschreven.')"
+    "INSERT INTO job_updates (job_id, status) VALUES (?, 'ontvangen')"
   ).run(info.lastInsertRowid);
   return getJobById(Number(info.lastInsertRowid))!;
 }
@@ -259,18 +268,19 @@ export type Subscriber = {
   id: number;
   email: string;
   token: string;
+  lang: string;
   confirmed_at: string | null;
   unsubscribed_at: string | null;
   created_at: string;
 };
 
-export function upsertSubscriber(email: string): Subscriber {
+export function upsertSubscriber(email: string, lang = "nl"): Subscriber {
   const d = getDb();
   const token = crypto.randomBytes(24).toString("hex");
   d.prepare(
-    `INSERT INTO subscribers (email, token) VALUES (?, ?)
-     ON CONFLICT(email) DO UPDATE SET unsubscribed_at = NULL`
-  ).run(email.toLowerCase(), token);
+    `INSERT INTO subscribers (email, token, lang) VALUES (?, ?, ?)
+     ON CONFLICT(email) DO UPDATE SET unsubscribed_at = NULL, lang = excluded.lang`
+  ).run(email.toLowerCase(), token, lang);
   return d
     .prepare("SELECT * FROM subscribers WHERE email = ?")
     .get(email.toLowerCase()) as Subscriber;

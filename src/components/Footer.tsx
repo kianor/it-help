@@ -1,7 +1,10 @@
 import Link from "next/link";
 import { site } from "@/config/site";
+import type { Dict } from "@/i18n";
+import type { Locale } from "@/i18n/config";
 
-export function Footer() {
+export function Footer({ lang, dict }: { lang: Locale; dict: Dict }) {
+  const f = dict.footer;
   const socials = [
     { label: "Instagram", url: site.socials.instagram },
     { label: "TikTok", url: site.socials.tiktok },
@@ -13,11 +16,15 @@ export function Footer() {
     <footer className="mt-20 border-t border-ink/10 bg-white pb-24 md:pb-0">
       <div className="mx-auto grid max-w-6xl gap-8 px-4 py-12 md:grid-cols-3">
         <div>
-          <p className="font-display text-lg font-bold">{site.name}</p>
+          <p className="font-display text-lg font-bold">
+            {site.name}
+            <span className="text-signal">.</span>
+          </p>
+          <p className="mt-1 font-mono text-xs text-signal">{site.tagline}</p>
           <p className="mt-2 text-sm text-steel">
-            {site.region}
+            {dict.common.region}
             <br />
-            {site.openingInfo}
+            {dict.common.openingInfo}
           </p>
           <p className="mt-2 font-mono text-sm">
             <a href={`tel:${site.phone}`} className="hover:text-cobalt">
@@ -27,13 +34,7 @@ export function Footer() {
           {socials.length > 0 && (
             <p className="mt-3 flex gap-3 text-sm">
               {socials.map((s) => (
-                <a
-                  key={s.label}
-                  href={s.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-cobalt hover:underline"
-                >
+                <a key={s.label} href={s.url} target="_blank" rel="noopener noreferrer" className="text-cobalt hover:underline">
                   {s.label}
                 </a>
               ))}
@@ -42,34 +43,34 @@ export function Footer() {
         </div>
 
         <div className="text-sm">
-          <p className="label">Diensten</p>
+          <p className="label">{f.servicesLabel}</p>
           <ul className="space-y-1.5">
-            <li><Link href="/pc-bouwen" className="hover:text-cobalt">PC laten bouwen</Link></li>
-            <li><Link href="/herstel" className="hover:text-cobalt">PC & laptop herstel</Link></li>
-            <li><Link href="/consoles" className="hover:text-cobalt">Consoles & controllers</Link></li>
-            <li><Link href="/voor-zaken" className="hover:text-cobalt">Voor zaken</Link></li>
-            <li><Link href="/volg" className="hover:text-cobalt">Volg je herstelling</Link></li>
+            <li><Link href={`/${lang}/pc-bouwen`} className="hover:text-cobalt">{f.links.pc}</Link></li>
+            <li><Link href={`/${lang}/herstel`} className="hover:text-cobalt">{f.links.herstel}</Link></li>
+            <li><Link href={`/${lang}/consoles`} className="hover:text-cobalt">{f.links.consoles}</Link></li>
+            <li><Link href={`/${lang}/voor-zaken`} className="hover:text-cobalt">{f.links.zaken}</Link></li>
+            <li><Link href={`/${lang}/volg`} className="hover:text-cobalt">{f.links.volg}</Link></li>
           </ul>
         </div>
 
         <div className="text-sm">
-          <p className="label">Praktisch</p>
+          <p className="label">{f.practicalLabel}</p>
           <ul className="space-y-1.5">
-            <li><Link href="/prijzen" className="hover:text-cobalt">Alle vaste prijzen</Link></li>
-            <li><Link href="/voorwaarden" className="hover:text-cobalt">Algemene voorwaarden</Link></li>
-            <li><Link href="/privacy" className="hover:text-cobalt">Privacyverklaring</Link></li>
+            <li><Link href={`/${lang}/prijzen`} className="hover:text-cobalt">{f.links.prijzen}</Link></li>
+            <li><Link href={`/${lang}/voorwaarden`} className="hover:text-cobalt">{f.links.voorwaarden}</Link></li>
+            <li><Link href={`/${lang}/privacy`} className="hover:text-cobalt">{f.links.privacy}</Link></li>
             {site.googleReviewsUrl && (
               <li>
                 <a href={site.googleReviewsUrl} target="_blank" rel="noopener noreferrer" className="hover:text-cobalt">
-                  Google-reviews
+                  {f.links.reviews}
                 </a>
               </li>
             )}
           </ul>
           <p className="mt-4 text-xs text-steel">
-            {site.kbo ? `KBO ${site.kbo}` : "KBO-nummer in aanvraag"}
+            {site.kbo ? `${f.kboPrefix} ${site.kbo}` : f.kboPending}
             <br />
-            Bijzondere vrijstellingsregeling kleine ondernemingen
+            {f.exemption}
           </p>
         </div>
       </div>

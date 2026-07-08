@@ -10,6 +10,7 @@ const schema = z.object({
   service: z.string().trim().min(1).max(100),
   message: z.string().trim().min(5, "Schrijf kort waarover het gaat.").max(3000),
   website: z.string().optional(), // honeypot
+  lang: z.enum(["nl", "en", "fr"]).optional(),
 });
 
 export async function POST(req: NextRequest) {
@@ -41,11 +42,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true });
   }
 
-  const { name, phone, email, service, message } = parsed.data;
-  insertRequest({ name, phone, email: email || undefined, service, message });
+  const { name, phone, email, service, message, lang } = parsed.data;
+  insertRequest({ name, phone, email: email || undefined, service, message, lang });
 
-  await mailNewRequestToOwner({ name, phone, email: email || undefined, service, message });
-  if (email) await mailRequestConfirmation(email, name);
+  await mailNewRequestToOwner({ name, phone, email: email || undefined, service, message, lang });
+  if (email) await mailRequestConfirmation(email, name, lang);
 
   return NextResponse.json({ ok: true });
 }

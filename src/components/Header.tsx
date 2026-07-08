@@ -4,30 +4,59 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { site } from "@/config/site";
+import { locales, type Locale } from "@/i18n/config";
 import { PhoneIcon } from "./CtaButtons";
+import { GameModeToggle } from "./GameModeToggle";
 
-const nav = [
-  { href: "/pc-bouwen", label: "PC bouwen" },
-  { href: "/herstel", label: "Herstel" },
-  { href: "/consoles", label: "Consoles" },
-  { href: "/voor-zaken", label: "Voor zaken" },
-  { href: "/prijzen", label: "Prijzen" },
-  { href: "/contact", label: "Contact" },
-];
+type NavLabels = { pc: string; herstel: string; consoles: string; zaken: string; prijzen: string; contact: string };
 
-export function Header() {
+export function Header({
+  lang,
+  nav,
+  callCta,
+  gameMode,
+  menuOpen,
+  menuClose,
+}: {
+  lang: Locale;
+  nav: NavLabels;
+  callCta: string;
+  gameMode: string;
+  menuOpen: string;
+  menuClose: string;
+}) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
+  const items = [
+    { href: `/${lang}/pc-bouwen`, label: nav.pc },
+    { href: `/${lang}/herstel`, label: nav.herstel },
+    { href: `/${lang}/consoles`, label: nav.consoles },
+    { href: `/${lang}/voor-zaken`, label: nav.zaken },
+    { href: `/${lang}/prijzen`, label: nav.prijzen },
+    { href: `/${lang}/contact`, label: nav.contact },
+  ];
+
+  // Zelfde pagina in een andere taal
+  const restPath = pathname.replace(/^\/(nl|en|fr)(?=\/|$)/, "") || "";
+  function switchHref(to: Locale) {
+    return `/${to}${restPath}`;
+  }
+  function onSwitch(to: Locale) {
+    document.cookie = `lang=${to};path=/;max-age=31536000;samesite=lax`;
+    setOpen(false);
+  }
+
   return (
     <header className="sticky top-0 z-40 border-b border-ink/10 bg-paper/95 backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4">
-        <Link href="/" className="font-display text-lg font-bold" onClick={() => setOpen(false)}>
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-4">
+        <Link href={`/${lang}`} className="font-display text-lg font-bold" onClick={() => setOpen(false)}>
           {site.name}
+          <span className="text-signal">.</span>
         </Link>
 
-        <nav className="hidden items-center gap-6 md:flex" aria-label="Hoofdnavigatie">
-          {nav.map((item) => (
+        <nav className="hidden items-center gap-5 lg:flex" aria-label="Navigatie">
+          {items.map((item) => (
             <Link
               key={item.href}
               href={item.href}
@@ -41,34 +70,46 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-2">
+          <div className="hidden items-center gap-0.5 rounded-lg border border-ink/10 p-0.5 font-mono text-xs sm:flex" role="group" aria-label="Taal / Language / Langue">
+            {locales.map((l) => (
+              <Link
+                key={l}
+                href={switchHref(l)}
+                onClick={() => onSwitch(l)}
+                aria-current={l === lang ? "true" : undefined}
+                className={`rounded-md px-2 py-1 font-bold uppercase transition ${
+                  l === lang ? "bg-ink text-paper" : "text-steel hover:text-ink"
+                }`}
+              >
+                {l}
+              </Link>
+            ))}
+          </div>
+          <GameModeToggle label={gameMode} />
           <a
             href={`tel:${site.phone}`}
-            className="hidden items-center gap-2 rounded-lg bg-signal px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#d95b12] sm:inline-flex"
+            className="hidden items-center gap-2 rounded-lg bg-signal px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#d95b12] md:inline-flex"
           >
             <PhoneIcon />
-            Bel of app me
+            {callCta}
           </a>
           <button
             type="button"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-ink/15 md:hidden"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-ink/15 lg:hidden"
             aria-expanded={open}
-            aria-label={open ? "Menu sluiten" : "Menu openen"}
+            aria-label={open ? menuClose : menuOpen}
             onClick={() => setOpen(!open)}
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
-              {open ? (
-                <path d="M18 6 6 18M6 6l12 12" />
-              ) : (
-                <path d="M4 7h16M4 12h16M4 17h16" />
-              )}
+              {open ? <path d="M18 6 6 18M6 6l12 12" /> : <path d="M4 7h16M4 12h16M4 17h16" />}
             </svg>
           </button>
         </div>
       </div>
 
       {open && (
-        <nav className="border-t border-ink/10 bg-paper px-4 py-3 md:hidden" aria-label="Mobiele navigatie">
-          {nav.map((item) => (
+        <nav className="border-t border-ink/10 bg-paper px-4 py-3 lg:hidden" aria-label="Menu">
+          {items.map((item) => (
             <Link
               key={item.href}
               href={item.href}
@@ -80,6 +121,20 @@ export function Header() {
               {item.label}
             </Link>
           ))}
+          <div className="mt-2 flex gap-1 border-t border-ink/10 px-3 pt-3 font-mono text-xs">
+            {locales.map((l) => (
+              <Link
+                key={l}
+                href={switchHref(l)}
+                onClick={() => onSwitch(l)}
+                className={`rounded-md px-2.5 py-1.5 font-bold uppercase ${
+                  l === lang ? "bg-ink text-paper" : "text-steel"
+                }`}
+              >
+                {l}
+              </Link>
+            ))}
+          </div>
         </nav>
       )}
     </header>

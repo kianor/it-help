@@ -1,29 +1,34 @@
-# De Digitale Werkbank — website
+# RitsIT — website
 
-Website voor de IT-service in bijberoep (Herent/Leuven): custom pc builds,
-pc- en laptopherstel, console care en IT-support voor kleine zaken.
-Gebouwd volgens de briefing in mensentaal, met vaste prijzen als signatuur.
+*Ritsvlug hersteld.* Website voor de IT-service in bijberoep (Herent/Leuven):
+custom pc builds, pc- en laptopherstel, console care en IT-support voor
+kleine zaken. Gebouwd volgens de briefing in mensentaal, met vaste prijzen
+als signatuur. Volledig drietalig: Nederlands, Engels en Frans.
 
 ## Wat zit erin
 
-**Publieke site**
+**Publieke site (NL/EN/FR via /nl, /en, /fr — automatische taaldetectie)**
 - 7 pagina's: home, `/pc-bouwen`, `/herstel`, `/consoles`, `/voor-zaken`, `/prijzen`, `/contact`
 - `/volg` — klanten volgen hun herstelling live met een volgcode (zoals een pakje)
-- `/privacy` en `/voorwaarden` — GDPR-conform, in mensentaal
-- Launch-actie-balk (-50% voor de eerste 5 klanten) met live teller
-- Voor/na-galerij op de consolepagina (gekoppeld aan admin)
+- `/privacy` en `/voorwaarden` — GDPR-conform, in mensentaal, in drie talen
+- Launch-actie-balk: -50% voor de eerste 5 klanten in ruil voor een eerlijke
+  Google-review, met live teller
+- Voor/na-galerij met interactieve sleep-slider op de consolepagina
+- Game-modus: opt-in donker neon-thema via de gamepad-knop in de header
+- RGB-glow op de gamer-blokken + Konami-code easter egg (↑↑↓↓←→←→BA = €5 korting)
 - Nieuwsbrief met dubbele opt-in
-- Sticky bel/WhatsApp-balk op mobiel, SEO (meta's, JSON-LD LocalBusiness, sitemap, robots)
+- Sticky bel/WhatsApp-balk op mobiel, SEO (meta's per taal, hreflang-alternates,
+  JSON-LD LocalBusiness, sitemap, robots)
 
 **Admin-paneel** (`/admin`, alleen voor Kiano)
 - Aanvragen uit het contactformulier, met nieuw/behandeld
-- Herstellingen: aanmaken (klant krijgt volgcode + mail), status bijwerken
-  (klant krijgt automatisch een mail per stap), review-verzoek met één klik
+- Herstellingen: aanmaken (klant krijgt volgcode + mail in zijn taal), status
+  bijwerken (automatische mail per stap), review-verzoek met één klik
 - Voor/na-galerij beheren (foto's uploaden)
 - Nieuwsbrief-inschrijvingen bekijken en exporteren
 - Launch-actie aan/uit en teller aanpassen
 
-**Automatische mails** (via Resend)
+**Automatische mails** (via Resend, in de taal van de klant)
 - Bevestiging naar de klant na een contactaanvraag + melding naar jou
 - Volgcode-mail bij het aanmaken van een herstelling
 - Statusupdate-mail bij elke stap
@@ -82,14 +87,15 @@ Zet er een reverse proxy met HTTPS voor (nginx/Caddy). Belangrijk:
 ## Alles aanpassen op één plek
 
 - **Naam, telefoon, e-mail, KBO, socials, Google-reviewslink:** `src/config/site.ts`
-- **Diensten en prijzen:** `src/config/services.ts`
-- **Teksten:** rechtstreeks in de pagina's onder `src/app/`
+- **Alle teksten, diensten en prijzen per taal:** `src/i18n/nl.ts`, `src/i18n/en.ts`, `src/i18n/fr.ts`
+- **Mailteksten:** `src/lib/mail.ts`
 - **Launch-actie:** via het admin-paneel, Instellingen
 
 ## Vóór livegang invullen (checklist uit de briefing)
 
 1. Definitieve bedrijfsnaam + domeinnaam → `src/config/site.ts`
 2. Telefoonnummer (tel + WhatsApp) → `src/config/site.ts`
+2b. Domeinnaam checken (ritsit.be) en registreren
 3. Zakelijk e-mailadres op eigen domein → `src/config/site.ts` en Resend
 4. KBO-nummer (na Acerta) → `src/config/site.ts` (site pas live mét KBO + BA-verzekering)
 5. 3 à 5 echte foto's van builds/werkplek → galerij of pagina's

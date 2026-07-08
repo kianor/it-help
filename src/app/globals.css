@@ -54,6 +54,101 @@
   }
 }
 
+@layer components {
+  /*
+   * Gamer-accent: subtiele RGB-glow rond de kaart bij hover
+   * (en permanent zichtbaar in game-modus).
+   */
+  .gamer-card {
+    position: relative;
+    --card-bg: #ffffff;
+  }
+  /* Dekkende laag onder de inhoud zodat de glow alleen als rand zichtbaar is */
+  .gamer-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: 11px;
+    background: var(--card-bg);
+  }
+  .gamer-card::after {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    z-index: -2;
+    border-radius: 14px;
+    background: conic-gradient(from var(--glow-angle, 0deg), #f26b1d, #2450a8, #7c3aed, #f26b1d);
+    opacity: 0;
+    filter: blur(10px);
+    transition: opacity 0.3s ease;
+  }
+  @property --glow-angle {
+    syntax: "<angle>";
+    initial-value: 0deg;
+    inherits: false;
+  }
+  @keyframes glow-spin {
+    to { --glow-angle: 360deg; }
+  }
+  .gamer-card:hover::after,
+  html.game .gamer-card::after {
+    opacity: 0.55;
+    animation: glow-spin 4s linear infinite;
+  }
+}
+
+/*
+ * GAME-MODUS — donker neon-thema, opt-in via de gamepad-knop in de header.
+ * Overschrijft de kernutilities zodat de bestaande markup ongewijzigd blijft.
+ */
+html.game body {
+  background-color: #0b1020;
+  color: #e6eaf2;
+}
+html.game .bg-paper { background-color: #0b1020; }
+html.game .bg-paper\/95 { background-color: rgba(11, 16, 32, 0.95); }
+html.game .bg-white { background-color: #141b30; }
+html.game .bg-ink { background-color: #05070f; }
+html.game .bg-cobalt\/5 { background-color: rgba(90, 130, 255, 0.08); }
+html.game .bg-cobalt\/10 { background-color: rgba(90, 130, 255, 0.15); }
+html.game .bg-signal\/10 { background-color: rgba(242, 107, 29, 0.15); }
+html.game .text-ink { color: #e6eaf2; }
+html.game .text-ink\/80 { color: rgba(230, 234, 242, 0.8); }
+html.game .text-ink\/90 { color: rgba(230, 234, 242, 0.9); }
+html.game .text-cobalt { color: #7ea2ff; }
+html.game .text-steel { color: #94a0b8; }
+html.game .border-ink\/10 { border-color: rgba(230, 234, 242, 0.12); }
+html.game .border-ink\/15 { border-color: rgba(230, 234, 242, 0.18); }
+html.game .border-ink\/25 { border-color: rgba(230, 234, 242, 0.3); }
+html.game .divide-ink\/10 > * + * { border-color: rgba(230, 234, 242, 0.1); }
+html.game .border-steel\/40,
+html.game .border-steel\/50 { border-color: rgba(148, 160, 184, 0.4); }
+html.game .gamer-card { --card-bg: #141b30; }
+html.game .price-tag {
+  background-color: #0b1020;
+  color: #e6eaf2;
+  border-color: rgba(230, 234, 242, 0.2);
+  box-shadow: 0 0 10px rgba(242, 107, 29, 0.15);
+}
+html.game .price-tag::before {
+  background-color: #141b30;
+  border-color: rgba(230, 234, 242, 0.3);
+}
+html.game .price-tag--accent { color: #ff8a48; border-color: rgba(242, 107, 29, 0.5); }
+html.game .btn-primary { box-shadow: 0 0 18px rgba(242, 107, 29, 0.35); }
+html.game .btn-secondary { border-color: #7ea2ff; color: #7ea2ff; }
+html.game .btn-secondary:hover { background-color: #7ea2ff; color: #0b1020; }
+html.game .input {
+  background-color: #0b1020;
+  color: #e6eaf2;
+  border-color: rgba(148, 160, 184, 0.4);
+}
+html.game .input::placeholder { color: #5c6880; }
+html.game .hover\:bg-white:hover { background-color: #e6eaf2; }
+html.game .text-white\/85 { color: rgba(230, 234, 242, 0.85); }
+html.game img { filter: brightness(0.95); }
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
