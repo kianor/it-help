@@ -23,6 +23,9 @@ export const site = {
   // [INVULLEN] Link naar Google Business Profile (reviews)
   googleReviewsUrl: "",
 
+  // [INVULLEN] Link naar de Trustpilot-pagina (reviews verzamelen + tonen)
+  trustpilotUrl: "",
+
   // Social media — leeg laten = niet tonen
   socials: {
     instagram: "",

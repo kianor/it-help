@@ -42,6 +42,14 @@ const en: Dict = {
       description:
         "Get in touch for computer help, PC builds or console repair in Herent and Leuven. Call, send a WhatsApp or use the form. Response the same working day.",
     },
+    afspraak: {
+      title: "Book an appointment online",
+      description: "Pick your own moment for computer help, a PC build or console repair in Herent or Leuven. Confirmation by email, free rescheduling up to 24 hours in advance.",
+    },
+    account: {
+      title: "My RitsIT",
+      description: "Track your repairs and appointments in one place. Log in without a password, via a secure email link.",
+    },
     volg: { title: "Track your repair", description: "Follow the status of your repair live with your tracking code." },
     privacy: {
       title: "Privacy statement",
@@ -60,6 +68,8 @@ const en: Dict = {
     zaken: "For business",
     prijzen: "Prices",
     contact: "Contact",
+    afspraak: "Book",
+    account: "My RitsIT",
   },
 
   common: {
@@ -86,7 +96,7 @@ const en: Dict = {
   promo: {
     label: "Launch deal:",
     template:
-      "-50% for my first {total} customers, in exchange for one honest Google review. {left} {slots} left →",
+      "{left} {slots} left →",
     one: "spot",
     many: "spots",
   },
@@ -319,6 +329,7 @@ const en: Dict = {
       consoles: "Consoles & controllers",
       zaken: "For business",
       volg: "Track your repair",
+      afspraak: "Book an appointment",
       prijzen: "All fixed prices",
       voorwaarden: "Terms and conditions",
       privacy: "Privacy statement",
@@ -327,6 +338,70 @@ const en: Dict = {
     kboPending: "Company number (KBO) pending",
     kboPrefix: "KBO",
     exemption: "Small business VAT exemption scheme (Belgium)",
+  },
+
+
+  calculator: {
+    title: "What kind of PC do I need?",
+    intro: "Slide and pick, and instantly see which package fits you. No strings attached, just handy.",
+    budgetLabel: "Budget for parts",
+    useLabel: "What will you use it for?",
+    uses: ["Competitive gaming (shooters, high fps)", "AAA games and singleplayer", "School, office and browsing", "Video, streaming and creation"],
+    resLabel: "At which resolution?",
+    verdictLabel: "My advice",
+    tierLow: "That builds a smooth, quiet machine for everyday use.",
+    tierMid: "That builds a strong 1080p/1440p gaming rig that lasts for years.",
+    tierHigh: "That's high-end territory: high fps, smooth at 1440p or 4K.",
+    warn4k: "For comfortable 4K gaming I recommend at least €1500 in parts.",
+    packageLabel: "Matching package",
+    partsLabel: "parts (you order them yourself, no middleman margin)",
+    cta: "Discuss this proposal with me",
+  },
+  reviewsSection: {
+    title: "What customers say",
+    empty: "I've only just started, so the first reviews are on their way. Want to be one of my first five customers? You get -50%, in exchange for one honest review. Everybody wins.",
+    basedOn: "{count} reviews · average {avg}/5",
+    readAll: "Read all reviews on Trustpilot",
+    write: "Write a review yourself",
+    via: "via",
+  },
+  socialSection: {
+    title: "Follow the workbench",
+    intro: "I film how I clean out consoles and build PCs. Before and after, no fluff.",
+  },
+  afspraakPage: {
+    title: "Book an appointment",
+    intro: "Pick a moment that suits you. I confirm by email, and rescheduling is free up to 24 hours in advance.",
+    chooseDay: "Pick a day",
+    chooseSlot: "Pick a time",
+    noSlots: "All slots are taken at the moment. Call or WhatsApp me and we'll find a gap.",
+    submit: "Request this appointment",
+    sending: "Working...",
+    sentTitle: "Requested!",
+    sentText: "You'll get a confirmation by email as soon as possible. Only then is the appointment final.",
+    slotTakenError: "That moment was just taken. Please pick another time.",
+    yourSlot: "Your pick",
+  },
+  accountPage: {
+    title: "My RitsIT",
+    loginTitle: "Log in without a password",
+    loginIntro: "Enter your email address and you'll get a login link. No password to remember, nothing to leak.",
+    emailLabel: "Your email address",
+    sendLink: "Send my login link",
+    linkSent: "Check your inbox! The link works for 15 minutes.",
+    verifyFail: "This login link has expired or was already used. Request a new one below.",
+    hello: "Logged in as",
+    jobsTitle: "My repairs",
+    jobsEmpty: "No repairs on this email address yet. Bring something in and it will show up here automatically.",
+    apptsTitle: "My appointments",
+    apptsEmpty: "No appointments yet.",
+    newApptCta: "Book an appointment",
+    newsletterTitle: "Newsletter",
+    newsletterOn: "You are subscribed.",
+    newsletterOff: "You are not subscribed.",
+    logout: "Log out",
+    track: "View status",
+    statusWord: "status",
   },
 
   konami: {

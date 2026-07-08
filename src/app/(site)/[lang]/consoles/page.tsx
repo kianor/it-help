@@ -7,9 +7,10 @@ import { listGallery } from "@/lib/db";
 import { isLocale } from "@/i18n/config";
 import { getDict } from "@/i18n";
 import { pageMetadata } from "@/i18n/metadata";
+import { p } from "@/i18n/slugs.mjs";
 
 export function generateMetadata({ params }: { params: { lang: string } }): Metadata {
-  return pageMetadata(params.lang, "/consoles", (d) => d.meta.consoles);
+  return pageMetadata(params.lang, "consoles", (d) => d.meta.consoles);
 }
 
 export const dynamic = "force-dynamic";
@@ -71,7 +72,7 @@ export default function ConsolesPage({ params }: { params: { lang: string } }) {
           </div>
           <div className="flex gap-3">
             <CallButton label={dict.common.callCta} />
-            <Link href={`/${lang}/contact`} className="btn-secondary">{dict.common.sendMessage}</Link>
+            <Link href={p(lang, "contact")} className="btn-secondary">{dict.common.sendMessage}</Link>
           </div>
         </div>
       </section>

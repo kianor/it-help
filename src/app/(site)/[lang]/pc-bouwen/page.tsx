@@ -5,9 +5,11 @@ import { CallButton } from "@/components/CtaButtons";
 import { isLocale } from "@/i18n/config";
 import { getDict } from "@/i18n";
 import { pageMetadata } from "@/i18n/metadata";
+import { p } from "@/i18n/slugs.mjs";
+import { PcCalculator } from "@/components/PcCalculator";
 
 export function generateMetadata({ params }: { params: { lang: string } }): Metadata {
-  return pageMetadata(params.lang, "/pc-bouwen", (d) => d.meta.pc);
+  return pageMetadata(params.lang, "pc-bouwen", (d) => d.meta.pc);
 }
 
 export default function PcBouwenPage({ params }: { params: { lang: string } }) {
@@ -25,6 +27,10 @@ export default function PcBouwenPage({ params }: { params: { lang: string } }) {
       <div className="mt-10">
         <ServiceList group={dict.services.pcBouwen} />
       </div>
+
+      <section className="pt-16">
+        <PcCalculator labels={dict.calculator} contactHref={p(lang, "contact")} />
+      </section>
 
       <section className="pt-16">
         <h2 className="text-2xl font-bold">{t.stepsTitle}</h2>
@@ -57,6 +63,21 @@ export default function PcBouwenPage({ params }: { params: { lang: string } }) {
         </div>
       </section>
 
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: t.faq.map((f) => ({
+              "@type": "Question",
+              name: f.q,
+              acceptedAnswer: { "@type": "Answer", text: f.a },
+            })),
+          }),
+        }}
+      />
+
       <section className="pt-16">
         <div className="flex flex-wrap items-center gap-4 rounded-2xl bg-cobalt/5 p-8">
           <div className="flex-1">
@@ -65,7 +86,7 @@ export default function PcBouwenPage({ params }: { params: { lang: string } }) {
           </div>
           <div className="flex gap-3">
             <CallButton label={dict.common.callCta} />
-            <Link href={`/${lang}/contact`} className="btn-secondary">{dict.common.sendMessage}</Link>
+            <Link href={p(lang, "contact")} className="btn-secondary">{dict.common.sendMessage}</Link>
           </div>
         </div>
       </section>

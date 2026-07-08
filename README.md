@@ -17,16 +17,31 @@ als signatuur. Volledig drietalig: Nederlands, Engels en Frans.
 - Game-modus: opt-in donker neon-thema via de gamepad-knop in de header
 - RGB-glow op de gamer-blokken + Konami-code easter egg (↑↑↓↓←→←→BA = €5 korting)
 - Nieuwsbrief met dubbele opt-in
+- `/afspraak` — eigen afsprakensysteem: klant kiest een vrij slot, jij bevestigt
+  met één klik (openingsuren instelbaar in het admin-paneel)
+- `/account` — klantaccounts met magic-link login (geen wachtwoorden): eigen
+  herstellingen volgen, afspraken zien, nieuwsbrief beheren
+- Prijscalculator op de pc-bouwen-pagina (budget + gebruik + resolutie → pakket)
+- Reviews-sectie gevoed vanuit het admin-paneel (Trustpilot/Google) met
+  AggregateRating-schema; video-sectie met YouTube-embeds
+- Vertaalde URL's per taal (bv. `/en/pc-builds`, `/fr/pc-sur-mesure`)
 - Sticky bel/WhatsApp-balk op mobiel, SEO (meta's per taal, hreflang-alternates,
-  JSON-LD LocalBusiness, sitemap, robots)
+  JSON-LD LocalBusiness + FAQPage, sitemap, robots)
+- GEO/AI-vindbaarheid: `/llms.txt` + expliciete toelating voor GPTBot, ClaudeBot,
+  PerplexityBot en co in robots.txt
 
 **Admin-paneel** (`/admin`, alleen voor Kiano)
 - Aanvragen uit het contactformulier, met nieuw/behandeld
+- Afspraken bevestigen/annuleren + beschikbaarheid en geblokkeerde dagen instellen
 - Herstellingen: aanmaken (klant krijgt volgcode + mail in zijn taal), status
-  bijwerken (automatische mail per stap), review-verzoek met één klik
-- Voor/na-galerij beheren (foto's uploaden)
-- Nieuwsbrief-inschrijvingen bekijken en exporteren
-- Launch-actie aan/uit en teller aanpassen
+  bijwerken mét foto (automatische mail per stap), review-verzoek met één klik,
+  printbare afgiftebon met QR-code
+- Voor/na-galerij beheren (foto's uploaden, interactieve slider op de site)
+- Reviews toevoegen/publiceren (bron Trustpilot/Google)
+- Nieuwsbrief opstellen en versturen per taalgroep, met uitschrijflinks
+- Acties beheren (meerdere kortingsacties, teller, drie talen)
+- Statistieken: bezoekers per dag, uniek, toppagina's, verwijzers, taal, toestel
+  (privacyvriendelijk: geen cookies, dagelijks wisselende hash)
 
 **Automatische mails** (via Resend, in de taal van de klant)
 - Bevestiging naar de klant na een contactaanvraag + melding naar jou
@@ -101,6 +116,7 @@ Zet er een reverse proxy met HTTPS voor (nginx/Caddy). Belangrijk:
 5. 3 à 5 echte foto's van builds/werkplek → galerij of pagina's
 6. Algemene voorwaarden laten nalezen (UNIZO/Acerta-model) → `src/app/voorwaarden/page.tsx`
 7. Google Business Profile aanmaken → link in `src/config/site.ts`
+8. Trustpilot-profiel aanmaken → link in `src/config/site.ts`
 
 ## Fase 2 (voorzien, nog niet gebouwd)
 

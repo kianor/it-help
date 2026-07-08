@@ -121,6 +121,15 @@ export default function VolgPage({
                   <span className="font-mono text-xs text-steel">{formatDate(u.created_at, htmlLang[lang])}</span>
                   <p className="font-semibold">{statusLabel(u.status)}</p>
                   {u.message && <p className="text-ink/80">{u.message}</p>}
+                  {u.photo_file && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={`/api/uploads/${u.photo_file}`}
+                      alt=""
+                      className="mt-2 max-h-64 rounded-lg border border-ink/10 object-cover"
+                      loading="lazy"
+                    />
+                  )}
                 </li>
               ))}
             </ul>

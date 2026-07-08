@@ -6,9 +6,10 @@ import { CallButton, WhatsAppButton } from "@/components/CtaButtons";
 import { isLocale } from "@/i18n/config";
 import { getDict } from "@/i18n";
 import { pageMetadata } from "@/i18n/metadata";
+import { p } from "@/i18n/slugs.mjs";
 
 export function generateMetadata({ params }: { params: { lang: string } }): Metadata {
-  return pageMetadata(params.lang, "/contact", (d) => d.meta.contact);
+  return pageMetadata(params.lang, "contact", (d) => d.meta.contact);
 }
 
 export default function ContactPage({ params }: { params: { lang: string } }) {
@@ -36,7 +37,7 @@ export default function ContactPage({ params }: { params: { lang: string } }) {
             lang={lang}
             labels={t.form}
             serviceOptions={t.serviceOptions}
-            privacyHref={`/${lang}/privacy`}
+            privacyHref={p(lang, "privacy")}
           />
         </div>
 

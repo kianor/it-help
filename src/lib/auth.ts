@@ -54,3 +54,39 @@ export async function isAdmin(): Promise<boolean> {
     return false;
   }
 }
+
+// ---------- klantsessies (magic link, apart van admin) ----------
+export const CUSTOMER_COOKIE = "rit_klant";
+const CUSTOMER_DAYS = 30;
+
+export async function setCustomerCookie(email: string) {
+  const token = await new SignJWT({ role: "customer", email: email.toLowerCase() })
+    .setProtectedHeader({ alg: "HS256" })
+    .setIssuedAt()
+    .setExpirationTime(`${CUSTOMER_DAYS}d`)
+    .sign(getAuthSecret());
+  cookies().set(CUSTOMER_COOKIE, token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    maxAge: CUSTOMER_DAYS * 24 * 60 * 60,
+  });
+}
+
+export function clearCustomerCookie() {
+  cookies().delete(CUSTOMER_COOKIE);
+}
+
+/** E-mailadres van de ingelogde klant, of null. */
+export async function customerEmail(): Promise<string | null> {
+  const token = cookies().get(CUSTOMER_COOKIE)?.value;
+  if (!token) return null;
+  try {
+    const { payload } = await jwtVerify(token, getAuthSecret());
+    if (payload.role !== "customer" || typeof payload.email !== "string") return null;
+    return payload.email;
+  } catch {
+    return null;
+  }
+}

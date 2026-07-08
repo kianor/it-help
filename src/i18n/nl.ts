@@ -42,6 +42,14 @@ const nl = {
       description:
         "Neem contact op voor computerhulp, pc builds of console-herstel in Herent en Leuven. Bel, stuur een WhatsApp of gebruik het formulier. Reactie dezelfde werkdag.",
     },
+    afspraak: {
+      title: "Maak online een afspraak",
+      description: "Kies zelf een moment voor computerhulp, een pc-build of consoleherstel in Herent of Leuven. Bevestiging per mail, gratis verzetten tot 24 uur vooraf.",
+    },
+    account: {
+      title: "Mijn RitsIT",
+      description: "Volg je herstellingen en afspraken op één plek. Inloggen zonder wachtwoord, via een veilige e-maillink.",
+    },
     volg: { title: "Volg je herstelling", description: "Volg live de status van je herstelling met je volgcode." },
     privacy: {
       title: "Privacyverklaring",
@@ -60,6 +68,8 @@ const nl = {
     zaken: "Voor zaken",
     prijzen: "Prijzen",
     contact: "Contact",
+    afspraak: "Afspraak",
+    account: "Mijn RitsIT",
   },
 
   common: {
@@ -87,7 +97,7 @@ const nl = {
     label: "Launch-actie:",
     // {total}, {left} en {slots} worden live ingevuld
     template:
-      "-50% voor mijn eerste {total} klanten, in ruil voor een eerlijke Google-review. Nog {left} {slots} vrij →",
+      "Nog {left} {slots} vrij →",
     one: "plek",
     many: "plekken",
   },
@@ -320,6 +330,7 @@ const nl = {
       consoles: "Consoles & controllers",
       zaken: "Voor zaken",
       volg: "Volg je herstelling",
+      afspraak: "Maak een afspraak",
       prijzen: "Alle vaste prijzen",
       voorwaarden: "Algemene voorwaarden",
       privacy: "Privacyverklaring",
@@ -328,6 +339,70 @@ const nl = {
     kboPending: "KBO-nummer in aanvraag",
     kboPrefix: "KBO",
     exemption: "Bijzondere vrijstellingsregeling kleine ondernemingen",
+  },
+
+
+  calculator: {
+    title: "Wat voor pc heb ik nodig?",
+    intro: "Schuif en kies, en zie meteen welk pakket bij je past. Vrijblijvend, gewoon handig.",
+    budgetLabel: "Budget voor onderdelen",
+    useLabel: "Waarvoor ga je hem gebruiken?",
+    uses: ["Competitief gamen (shooters, hoge fps)", "AAA-games en singleplayer", "School, bureau en surfen", "Video, streaming en creatie"],
+    resLabel: "Op welke resolutie?",
+    verdictLabel: "Mijn advies",
+    tierLow: "Daar bouw ik een vlotte, stille machine mee voor alledaags gebruik.",
+    tierMid: "Daar bouw je een sterke 1080p/1440p-gamer mee die jaren meegaat.",
+    tierHigh: "Daarmee zit je aan high-end: hoge fps, strak op 1440p of 4K.",
+    warn4k: "Voor comfortabel 4K-gamen raad ik minstens €1500 aan onderdelen aan.",
+    packageLabel: "Passend pakket",
+    partsLabel: "onderdelen (jij bestelt zelf, zonder tussenmarge)",
+    cta: "Bespreek dit voorstel met mij",
+  },
+  reviewsSection: {
+    title: "Wat klanten zeggen",
+    empty: "Ik ben pas gestart, dus de eerste reviews komen eraan. Word jij een van mijn eerste vijf klanten? Dan krijg je -50%, in ruil voor één eerlijke review. Iedereen content.",
+    basedOn: "{count} reviews · gemiddeld {avg}/5",
+    readAll: "Lees alle reviews op Trustpilot",
+    write: "Schrijf zelf een review",
+    via: "via",
+  },
+  socialSection: {
+    title: "Volg de werkbank",
+    intro: "Ik film hoe ik consoles uitkuis en pc's bouw. Voor en na, zonder blabla.",
+  },
+  afspraakPage: {
+    title: "Maak een afspraak",
+    intro: "Kies een moment dat jou past. Ik bevestig per mail, en verzetten kan gratis tot 24 uur vooraf.",
+    chooseDay: "Kies een dag",
+    chooseSlot: "Kies een uur",
+    noSlots: "Momenteel zijn alle plekken bezet. Bel of app me, dan vinden we wel een gaatje.",
+    submit: "Vraag deze afspraak aan",
+    sending: "Bezig...",
+    sentTitle: "Aangevraagd!",
+    sentText: "Je krijgt zo snel mogelijk een bevestiging per mail. Pas dan ligt de afspraak vast.",
+    slotTakenError: "Dat moment is net ingenomen. Kies een ander uur.",
+    yourSlot: "Jouw keuze",
+  },
+  accountPage: {
+    title: "Mijn RitsIT",
+    loginTitle: "Inloggen zonder wachtwoord",
+    loginIntro: "Vul je e-mailadres in en je krijgt een inloglink. Geen wachtwoord om te onthouden, niets om te lekken.",
+    emailLabel: "Je e-mailadres",
+    sendLink: "Stuur mijn inloglink",
+    linkSent: "Check je mailbox! De link werkt 15 minuten.",
+    verifyFail: "Deze inloglink is verlopen of al gebruikt. Vraag hieronder een nieuwe aan.",
+    hello: "Ingelogd als",
+    jobsTitle: "Mijn herstellingen",
+    jobsEmpty: "Nog geen herstellingen op dit e-mailadres. Breng je iets binnen, dan verschijnt het hier automatisch.",
+    apptsTitle: "Mijn afspraken",
+    apptsEmpty: "Nog geen afspraken.",
+    newApptCta: "Maak een afspraak",
+    newsletterTitle: "Nieuwsbrief",
+    newsletterOn: "Je bent ingeschreven.",
+    newsletterOff: "Je bent niet ingeschreven.",
+    logout: "Uitloggen",
+    track: "Bekijk status",
+    statusWord: "status",
   },
 
   konami: {

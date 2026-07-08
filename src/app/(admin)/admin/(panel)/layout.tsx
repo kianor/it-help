@@ -9,9 +9,13 @@ export const metadata: Metadata = {
 
 const nav = [
   { href: "/admin", label: "Aanvragen" },
+  { href: "/admin/afspraken", label: "Afspraken" },
   { href: "/admin/herstellingen", label: "Herstellingen" },
-  { href: "/admin/galerij", label: "Voor/na-galerij" },
+  { href: "/admin/galerij", label: "Galerij" },
+  { href: "/admin/reviews", label: "Reviews" },
   { href: "/admin/nieuwsbrief", label: "Nieuwsbrief" },
+  { href: "/admin/acties", label: "Acties" },
+  { href: "/admin/stats", label: "Statistieken" },
   { href: "/admin/instellingen", label: "Instellingen" },
 ];
 

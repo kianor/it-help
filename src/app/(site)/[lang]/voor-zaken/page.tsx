@@ -5,9 +5,10 @@ import { CallButton } from "@/components/CtaButtons";
 import { isLocale } from "@/i18n/config";
 import { getDict } from "@/i18n";
 import { pageMetadata } from "@/i18n/metadata";
+import { p } from "@/i18n/slugs.mjs";
 
 export function generateMetadata({ params }: { params: { lang: string } }): Metadata {
-  return pageMetadata(params.lang, "/voor-zaken", (d) => d.meta.zaken);
+  return pageMetadata(params.lang, "voor-zaken", (d) => d.meta.zaken);
 }
 
 export default function VoorZakenPage({ params }: { params: { lang: string } }) {
@@ -29,7 +30,7 @@ export default function VoorZakenPage({ params }: { params: { lang: string } }) 
           <h2 className="mt-2 text-3xl font-bold">{t.checkTitle}</h2>
           <p className="mt-3 max-w-2xl text-white/85">{t.checkText}</p>
           <div className="mt-6 flex flex-wrap gap-3">
-            <Link href={`/${lang}/contact`} className="btn-primary">
+            <Link href={p(lang, "contact")} className="btn-primary">
               {t.checkCta}
             </Link>
             <CallButton

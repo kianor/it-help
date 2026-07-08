@@ -42,6 +42,14 @@ const fr: Dict = {
       description:
         "Contactez-moi pour de l'aide informatique, un PC sur mesure ou une réparation de console à Herent et Louvain. Appelez, envoyez un WhatsApp ou utilisez le formulaire. Réponse le jour ouvrable même.",
     },
+    afspraak: {
+      title: "Prendre rendez-vous en ligne",
+      description: "Choisissez vous-même un moment pour de l'aide informatique, un montage PC ou une réparation de console à Herent ou Louvain. Confirmation par mail, déplacement gratuit jusqu'à 24 h à l'avance.",
+    },
+    account: {
+      title: "Mon RitsIT",
+      description: "Suivez vos réparations et rendez-vous au même endroit. Connexion sans mot de passe, via un lien e-mail sécurisé.",
+    },
     volg: { title: "Suivez votre réparation", description: "Suivez en direct l'état de votre réparation avec votre code de suivi." },
     privacy: {
       title: "Déclaration de confidentialité",
@@ -60,6 +68,8 @@ const fr: Dict = {
     zaken: "Entreprises",
     prijzen: "Prix",
     contact: "Contact",
+    afspraak: "Rendez-vous",
+    account: "Mon RitsIT",
   },
 
   common: {
@@ -86,7 +96,7 @@ const fr: Dict = {
   promo: {
     label: "Offre de lancement :",
     template:
-      "-50% pour mes {total} premiers clients, en échange d'un avis Google honnête. Encore {left} {slots} →",
+      "Encore {left} {slots} →",
     one: "place",
     many: "places",
   },
@@ -319,6 +329,7 @@ const fr: Dict = {
       consoles: "Consoles & manettes",
       zaken: "Pour les entreprises",
       volg: "Suivez votre réparation",
+      afspraak: "Prendre rendez-vous",
       prijzen: "Tous les prix fixes",
       voorwaarden: "Conditions générales",
       privacy: "Déclaration de confidentialité",
@@ -327,6 +338,70 @@ const fr: Dict = {
     kboPending: "Numéro d'entreprise (BCE) en cours de demande",
     kboPrefix: "BCE",
     exemption: "Régime de franchise pour petites entreprises",
+  },
+
+
+  calculator: {
+    title: "De quel PC ai-je besoin ?",
+    intro: "Glissez et choisissez, et voyez tout de suite quel forfait vous convient. Sans engagement, juste pratique.",
+    budgetLabel: "Budget pour les pièces",
+    useLabel: "Pour quoi allez-vous l'utiliser ?",
+    uses: ["Gaming compétitif (shooters, fps élevés)", "Jeux AAA et solo", "École, bureau et navigation", "Vidéo, streaming et création"],
+    resLabel: "À quelle résolution ?",
+    verdictLabel: "Mon conseil",
+    tierLow: "De quoi monter une machine fluide et silencieuse pour un usage quotidien.",
+    tierMid: "De quoi monter un PC gaming solide en 1080p/1440p qui tiendra des années.",
+    tierHigh: "Là on est dans le haut de gamme : fps élevés, fluide en 1440p ou 4K.",
+    warn4k: "Pour jouer confortablement en 4K, je conseille au moins 1500 € de pièces.",
+    packageLabel: "Forfait adapté",
+    partsLabel: "pièces (vous les commandez vous-même, sans marge d'intermédiaire)",
+    cta: "Discuter de cette proposition avec moi",
+  },
+  reviewsSection: {
+    title: "Ce que disent les clients",
+    empty: "Je viens de me lancer, les premiers avis arrivent. Envie d'être parmi mes cinq premiers clients ? Vous recevez -50%, en échange d'un avis honnête. Tout le monde y gagne.",
+    basedOn: "{count} avis · moyenne {avg}/5",
+    readAll: "Lire tous les avis sur Trustpilot",
+    write: "Écrire un avis vous-même",
+    via: "via",
+  },
+  socialSection: {
+    title: "Suivez l'atelier",
+    intro: "Je filme comment je nettoie des consoles et monte des PC. Avant et après, sans blabla.",
+  },
+  afspraakPage: {
+    title: "Prendre rendez-vous",
+    intro: "Choisissez un moment qui vous convient. Je confirme par mail, et déplacer est gratuit jusqu'à 24 heures à l'avance.",
+    chooseDay: "Choisissez un jour",
+    chooseSlot: "Choisissez une heure",
+    noSlots: "Tous les créneaux sont pris pour le moment. Appelez-moi ou envoyez un WhatsApp et on trouvera un trou.",
+    submit: "Demander ce rendez-vous",
+    sending: "En cours...",
+    sentTitle: "Demandé !",
+    sentText: "Vous recevrez une confirmation par mail dès que possible. Le rendez-vous n'est définitif qu'à ce moment-là.",
+    slotTakenError: "Ce créneau vient d'être pris. Choisissez une autre heure.",
+    yourSlot: "Votre choix",
+  },
+  accountPage: {
+    title: "Mon RitsIT",
+    loginTitle: "Se connecter sans mot de passe",
+    loginIntro: "Entrez votre adresse e-mail et vous recevrez un lien de connexion. Pas de mot de passe à retenir, rien à faire fuiter.",
+    emailLabel: "Votre adresse e-mail",
+    sendLink: "Envoyer mon lien de connexion",
+    linkSent: "Vérifiez votre boîte mail ! Le lien fonctionne 15 minutes.",
+    verifyFail: "Ce lien de connexion a expiré ou a déjà été utilisé. Demandez-en un nouveau ci-dessous.",
+    hello: "Connecté en tant que",
+    jobsTitle: "Mes réparations",
+    jobsEmpty: "Pas encore de réparations à cette adresse e-mail. Apportez quelque chose et ça apparaîtra ici automatiquement.",
+    apptsTitle: "Mes rendez-vous",
+    apptsEmpty: "Pas encore de rendez-vous.",
+    newApptCta: "Prendre rendez-vous",
+    newsletterTitle: "Newsletter",
+    newsletterOn: "Vous êtes inscrit.",
+    newsletterOff: "Vous n'êtes pas inscrit.",
+    logout: "Se déconnecter",
+    track: "Voir le statut",
+    statusWord: "statut",
   },
 
   konami: {

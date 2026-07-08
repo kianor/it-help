@@ -5,7 +5,7 @@ import { getDict, fill } from "@/i18n";
 import { pageMetadata } from "@/i18n/metadata";
 
 export function generateMetadata({ params }: { params: { lang: string } }): Metadata {
-  return pageMetadata(params.lang, "/privacy", (d) => d.meta.privacy);
+  return pageMetadata(params.lang, "privacy", (d) => d.meta.privacy);
 }
 
 export default function PrivacyPage({ params }: { params: { lang: string } }) {

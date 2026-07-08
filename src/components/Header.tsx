@@ -5,10 +5,11 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { site } from "@/config/site";
 import { locales, type Locale } from "@/i18n/config";
+import { p, PAGE_SLUGS } from "@/i18n/slugs.mjs";
 import { PhoneIcon } from "./CtaButtons";
 import { GameModeToggle } from "./GameModeToggle";
 
-type NavLabels = { pc: string; herstel: string; consoles: string; zaken: string; prijzen: string; contact: string };
+type NavLabels = { pc: string; herstel: string; consoles: string; zaken: string; prijzen: string; contact: string; afspraak: string; account: string };
 
 export function Header({
   lang,
@@ -29,18 +30,27 @@ export function Header({
   const [open, setOpen] = useState(false);
 
   const items = [
-    { href: `/${lang}/pc-bouwen`, label: nav.pc },
-    { href: `/${lang}/herstel`, label: nav.herstel },
-    { href: `/${lang}/consoles`, label: nav.consoles },
-    { href: `/${lang}/voor-zaken`, label: nav.zaken },
-    { href: `/${lang}/prijzen`, label: nav.prijzen },
-    { href: `/${lang}/contact`, label: nav.contact },
+    { href: p(lang, "pc-bouwen"), label: nav.pc },
+    { href: p(lang, "herstel"), label: nav.herstel },
+    { href: p(lang, "consoles"), label: nav.consoles },
+    { href: p(lang, "voor-zaken"), label: nav.zaken },
+    { href: p(lang, "prijzen"), label: nav.prijzen },
+    { href: p(lang, "afspraak"), label: nav.afspraak },
+    { href: p(lang, "contact"), label: nav.contact },
   ];
 
-  // Zelfde pagina in een andere taal
-  const restPath = pathname.replace(/^\/(nl|en|fr)(?=\/|$)/, "") || "";
+  // Zelfde pagina in een andere taal (met vertaalde slug waar die bestaat)
   function switchHref(to: Locale) {
-    return `/${to}${restPath}`;
+    const rest = pathname.replace(/^\/(nl|en|fr)(?=\/|$)/, "");
+    const currentSlug = rest.split("/")[1];
+    if (currentSlug) {
+      for (const [page, slugs] of Object.entries(PAGE_SLUGS)) {
+        if ((slugs as Record<string, string>)[lang] === currentSlug) {
+          return p(to, page as never);
+        }
+      }
+    }
+    return `/${to}${rest}`;
   }
   function onSwitch(to: Locale) {
     document.cookie = `lang=${to};path=/;max-age=31536000;samesite=lax`;
@@ -85,6 +95,17 @@ export function Header({
               </Link>
             ))}
           </div>
+          <Link
+            href={p(lang, "account")}
+            title={nav.account}
+            className="hidden h-10 w-10 items-center justify-center rounded-lg border border-ink/15 text-steel transition hover:text-ink sm:inline-flex"
+          >
+            <span className="sr-only">{nav.account}</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+          </Link>
           <GameModeToggle label={gameMode} />
           <a
             href={`tel:${site.phone}`}

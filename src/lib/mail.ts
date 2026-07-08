@@ -1,5 +1,6 @@
 import { Resend } from "resend";
 import { site, siteUrl } from "@/config/site";
+import { p } from "@/i18n/slugs.mjs";
 
 /**
  * Alle mails lopen via Resend, in de taal van de klant (nl/en/fr).
@@ -128,7 +129,7 @@ export async function mailJobCreated(job: {
   lang?: string;
 }) {
   const l = asLang(job.lang);
-  const url = `${siteUrl()}/${l}/volg?code=${encodeURIComponent(job.code)}`;
+  const url = `${siteUrl()}${p(l, "volg")}?code=${encodeURIComponent(job.code)}`;
   const priceLine = {
     nl: job.price ? ` Afgesproken prijs: <strong>${esc(job.price)}</strong>. Daar blijft het bij.` : "",
     en: job.price ? ` Agreed price: <strong>${esc(job.price)}</strong>. That's what it stays.` : "",
@@ -204,7 +205,7 @@ export async function mailJobStatusUpdate(job: {
   lang?: string;
 }) {
   const l = asLang(job.lang);
-  const url = `${siteUrl()}/${l}/volg?code=${encodeURIComponent(job.code)}`;
+  const url = `${siteUrl()}${p(l, "volg")}?code=${encodeURIComponent(job.code)}`;
   const status = statusLabels[l][job.status] ?? job.status;
   const note = job.message
     ? `<p style="white-space:pre-wrap;border-left:3px solid #2450A8;padding-left:12px;">${esc(job.message)}</p>`
@@ -301,6 +302,148 @@ export async function mailNewsletterConfirm(email: string, token: string, lang?:
     },
   }[l];
   await send(email, t.subject, layout(t.body, footers[l]));
+}
+
+// ---------- afspraken ----------
+export async function mailAppointmentToOwner(a: {
+  name: string;
+  phone: string;
+  email?: string | null;
+  service: string;
+  slot_start: string;
+  message?: string | null;
+}) {
+  const to = process.env.MAIL_TO;
+  if (!to) return;
+  await send(
+    to,
+    `Afspraakverzoek: ${a.slot_start} — ${a.name}`,
+    layout(
+      `<h2 style="margin-top:0;">Nieuw afspraakverzoek</h2>
+      <p><strong>Wanneer:</strong> ${esc(a.slot_start)}<br>
+      <strong>Naam:</strong> ${esc(a.name)}<br>
+      <strong>Telefoon:</strong> ${esc(a.phone)}<br>
+      <strong>E-mail:</strong> ${esc(a.email || "niet opgegeven")}<br>
+      <strong>Dienst:</strong> ${esc(a.service)}</p>
+      ${a.message ? `<p style="white-space:pre-wrap;border-left:3px solid #2450A8;padding-left:12px;">${esc(a.message)}</p>` : ""}
+      <p>Bevestig of weiger in het admin-paneel (Afspraken).</p>`,
+      footers.nl
+    )
+  );
+}
+
+export async function mailAppointmentRequested(a: {
+  email: string;
+  name: string;
+  slot_start: string;
+  service: string;
+  lang?: string;
+}) {
+  const l = asLang(a.lang);
+  const t = {
+    nl: {
+      subject: `Afspraakverzoek ontvangen: ${a.slot_start}`,
+      body: `<h2 style="margin-top:0;">Dag ${esc(a.name)},</h2>
+        <p>Je vroeg een afspraak aan op <strong>${esc(a.slot_start)}</strong> voor: ${esc(a.service)}.</p>
+        <p>Ik bevestig je afspraak zo snel mogelijk per mail. Pas na die bevestiging ligt ze vast.</p>
+        <p>Tot dan,<br>Kiano</p>`,
+    },
+    en: {
+      subject: `Appointment request received: ${a.slot_start}`,
+      body: `<h2 style="margin-top:0;">Hi ${esc(a.name)},</h2>
+        <p>You requested an appointment on <strong>${esc(a.slot_start)}</strong> for: ${esc(a.service)}.</p>
+        <p>I'll confirm your appointment by email as soon as possible. It's only final after that confirmation.</p>
+        <p>See you soon,<br>Kiano</p>`,
+    },
+    fr: {
+      subject: `Demande de rendez-vous reçue : ${a.slot_start}`,
+      body: `<h2 style="margin-top:0;">Bonjour ${esc(a.name)},</h2>
+        <p>Vous avez demandé un rendez-vous le <strong>${esc(a.slot_start)}</strong> pour : ${esc(a.service)}.</p>
+        <p>Je confirme votre rendez-vous par mail dès que possible. Il n'est définitif qu'après cette confirmation.</p>
+        <p>À bientôt,<br>Kiano</p>`,
+    },
+  }[l];
+  await send(a.email, t.subject, layout(t.body, footers[l]));
+}
+
+export async function mailAppointmentConfirmed(a: {
+  email: string;
+  name: string;
+  slot_start: string;
+  service: string;
+  lang?: string;
+}) {
+  const l = asLang(a.lang);
+  const t = {
+    nl: {
+      subject: `Bevestigd: afspraak op ${a.slot_start}`,
+      body: `<h2 style="margin-top:0;">Dag ${esc(a.name)},</h2>
+        <p>Je afspraak op <strong>${esc(a.slot_start)}</strong> voor ${esc(a.service)} is bevestigd.</p>
+        <p>Kan je toch niet? Bel of app me even, verzetten kan gratis tot 24 uur vooraf.</p>
+        <p>Tot dan,<br>Kiano</p>`,
+    },
+    en: {
+      subject: `Confirmed: appointment on ${a.slot_start}`,
+      body: `<h2 style="margin-top:0;">Hi ${esc(a.name)},</h2>
+        <p>Your appointment on <strong>${esc(a.slot_start)}</strong> for ${esc(a.service)} is confirmed.</p>
+        <p>Can't make it after all? Call or WhatsApp me — rescheduling is free up to 24 hours in advance.</p>
+        <p>See you then,<br>Kiano</p>`,
+    },
+    fr: {
+      subject: `Confirmé : rendez-vous le ${a.slot_start}`,
+      body: `<h2 style="margin-top:0;">Bonjour ${esc(a.name)},</h2>
+        <p>Votre rendez-vous du <strong>${esc(a.slot_start)}</strong> pour ${esc(a.service)} est confirmé.</p>
+        <p>Un empêchement ? Appelez-moi ou envoyez un WhatsApp — déplacer est gratuit jusqu'à 24 heures à l'avance.</p>
+        <p>À bientôt,<br>Kiano</p>`,
+    },
+  }[l];
+  await send(a.email, t.subject, layout(t.body, footers[l]));
+}
+
+// ---------- klantaccount: magic link ----------
+export async function mailMagicLink(email: string, url: string, lang?: string) {
+  const l = asLang(lang);
+  const t = {
+    nl: {
+      subject: "Je inloglink voor RitsIT",
+      body: `<h2 style="margin-top:0;">Inloggen zonder wachtwoord</h2>
+        <p>Klik op de knop om in te loggen op je RitsIT-account. De link werkt 15 minuten en één keer.</p>
+        ${btn(url, "Log me in")}
+        <p>Vroeg jij dit niet aan? Dan mag je deze mail gewoon negeren.</p>`,
+    },
+    en: {
+      subject: "Your login link for RitsIT",
+      body: `<h2 style="margin-top:0;">Log in without a password</h2>
+        <p>Click the button to log in to your RitsIT account. The link works for 15 minutes and only once.</p>
+        ${btn(url, "Log me in")}
+        <p>Didn't request this? Then simply ignore this email.</p>`,
+    },
+    fr: {
+      subject: "Votre lien de connexion RitsIT",
+      body: `<h2 style="margin-top:0;">Se connecter sans mot de passe</h2>
+        <p>Cliquez sur le bouton pour vous connecter à votre compte RitsIT. Le lien fonctionne 15 minutes et une seule fois.</p>
+        ${btn(url, "Me connecter")}
+        <p>Vous n'avez rien demandé ? Ignorez simplement ce mail.</p>`,
+    },
+  }[l];
+  await send(email, t.subject, layout(t.body, footers[l]));
+}
+
+// ---------- nieuwsbriefcampagne ----------
+export async function mailCampaign(
+  to: string,
+  subject: string,
+  bodyText: string,
+  unsubscribeUrl: string,
+  lang?: string
+) {
+  const l = asLang(lang);
+  const unsubLabel = { nl: "Uitschrijven", en: "Unsubscribe", fr: "Se désinscrire" }[l];
+  const html = layout(
+    `<div style="white-space:pre-wrap;">${esc(bodyText)}</div>`,
+    `${footers[l]}<br><a href="${unsubscribeUrl}" style="color:#8A94A6;">${unsubLabel}</a>`
+  );
+  await send(to, subject, html);
 }
 
 function esc(s: string): string {

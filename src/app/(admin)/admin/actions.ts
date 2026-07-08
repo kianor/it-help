@@ -9,12 +9,21 @@ import {
   addJobUpdate,
   createJob,
   deleteGalleryItem,
+  deletePromo,
+  deleteReview,
+  getAppointment,
   getJobById,
   insertGalleryItem,
+  insertReview,
+  listConfirmedSubscribers,
+  logCampaign,
   markReviewRequested,
   rateLimit,
+  savePromo,
+  setAppointmentStatus,
   setRequestStatus,
   setSetting,
+  toggleReview,
   UPLOADS_DIR,
 } from "@/lib/db";
 import {
@@ -24,10 +33,13 @@ import {
   setSessionCookie,
 } from "@/lib/auth";
 import {
+  mailAppointmentConfirmed,
+  mailCampaign,
   mailJobCreated,
   mailJobStatusUpdate,
   mailReviewRequest,
 } from "@/lib/mail";
+import { siteUrl } from "@/config/site";
 
 async function requireAdmin() {
   if (!(await isAdmin())) redirect("/admin/login");
@@ -110,7 +122,13 @@ export async function updateJobStatusAction(formData: FormData) {
   const message = String(formData.get("message") || "").trim();
   if (!jobId || !status) return;
 
-  addJobUpdate(jobId, status, message || undefined);
+  const photo = formData.get("photo");
+  let photoFile: string | undefined;
+  if (photo instanceof File && photo.size > 0) {
+    photoFile = (await saveUpload(photo)) || undefined;
+  }
+
+  addJobUpdate(jobId, status, message || undefined, photoFile);
 
   const job = getJobById(jobId);
   if (job?.customer_email) {
@@ -191,14 +209,121 @@ export async function deleteGalleryAction(formData: FormData) {
   revalidatePath("/consoles");
 }
 
-// ---------- instellingen ----------
-export async function savePromoAction(formData: FormData) {
+
+// ---------- reviews ----------
+export async function addReviewAction(formData: FormData) {
   await requireAdmin();
-  const active = formData.get("active") === "on";
-  const total = Math.max(0, Number(formData.get("total")) || 0);
-  const used = Math.max(0, Number(formData.get("used")) || 0);
-  setSetting("promo_active", active ? "1" : "0");
-  setSetting("promo_total", String(total));
-  setSetting("promo_used", String(used));
+  const author = String(formData.get("author") || "").trim();
+  const text = String(formData.get("text") || "").trim();
+  const rating = Number(formData.get("rating")) || 5;
+  const source = String(formData.get("source") || "Trustpilot").trim();
+  if (!author || !text) return;
+  insertReview({ author, rating, text, source });
+  revalidatePath("/admin/reviews");
+}
+
+export async function toggleReviewAction(formData: FormData) {
+  await requireAdmin();
+  const id = Number(formData.get("id"));
+  if (id) toggleReview(id);
+  revalidatePath("/admin/reviews");
+}
+
+export async function deleteReviewAction(formData: FormData) {
+  await requireAdmin();
+  const id = Number(formData.get("id"));
+  if (id) deleteReview(id);
+  revalidatePath("/admin/reviews");
+}
+
+// ---------- afspraken ----------
+export async function setAppointmentStatusAction(formData: FormData) {
+  await requireAdmin();
+  const id = Number(formData.get("id"));
+  const status = String(formData.get("status") || "");
+  if (!id || !["aangevraagd", "bevestigd", "geannuleerd"].includes(status)) return;
+  setAppointmentStatus(id, status);
+  const appointment = getAppointment(id);
+  if (status === "bevestigd" && appointment?.email) {
+    await mailAppointmentConfirmed({
+      email: appointment.email,
+      name: appointment.name,
+      slot_start: appointment.slot_start,
+      service: appointment.service,
+      lang: appointment.lang,
+    });
+  }
+  revalidatePath("/admin/afspraken");
+}
+
+export async function saveAvailabilityAction(formData: FormData) {
+  await requireAdmin();
+  const keys = [
+    "appt_slot_minutes", "appt_lead_hours", "appt_horizon_days", "appt_blocked",
+    "appt_hours_mon", "appt_hours_tue", "appt_hours_wed", "appt_hours_thu",
+    "appt_hours_fri", "appt_hours_sat", "appt_hours_sun",
+  ];
+  for (const key of keys) {
+    const value = formData.get(key);
+    if (value !== null) setSetting(key, String(value).trim());
+  }
+  revalidatePath("/admin/afspraken");
+}
+
+// ---------- acties (promo's) ----------
+export async function savePromoAction2(formData: FormData) {
+  await requireAdmin();
+  const totalRaw = String(formData.get("total") || "").trim();
+  savePromo({
+    id: Number(formData.get("id")) || undefined,
+    text_nl: String(formData.get("text_nl") || "").trim(),
+    text_en: String(formData.get("text_en") || "").trim(),
+    text_fr: String(formData.get("text_fr") || "").trim(),
+    active: formData.get("active") === "on",
+    total: totalRaw === "" ? null : Math.max(0, Number(totalRaw) || 0),
+    used: Math.max(0, Number(formData.get("used")) || 0),
+  });
+  revalidatePath("/admin/acties");
+}
+
+export async function deletePromoAction(formData: FormData) {
+  await requireAdmin();
+  const id = Number(formData.get("id"));
+  if (id) deletePromo(id);
+  revalidatePath("/admin/acties");
+}
+
+// ---------- instellingen: video's ----------
+export async function saveVideosAction(formData: FormData) {
+  await requireAdmin();
+  setSetting("social_videos", String(formData.get("social_videos") || "").trim());
   revalidatePath("/admin/instellingen");
+}
+
+// ---------- nieuwsbrief versturen ----------
+export async function sendCampaignAction(
+  _prev: { done?: number; error?: string } | undefined,
+  formData: FormData
+): Promise<{ done?: number; error?: string }> {
+  await requireAdmin();
+  const subject = String(formData.get("subject") || "").trim();
+  const bodyText = String(formData.get("body") || "").trim();
+  const langFilter = String(formData.get("lang_filter") || "all");
+  if (!subject || !bodyText) return { error: "Vul onderwerp en tekst in." };
+  if (!process.env.RESEND_API_KEY) {
+    return { error: "RESEND_API_KEY ontbreekt: er kunnen geen mails uit." };
+  }
+
+  const subscribers = listConfirmedSubscribers(langFilter);
+  if (subscribers.length === 0) return { error: "Geen bevestigde inschrijvingen voor deze selectie." };
+
+  let sent = 0;
+  for (const sub of subscribers) {
+    const unsubscribeUrl = `${siteUrl()}/${sub.lang}/nieuwsbrief/uitschrijven?token=${sub.token}`;
+    await mailCampaign(sub.email, subject, bodyText, unsubscribeUrl, sub.lang);
+    sent++;
+  }
+  logCampaign(subject, bodyText, langFilter, sent);
+  revalidatePath("/admin/nieuwsbrief");
+  return { done: sent };
 }

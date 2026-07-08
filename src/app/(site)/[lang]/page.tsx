@@ -5,6 +5,12 @@ import { PriceTag } from "@/components/PriceTag";
 import { isLocale } from "@/i18n/config";
 import { getDict } from "@/i18n";
 import { pageMetadata } from "@/i18n/metadata";
+import { p, type PageKey } from "@/i18n/slugs.mjs";
+import { listReviews, reviewStats, getSetting } from "@/lib/db";
+import { site, siteUrl } from "@/config/site";
+import { fill } from "@/i18n";
+
+export const dynamic = "force-dynamic";
 
 export function generateMetadata({ params }: { params: { lang: string } }): Metadata {
   const meta = pageMetadata(params.lang, "", (d) => d.meta.home);
@@ -12,7 +18,7 @@ export function generateMetadata({ params }: { params: { lang: string } }): Meta
   return { ...meta, title: { absolute: String(meta.title) } };
 }
 
-const blockHrefs = ["/pc-bouwen", "/herstel", "/consoles", "/voor-zaken"];
+const blockPages: PageKey[] = ["pc-bouwen", "herstel", "consoles", "voor-zaken"];
 // PC bouwen en consoles krijgen het gamer-accent (RGB-glow op hover)
 const gamerBlocks = new Set([0, 2]);
 
@@ -33,7 +39,7 @@ export default function HomePage({ params }: { params: { lang: string } }) {
           <p className="mt-5 text-lg text-ink/80">{t.heroSub}</p>
           <div className="mt-8 flex flex-wrap gap-3">
             <CallButton label={dict.common.callCta} />
-            <Link href={`/${lang}/prijzen`} className="btn-secondary">
+            <Link href={p(lang, "prijzen")} className="btn-secondary">
               {dict.common.viewPrices}
             </Link>
           </div>
@@ -45,8 +51,8 @@ export default function HomePage({ params }: { params: { lang: string } }) {
         <div className="grid gap-4 sm:grid-cols-2">
           {t.blocks.map((b, i) => (
             <Link
-              key={blockHrefs[i]}
-              href={`/${lang}${blockHrefs[i]}`}
+              key={blockPages[i]}
+              href={p(lang, blockPages[i])}
               className={`group animate-reveal rounded-xl border border-ink/10 bg-white p-6 transition hover:-translate-y-0.5 hover:border-cobalt/50 hover:shadow-md ${
                 gamerBlocks.has(i) ? "gamer-card" : ""
               }`}
@@ -95,13 +101,11 @@ export default function HomePage({ params }: { params: { lang: string } }) {
         </div>
       </section>
 
-      {/* Reviews + launch-actie */}
-      <section className="mx-auto max-w-6xl px-4 pt-20">
-        <div className="rounded-xl border border-dashed border-steel/50 bg-white p-8 text-center">
-          <h2 className="text-2xl font-bold">{t.reviewsTitle}</h2>
-          <p className="mx-auto mt-3 max-w-xl text-ink/80">{t.reviewsText}</p>
-        </div>
-      </section>
+      {/* Reviews (beheerd in admin, bron Trustpilot/Google) */}
+      <ReviewsSection lang={lang} />
+
+      {/* Social: before/after-video's */}
+      <SocialSection lang={lang} />
 
       {/* Afsluitende CTA */}
       <section className="mx-auto max-w-6xl px-4 pt-20">
@@ -113,7 +117,7 @@ export default function HomePage({ params }: { params: { lang: string } }) {
           <div className="mt-6 flex flex-wrap gap-3">
             <CallButton label={dict.common.callCta} />
             <Link
-              href={`/${lang}/contact`}
+              href={p(lang, "contact")}
               className="inline-flex items-center justify-center rounded-lg border-2 border-white/70 px-6 py-3 font-semibold text-white transition hover:bg-white hover:text-ink"
             >
               {dict.common.sendMessage}
@@ -122,5 +126,128 @@ export default function HomePage({ params }: { params: { lang: string } }) {
         </div>
       </section>
     </>
+  );
+}
+
+function Stars({ rating }: { rating: number }) {
+  return (
+    <span className="font-mono text-signal" aria-label={`${rating}/5`}>
+      {"★".repeat(Math.round(rating))}
+      <span className="text-steel/40">{"★".repeat(5 - Math.round(rating))}</span>
+    </span>
+  );
+}
+
+function ReviewsSection({ lang }: { lang: "nl" | "en" | "fr" }) {
+  const dict = getDict(lang);
+  const t = dict.reviewsSection;
+  const reviews = listReviews(true).slice(0, 6);
+  const stats = reviewStats();
+
+  return (
+    <section className="mx-auto max-w-6xl px-4 pt-20">
+      <h2 className="text-3xl font-bold">{t.title}</h2>
+      {reviews.length === 0 ? (
+        <div className="mt-6 rounded-xl border border-dashed border-steel/50 bg-white p-8 text-center">
+          <p className="mx-auto max-w-xl text-ink/80">{t.empty}</p>
+        </div>
+      ) : (
+        <>
+          <p className="mt-2 text-sm text-steel">
+            {fill(t.basedOn, { count: stats.count, avg: stats.avg })}
+          </p>
+          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {reviews.map((r) => (
+              <figure key={r.id} className="rounded-xl border border-ink/10 bg-white p-5">
+                <Stars rating={r.rating} />
+                <blockquote className="mt-2 text-sm text-ink/90">{r.text}</blockquote>
+                <figcaption className="mt-3 text-sm font-semibold">
+                  {r.author} <span className="font-normal text-steel">{t.via} {r.source}</span>
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "LocalBusiness",
+                name: site.name,
+                url: `${siteUrl()}/${lang}`,
+                aggregateRating: {
+                  "@type": "AggregateRating",
+                  ratingValue: stats.avg,
+                  reviewCount: stats.count,
+                  bestRating: 5,
+                },
+              }),
+            }}
+          />
+        </>
+      )}
+      {site.trustpilotUrl && (
+        <p className="mt-4 flex flex-wrap gap-4 text-sm">
+          <a href={site.trustpilotUrl} target="_blank" rel="noopener noreferrer" className="font-semibold text-cobalt hover:underline">
+            {t.readAll} →
+          </a>
+          <a href={site.trustpilotUrl} target="_blank" rel="noopener noreferrer" className="text-steel hover:text-cobalt hover:underline">
+            {t.write}
+          </a>
+        </p>
+      )}
+    </section>
+  );
+}
+
+function SocialSection({ lang }: { lang: "nl" | "en" | "fr" }) {
+  const dict = getDict(lang);
+  const t = dict.socialSection;
+  const raw = (getSetting("social_videos") || "").split("\n").map((l) => l.trim()).filter(Boolean);
+  const socials = [
+    { label: "TikTok", url: site.socials.tiktok },
+    { label: "Instagram", url: site.socials.instagram },
+    { label: "YouTube", url: site.socials.youtube },
+  ].filter((s) => s.url);
+  if (raw.length === 0 && socials.length === 0) return null;
+
+  const embeds = raw
+    .map((url) => {
+      const yt = url.match(/(?:youtube\.com\/(?:watch\?v=|shorts\/)|youtu\.be\/)([\w-]{6,})/);
+      return yt ? { id: yt[1], url } : null;
+    })
+    .filter(Boolean)
+    .slice(0, 3) as { id: string; url: string }[];
+
+  return (
+    <section className="mx-auto max-w-6xl px-4 pt-20">
+      <h2 className="text-3xl font-bold">{t.title}</h2>
+      <p className="mt-2 max-w-2xl text-ink/80">{t.intro}</p>
+      {embeds.length > 0 && (
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {embeds.map((v) => (
+            <div key={v.id} className="gamer-card overflow-hidden rounded-xl border border-ink/10 bg-white">
+              <iframe
+                src={`https://www.youtube-nocookie.com/embed/${v.id}`}
+                title="Video"
+                className="aspect-video w-full"
+                allow="accelerometer; encrypted-media; picture-in-picture"
+                allowFullScreen
+                loading="lazy"
+              />
+            </div>
+          ))}
+        </div>
+      )}
+      {socials.length > 0 && (
+        <p className="mt-5 flex flex-wrap gap-4">
+          {socials.map((s) => (
+            <a key={s.label} href={s.url} target="_blank" rel="noopener noreferrer" className="btn-secondary">
+              {s.label}
+            </a>
+          ))}
+        </p>
+      )}
+    </section>
   );
 }

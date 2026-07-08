@@ -2,6 +2,7 @@ import Link from "next/link";
 import { site } from "@/config/site";
 import type { Dict } from "@/i18n";
 import type { Locale } from "@/i18n/config";
+import { p } from "@/i18n/slugs.mjs";
 
 export function Footer({ lang, dict }: { lang: Locale; dict: Dict }) {
   const f = dict.footer;
@@ -45,20 +46,22 @@ export function Footer({ lang, dict }: { lang: Locale; dict: Dict }) {
         <div className="text-sm">
           <p className="label">{f.servicesLabel}</p>
           <ul className="space-y-1.5">
-            <li><Link href={`/${lang}/pc-bouwen`} className="hover:text-cobalt">{f.links.pc}</Link></li>
-            <li><Link href={`/${lang}/herstel`} className="hover:text-cobalt">{f.links.herstel}</Link></li>
-            <li><Link href={`/${lang}/consoles`} className="hover:text-cobalt">{f.links.consoles}</Link></li>
-            <li><Link href={`/${lang}/voor-zaken`} className="hover:text-cobalt">{f.links.zaken}</Link></li>
-            <li><Link href={`/${lang}/volg`} className="hover:text-cobalt">{f.links.volg}</Link></li>
+            <li><Link href={p(lang, "pc-bouwen")} className="hover:text-cobalt">{f.links.pc}</Link></li>
+            <li><Link href={p(lang, "herstel")} className="hover:text-cobalt">{f.links.herstel}</Link></li>
+            <li><Link href={p(lang, "consoles")} className="hover:text-cobalt">{f.links.consoles}</Link></li>
+            <li><Link href={p(lang, "voor-zaken")} className="hover:text-cobalt">{f.links.zaken}</Link></li>
+            <li><Link href={p(lang, "volg")} className="hover:text-cobalt">{f.links.volg}</Link></li>
+            <li><Link href={p(lang, "afspraak")} className="hover:text-cobalt">{f.links.afspraak}</Link></li>
+            <li><Link href={p(lang, "account")} className="hover:text-cobalt">{dict.nav.account}</Link></li>
           </ul>
         </div>
 
         <div className="text-sm">
           <p className="label">{f.practicalLabel}</p>
           <ul className="space-y-1.5">
-            <li><Link href={`/${lang}/prijzen`} className="hover:text-cobalt">{f.links.prijzen}</Link></li>
-            <li><Link href={`/${lang}/voorwaarden`} className="hover:text-cobalt">{f.links.voorwaarden}</Link></li>
-            <li><Link href={`/${lang}/privacy`} className="hover:text-cobalt">{f.links.privacy}</Link></li>
+            <li><Link href={p(lang, "prijzen")} className="hover:text-cobalt">{f.links.prijzen}</Link></li>
+            <li><Link href={p(lang, "voorwaarden")} className="hover:text-cobalt">{f.links.voorwaarden}</Link></li>
+            <li><Link href={p(lang, "privacy")} className="hover:text-cobalt">{f.links.privacy}</Link></li>
             {site.googleReviewsUrl && (
               <li>
                 <a href={site.googleReviewsUrl} target="_blank" rel="noopener noreferrer" className="hover:text-cobalt">

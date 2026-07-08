@@ -1,3 +1,5 @@
+import { slugRewrites, slugRedirects } from "./src/i18n/slugs.mjs";
+
 /** @type {import('next').NextConfig} */
 
 const securityHeaders = [
@@ -15,9 +17,11 @@ const securityHeaders = [
       "default-src 'self'",
       "script-src 'self' 'unsafe-inline'",
       "style-src 'self' 'unsafe-inline'",
-      "img-src 'self' data: blob:",
+      "img-src 'self' data: blob: https://i.ytimg.com",
       "font-src 'self'",
       "connect-src 'self'",
+      // Alleen video-embeds van deze spelers zijn toegelaten
+      "frame-src https://www.youtube-nocookie.com https://www.tiktok.com",
       "frame-ancestors 'none'",
       "base-uri 'self'",
       "form-action 'self'",
@@ -28,6 +32,12 @@ const securityHeaders = [
 const nextConfig = {
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
+  },
+  async rewrites() {
+    return slugRewrites();
+  },
+  async redirects() {
+    return slugRedirects();
   },
 };
 

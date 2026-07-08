@@ -5,9 +5,10 @@ import { CallButton } from "@/components/CtaButtons";
 import { isLocale } from "@/i18n/config";
 import { getDict } from "@/i18n";
 import { pageMetadata } from "@/i18n/metadata";
+import { p } from "@/i18n/slugs.mjs";
 
 export function generateMetadata({ params }: { params: { lang: string } }): Metadata {
-  return pageMetadata(params.lang, "/prijzen", (d) => d.meta.prijzen);
+  return pageMetadata(params.lang, "prijzen", (d) => d.meta.prijzen);
 }
 
 export default function PrijzenPage({ params }: { params: { lang: string } }) {
@@ -52,7 +53,7 @@ export default function PrijzenPage({ params }: { params: { lang: string } }) {
           </div>
           <div className="flex gap-3">
             <CallButton label={dict.common.callCta} />
-            <Link href={`/${lang}/contact`} className="btn-secondary">{dict.common.sendMessage}</Link>
+            <Link href={p(lang, "contact")} className="btn-secondary">{dict.common.sendMessage}</Link>
           </div>
         </div>
       </section>

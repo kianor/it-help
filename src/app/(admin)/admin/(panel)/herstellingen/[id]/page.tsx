@@ -40,9 +40,14 @@ export default function AdminJobDetailPage({ params }: { params: { id: string } 
         <div className="rounded-lg border border-ink/10 bg-white px-4 py-2 text-right">
           <p className="label">Volgcode voor de klant</p>
           <p className="font-mono font-bold">{job.code}</p>
-          <Link href={`/${job.lang}/volg?code=${job.code}`} className="text-xs text-cobalt hover:underline" target="_blank">
-            Bekijk als klant →
-          </Link>
+          <p className="flex gap-3 text-xs">
+            <Link href={`/${job.lang}/volg?code=${job.code}`} className="text-cobalt hover:underline" target="_blank">
+              Bekijk als klant →
+            </Link>
+            <Link href={`/admin/herstellingen/${job.id}/bon`} className="text-cobalt hover:underline" target="_blank">
+              Print afgiftebon (QR) →
+            </Link>
+          </p>
         </div>
       </div>
 
@@ -60,6 +65,10 @@ export default function AdminJobDetailPage({ params }: { params: { id: string } 
                 <option key={s} value={s}>{s}</option>
               ))}
             </select>
+          </div>
+          <div>
+            <label className="label" htmlFor="photo">Foto voor de klant (optioneel, bv. de stofboel)</label>
+            <input className="input" id="photo" name="photo" type="file" accept="image/jpeg,image/png,image/webp" />
           </div>
           <div>
             <label className="label" htmlFor="message">Bericht voor de klant (optioneel)</label>
@@ -102,6 +111,10 @@ export default function AdminJobDetailPage({ params }: { params: { id: string } 
               <span className="font-mono text-xs text-steel">{formatDate(u.created_at)}</span>{" "}
               <span className="font-semibold">{u.status}</span>
               {u.message && <p className="mt-0.5 text-ink/80">{u.message}</p>}
+              {u.photo_file && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={`/api/uploads/${u.photo_file}`} alt="" className="mt-2 max-h-40 rounded-lg border border-ink/10" />
+              )}
             </li>
           ))}
         </ul>

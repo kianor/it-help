@@ -9,6 +9,8 @@ import { KonamiEgg } from "@/components/KonamiEgg";
 import { site, siteUrl } from "@/config/site";
 import { locales, isLocale, htmlLang, type Locale } from "@/i18n/config";
 import { getDict } from "@/i18n";
+import { p } from "@/i18n/slugs.mjs";
+import { HitBeacon } from "@/components/HitBeacon";
 
 export function generateStaticParams() {
   return locales.map((lang) => ({ lang }));
@@ -90,7 +92,7 @@ export default function SiteLayout({
         >
           {dict.common.skipToContent}
         </a>
-        <PromoBanner lang={lang} label={dict.promo.label} template={dict.promo.template} one={dict.promo.one} many={dict.promo.many} />
+        <PromoBanner lang={lang} label={dict.promo.label} template={dict.promo.template} one={dict.promo.one} many={dict.promo.many} contactHref={p(lang, "contact")} />
         <Header
           lang={lang}
           nav={dict.nav}
@@ -104,6 +106,7 @@ export default function SiteLayout({
         <StickyCallBar callMe={dict.common.callMe} />
         <KonamiEgg title={dict.konami.title} text={dict.konami.text} close={dict.konami.close} />
         <LocalBusinessJsonLd lang={lang} />
+        <HitBeacon lang={lang} />
       </body>
     </html>
   );

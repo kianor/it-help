@@ -4,7 +4,7 @@ import { getDict } from "@/i18n";
 import { pageMetadata } from "@/i18n/metadata";
 
 export function generateMetadata({ params }: { params: { lang: string } }): Metadata {
-  return pageMetadata(params.lang, "/voorwaarden", (d) => d.meta.voorwaarden);
+  return pageMetadata(params.lang, "voorwaarden", (d) => d.meta.voorwaarden);
 }
 
 /*
