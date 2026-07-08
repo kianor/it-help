@@ -1,0 +1,66 @@
+@import "@fontsource-variable/bricolage-grotesque";
+@import "@fontsource-variable/instrument-sans";
+@import "@fontsource/jetbrains-mono/400.css";
+@import "@fontsource/jetbrains-mono/700.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-paper text-ink font-body antialiased;
+  }
+  h1, h2, h3, h4 {
+    @apply font-display;
+  }
+  :focus-visible {
+    @apply outline-none ring-2 ring-cobalt ring-offset-2 ring-offset-paper;
+  }
+}
+
+@layer components {
+  /* Werkplaats-prijskaartje: het signatuur-element */
+  .price-tag {
+    @apply relative inline-flex items-center gap-2 rounded-lg border border-ink/15 bg-white py-1.5 pl-6 pr-3 font-mono text-sm font-bold text-ink shadow-sm transition-transform duration-200;
+  }
+  .price-tag::before {
+    content: "";
+    @apply absolute left-2 top-1/2 h-2.5 w-2.5 -translate-y-1/2 rounded-full border border-ink/25 bg-paper;
+  }
+  .price-tag--accent {
+    @apply border-signal/40 text-signal;
+  }
+  @media (hover: hover) {
+    a:hover .price-tag,
+    .price-tag-hover:hover .price-tag {
+      transform: rotate(-2deg) translateY(-1px);
+    }
+  }
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-signal px-6 py-3 font-semibold text-white transition hover:bg-[#d95b12];
+  }
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg border-2 border-cobalt px-6 py-3 font-semibold text-cobalt transition hover:bg-cobalt hover:text-white;
+  }
+  .input {
+    @apply w-full rounded-lg border border-steel/40 bg-white px-4 py-3 text-ink placeholder:text-steel focus:border-cobalt;
+  }
+  .label {
+    @apply mb-1.5 block font-mono text-xs font-bold uppercase tracking-wide text-steel;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
