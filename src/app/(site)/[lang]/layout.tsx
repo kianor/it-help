@@ -1,0 +1,113 @@
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import "../../globals.css";
+import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
+import { StickyCallBar } from "@/components/StickyCallBar";
+import { PromoBanner } from "@/components/PromoBanner";
+import { KonamiEgg } from "@/components/KonamiEgg";
+import { site, siteUrl } from "@/config/site";
+import { locales, isLocale, htmlLang, type Locale } from "@/i18n/config";
+import { getDict } from "@/i18n";
+import { p } from "@/i18n/slugs.mjs";
+import { HitBeacon } from "@/components/HitBeacon";
+
+export function generateStaticParams() {
+  return locales.map((lang) => ({ lang }));
+}
+
+export function generateMetadata({ params }: { params: { lang: string } }): Metadata {
+  const lang = isLocale(params.lang) ? params.lang : "nl";
+  const dict = getDict(lang);
+  return {
+    metadataBase: new URL(siteUrl()),
+    title: {
+      default: dict.meta.home.title,
+      template: `%s | ${site.name}`,
+    },
+    description: dict.meta.home.description,
+    openGraph: {
+      type: "website",
+      locale: lang === "nl" ? "nl_BE" : lang === "fr" ? "fr_BE" : "en_US",
+      siteName: site.name,
+    },
+  };
+}
+
+function LocalBusinessJsonLd({ lang }: { lang: Locale }) {
+  const dict = getDict(lang);
+  const data = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    name: site.name,
+    description: dict.meta.home.description,
+    url: `${siteUrl()}/${lang}`,
+    telephone: site.phone,
+    email: site.email,
+    areaServed: ["Herent", "Leuven"],
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: site.address,
+      addressRegion: "Vlaams-Brabant",
+      addressCountry: "BE",
+    },
+    openingHoursSpecification: [
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+        opens: "18:00",
+        closes: "21:30",
+      },
+      { "@type": "OpeningHoursSpecification", dayOfWeek: "Saturday", opens: "09:00", closes: "18:00" },
+    ],
+    priceRange: "€25 - €199",
+    inLanguage: htmlLang[lang],
+  };
+  return (
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }} />
+  );
+}
+
+/** Zet de game-modus-klasse vóór hydration zodat er geen flits is. */
+const gameModeScript = `try{if(localStorage.getItem('ritsit-game')==='1')document.documentElement.classList.add('game')}catch(e){}`;
+
+export default function SiteLayout({
+  children,
+  params,
+}: {
+  children: React.ReactNode;
+  params: { lang: string };
+}) {
+  if (!isLocale(params.lang)) notFound();
+  const lang = params.lang;
+  const dict = getDict(lang);
+
+  return (
+    <html lang={htmlLang[lang]}>
+      <body>
+        <script dangerouslySetInnerHTML={{ __html: gameModeScript }} />
+        <a
+          href="#inhoud"
+          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-white focus:px-4 focus:py-2"
+        >
+          {dict.common.skipToContent}
+        </a>
+        <PromoBanner lang={lang} label={dict.promo.label} template={dict.promo.template} one={dict.promo.one} many={dict.promo.many} contactHref={p(lang, "contact")} />
+        <Header
+          lang={lang}
+          nav={dict.nav}
+          callCta={dict.common.callCta}
+          gameMode={dict.common.gameMode}
+          menuOpen={dict.common.menuOpen}
+          menuClose={dict.common.menuClose}
+        />
+        <main id="inhoud">{children}</main>
+        <Footer lang={lang} dict={dict} />
+        <StickyCallBar callMe={dict.common.callMe} />
+        <KonamiEgg title={dict.konami.title} text={dict.konami.text} close={dict.konami.close} />
+        <LocalBusinessJsonLd lang={lang} />
+        <HitBeacon lang={lang} />
+      </body>
+    </html>
+  );
+}
