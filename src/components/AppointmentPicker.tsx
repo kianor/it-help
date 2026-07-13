@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { site } from "@/config/site";
 import type { Dict } from "@/i18n";
 import type { DaySlots } from "@/lib/appointments";
 import { track } from "@/lib/analytics";
@@ -17,6 +16,7 @@ export function AppointmentPicker({
   serviceOptions,
   htmlLang,
   callCta,
+  phone,
 }: {
   lang: string;
   days: DaySlots[];
@@ -25,6 +25,7 @@ export function AppointmentPicker({
   serviceOptions: readonly string[];
   htmlLang: string;
   callCta: string;
+  phone: string;
 }) {
   const [day, setDay] = useState<string | null>(days[0]?.day ?? null);
   const [slot, setSlot] = useState<string | null>(null);
@@ -89,7 +90,7 @@ export function AppointmentPicker({
     return (
       <div className="rounded-lg bg-accent-strong/10 p-5">
         <p className="font-medium text-accent-strong">{labels.noSlots}</p>
-        <a href={`tel:${site.phone}`} data-track="cta_call_click" data-track-label="afspraak-vol" className="btn-primary mt-4">
+        <a href={`tel:${phone}`} data-track="cta_call_click" data-track-label="afspraak-vol" className="btn-primary mt-4">
           {callCta}
         </a>
       </div>

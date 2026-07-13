@@ -1,16 +1,18 @@
 import Link from "next/link";
 import { site } from "@/config/site";
+import { getSite } from "@/lib/site-config";
 import type { Dict } from "@/i18n";
 import type { Locale } from "@/i18n/config";
 import { p } from "@/i18n/slugs.mjs";
 
 export function Footer({ lang, dict }: { lang: Locale; dict: Dict }) {
+  const cfg = getSite();
   const f = dict.footer;
   const socials = [
-    { label: "Instagram", url: site.socials.instagram },
-    { label: "TikTok", url: site.socials.tiktok },
-    { label: "YouTube", url: site.socials.youtube },
-    { label: "Facebook", url: site.socials.facebook },
+    { label: "Instagram", url: cfg.socials.instagram },
+    { label: "TikTok", url: cfg.socials.tiktok },
+    { label: "YouTube", url: cfg.socials.youtube },
+    { label: "Facebook", url: cfg.socials.facebook },
   ].filter((s) => s.url);
 
   return (
@@ -28,8 +30,8 @@ export function Footer({ lang, dict }: { lang: Locale; dict: Dict }) {
             {dict.common.openingInfo}
           </p>
           <p className="mt-2 font-mono text-sm">
-            <a href={`tel:${site.phone}`} data-track="footer_click" className="hover:text-cobalt">
-              {site.phoneDisplay}
+            <a href={`tel:${cfg.phone}`} data-track="footer_click" className="hover:text-cobalt">
+              {cfg.phoneDisplay}
             </a>
           </p>
           {socials.length > 0 && (
@@ -62,16 +64,16 @@ export function Footer({ lang, dict }: { lang: Locale; dict: Dict }) {
             <li><Link href={p(lang, "prijzen")} data-track="footer_click" className="hover:text-cobalt">{f.links.prijzen}</Link></li>
             <li><Link href={p(lang, "voorwaarden")} data-track="footer_click" className="hover:text-cobalt">{f.links.voorwaarden}</Link></li>
             <li><Link href={p(lang, "privacy")} data-track="footer_click" className="hover:text-cobalt">{f.links.privacy}</Link></li>
-            {site.googleReviewsUrl && (
+            {cfg.googleReviewsUrl && (
               <li>
-                <a href={site.googleReviewsUrl} target="_blank" rel="noopener noreferrer" data-track="footer_click" className="hover:text-cobalt">
+                <a href={cfg.googleReviewsUrl} target="_blank" rel="noopener noreferrer" data-track="footer_click" className="hover:text-cobalt">
                   {f.links.reviews}
                 </a>
               </li>
             )}
           </ul>
           <p className="mt-4 text-xs text-steel">
-            {site.kbo ? `${f.kboPrefix} ${site.kbo}` : f.kboPending}
+            {cfg.kbo ? `${f.kboPrefix} ${cfg.kbo}` : f.kboPending}
             <br />
             {f.exemption}
           </p>

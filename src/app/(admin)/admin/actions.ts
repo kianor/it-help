@@ -38,8 +38,10 @@ import {
   mailCampaign,
   mailJobCreated,
   mailJobStatusUpdate,
+  mailNewRequestToOwner,
   mailReviewRequest,
 } from "@/lib/mail";
+import { getSite } from "@/lib/site-config";
 import { siteUrl } from "@/config/site";
 import { locales } from "@/i18n/config";
 import { p as pagePath } from "@/i18n/slugs.mjs";
@@ -326,12 +328,44 @@ export async function deletePromoAction(formData: FormData) {
   revalidateAllPublic();
 }
 
-// ---------- instellingen: video's ----------
-export async function saveVideosAction(formData: FormData) {
+// ---------- instellingen ----------
+const SITE_SETTING_KEYS = [
+  "site_phone", "site_phone_display", "site_whatsapp", "site_email", "site_kbo",
+  "site_google_reviews", "site_trustpilot",
+  "site_instagram", "site_tiktok", "site_youtube", "site_facebook",
+  "mail_to", "mail_from", "social_videos",
+] as const;
+
+/** Bewaart de zaakgegevens en ververst meteen alle publieke pagina's. */
+export async function saveSiteSettingsAction(formData: FormData) {
   await requireAdmin();
-  setSetting("social_videos", String(formData.get("social_videos") || "").trim());
+  for (const key of SITE_SETTING_KEYS) {
+    const value = formData.get(key);
+    if (value !== null) setSetting(key, String(value).trim());
+  }
   revalidatePath("/admin/instellingen");
-  revalidatePublic("");
+  revalidateAllPublic();
+}
+
+/** Testmail zodat de mailconfiguratie meteen te controleren is. */
+export async function sendTestMailAction(
+  _prev: { ok?: boolean; error?: string } | undefined,
+  _formData: FormData
+): Promise<{ ok?: boolean; error?: string }> {
+  await requireAdmin();
+  if (!process.env.RESEND_API_KEY) {
+    return { error: "RESEND_API_KEY ontbreekt in .env — zonder key kunnen er geen mails uit." };
+  }
+  const to = getSite().mailTo;
+  if (!to) return { error: "Vul eerst een ontvangst-adres in (mails naar jou)." };
+  await mailNewRequestToOwner({
+    name: "Testmail vanuit het admin-paneel",
+    phone: getSite().phoneDisplay,
+    service: "Test van de mailinstellingen",
+    message: "Als je dit leest, staan je mailinstellingen goed. Deze mail gebruikt dezelfde route als echte contactaanvragen.",
+    lang: "nl",
+  });
+  return { ok: true };
 }
 
 // ---------- nieuwsbrief versturen ----------

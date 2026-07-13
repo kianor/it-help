@@ -8,6 +8,7 @@ import { StickyCallBar } from "@/components/StickyCallBar";
 import { PromoBanner } from "@/components/PromoBanner";
 import { KonamiEgg } from "@/components/KonamiEgg";
 import { site, siteUrl } from "@/config/site";
+import { getSite } from "@/lib/site-config";
 import { locales, isLocale, htmlLang, type Locale } from "@/i18n/config";
 import { getDict } from "@/i18n";
 import { p } from "@/i18n/slugs.mjs";
@@ -40,14 +41,15 @@ export function generateMetadata({ params }: { params: { lang: string } }): Meta
 
 function LocalBusinessJsonLd({ lang }: { lang: Locale }) {
   const dict = getDict(lang);
+  const cfg = getSite();
   const data = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     name: site.name,
     description: dict.meta.home.description,
     url: `${siteUrl()}/${lang}`,
-    telephone: site.phone,
-    email: site.email,
+    telephone: cfg.phone,
+    email: cfg.email,
     areaServed: ["Herent", "Leuven"],
     address: {
       "@type": "PostalAddress",
@@ -105,6 +107,7 @@ export default function SiteLayout({
           menuOpen={dict.common.menuOpen}
           menuClose={dict.common.menuClose}
           volgLabel={dict.footer.links.volg}
+          phone={getSite().phone}
         />
         <main id="inhoud">{children}</main>
         <Footer lang={lang} dict={dict} />

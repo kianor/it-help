@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { site } from "@/config/site";
+import { getSite } from "@/lib/site-config";
 import { isLocale } from "@/i18n/config";
 import { getDict, fill } from "@/i18n";
 import { pageMetadata } from "@/i18n/metadata";
@@ -13,7 +13,8 @@ export function generateMetadata({ params }: { params: { lang: string } }): Meta
 export default function PrivacyPage({ params }: { params: { lang: string } }) {
   const lang = isLocale(params.lang) ? params.lang : "nl";
   const t = getDict(lang).privacy;
-  const values = { phone: site.phoneDisplay, email: site.email };
+  const cfg = getSite();
+  const values = { phone: cfg.phoneDisplay, email: cfg.email };
 
   return (
     <div className="mx-auto max-w-3xl px-4 pt-14">
