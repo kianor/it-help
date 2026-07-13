@@ -380,6 +380,7 @@ const nl = {
     sending: "Bezig...",
     sentTitle: "Aangevraagd!",
     sentText: "Je krijgt zo snel mogelijk een bevestiging per mail. Pas dan ligt de afspraak vast.",
+    emailLabel: "E-mail * (hierop krijg je de bevestiging)",
     slotTakenError: "Dat moment is net ingenomen. Kies een ander uur.",
     yourSlot: "Jouw keuze",
   },
@@ -401,8 +402,15 @@ const nl = {
     newsletterOn: "Je bent ingeschreven.",
     newsletterOff: "Je bent niet ingeschreven.",
     logout: "Uitloggen",
+    newsletterOffCta: "Schrijf me uit",
     track: "Bekijk status",
     statusWord: "status",
+  },
+
+  consent: {
+    text: "Mag ik anonieme bezoekstatistieken via Google Analytics gebruiken om de site te verbeteren? Weiger je, dan gebruik ik alleen mijn eigen cookievrije telling.",
+    accept: "Dat is oké",
+    decline: "Liever niet",
   },
 
   konami: {

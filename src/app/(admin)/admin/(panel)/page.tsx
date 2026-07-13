@@ -25,7 +25,7 @@ export default function AdminRequestsPage() {
       <h1 className="text-2xl font-bold">
         Aanvragen{" "}
         {nieuw.length > 0 && (
-          <span className="ml-1 rounded-full bg-signal px-2.5 py-0.5 text-sm text-white">
+          <span className="ml-1 rounded-full bg-accent-strong px-2.5 py-0.5 text-sm text-white">
             {nieuw.length} nieuw
           </span>
         )}
@@ -39,7 +39,7 @@ export default function AdminRequestsPage() {
         {[...nieuw, ...rest].map((r) => (
           <div
             key={r.id}
-            className={`rounded-xl border bg-white p-5 ${r.status === "nieuw" ? "border-signal/50" : "border-ink/10 opacity-70"}`}
+            className={`rounded-xl border bg-surface p-5 ${r.status === "nieuw" ? "border-signal/50" : "border-ink/10 opacity-70"}`}
           >
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>

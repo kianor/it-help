@@ -1,9 +1,10 @@
-import { statsOverview } from "@/lib/db";
+import { eventStats, statsOverview } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
 export default function AdminStatsPage() {
   const { perDay, topPages, topRefs, langs, devices, totals } = statsOverview(30);
+  const events = eventStats(30);
   const maxViews = Math.max(1, ...perDay.map((d) => d.views));
 
   return (
@@ -15,18 +16,18 @@ export default function AdminStatsPage() {
       </p>
 
       <div className="mt-6 grid gap-4 sm:grid-cols-2">
-        <div className="rounded-xl border border-ink/10 bg-white p-5">
+        <div className="rounded-xl border border-ink/10 bg-surface p-5">
           <p className="label">Paginaweergaven</p>
           <p className="font-mono text-3xl font-bold">{totals.views}</p>
         </div>
-        <div className="rounded-xl border border-ink/10 bg-white p-5">
+        <div className="rounded-xl border border-ink/10 bg-surface p-5">
           <p className="label">Unieke bezoekers</p>
           <p className="font-mono text-3xl font-bold">{totals.uniques}</p>
         </div>
       </div>
 
       {/* Per dag */}
-      <div className="mt-6 rounded-xl border border-ink/10 bg-white p-5">
+      <div className="mt-6 rounded-xl border border-ink/10 bg-surface p-5">
         <p className="label">Per dag (donker = weergaven, oranje = uniek)</p>
         {perDay.length === 0 ? (
           <p className="text-sm text-steel">Nog geen bezoeken geregistreerd.</p>
@@ -35,7 +36,7 @@ export default function AdminStatsPage() {
             {perDay.map((d) => (
               <div key={d.day} className="group relative flex flex-1 flex-col items-center justify-end gap-px" title={`${d.day}: ${d.views} weergaven, ${d.uniques} uniek`}>
                 <div className="w-full rounded-t bg-ink/70" style={{ height: `${(d.views / maxViews) * 100}%`, minHeight: 2 }} />
-                <div className="w-full bg-signal" style={{ height: `${(d.uniques / maxViews) * 100}%`, minHeight: 1 }} />
+                <div className="w-full bg-accent-strong" style={{ height: `${(d.uniques / maxViews) * 100}%`, minHeight: 1 }} />
               </div>
             ))}
           </div>
@@ -47,7 +48,22 @@ export default function AdminStatsPage() {
         <StatTable title="Verwijzers (waar bezoekers vandaan komen)" rows={topRefs.map((r) => [r.ref, r.views])} empty="Nog geen externe verwijzers. Tip: zet de site-link in je TikTok/Instagram-bio." />
         <StatTable title="Taal" rows={langs.map((r) => [r.lang || "?", r.views])} />
         <StatTable title="Toestel" rows={devices.map((r) => [r.device, r.views])} />
+        <StatTable
+          title="Interacties (events)"
+          rows={events.byName.map((e) => [e.name, e.count])}
+          empty="Nog geen interacties gemeten."
+        />
+        <StatTable
+          title="Populairste event-labels"
+          rows={events.topLabels.map((e) => [`${e.name}: ${e.label}`, e.count])}
+        />
       </div>
+
+      <p className="mt-6 text-xs text-steel">
+        Het volledige meetplan (elke event-naam, trigger en betekenis, incl. de
+        optionele Google Analytics 4-koppeling) staat in{" "}
+        <code className="rounded bg-paper px-1.5 py-0.5 font-mono">docs/TRACKING.md</code> in de repo.
+      </p>
     </div>
   );
 }
@@ -55,7 +71,7 @@ export default function AdminStatsPage() {
 function StatTable({ title, rows, empty }: { title: string; rows: [string, number][]; empty?: string }) {
   const max = Math.max(1, ...rows.map(([, n]) => n));
   return (
-    <div className="rounded-xl border border-ink/10 bg-white p-5">
+    <div className="rounded-xl border border-ink/10 bg-surface p-5">
       <p className="label">{title}</p>
       {rows.length === 0 ? (
         <p className="text-sm text-steel">{empty || "Nog geen gegevens."}</p>

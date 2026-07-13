@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { track } from "@/lib/analytics";
 
 /**
  * Interactieve voor/na-vergelijker: sleep de schuif (werkt ook met toetsenbord
@@ -22,6 +23,7 @@ export function BeforeAfterSlider({
   alt: string;
 }) {
   const [pos, setPos] = useState(50);
+  const tracked = useRef(false);
 
   return (
     <div className="relative aspect-square w-full select-none overflow-hidden rounded-lg">
@@ -33,16 +35,16 @@ export function BeforeAfterSlider({
       </div>
 
       {/* Schuiflijn + greep */}
-      <div className="pointer-events-none absolute inset-y-0 w-0.5 bg-white shadow-[0_0_6px_rgba(0,0,0,0.5)]" style={{ left: `${pos}%` }}>
-        <span className="absolute left-1/2 top-1/2 flex h-9 w-9 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 border-white bg-ink/80 font-mono text-xs font-bold text-white">
+      <div className="pointer-events-none absolute inset-y-0 w-0.5 bg-surface shadow-[0_0_6px_rgba(0,0,0,0.5)]" style={{ left: `${pos}%` }}>
+        <span className="absolute left-1/2 top-1/2 flex h-9 w-9 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 border-white bg-panel/80 font-mono text-xs font-bold text-white">
           ⇄
         </span>
       </div>
 
-      <span className="pointer-events-none absolute left-2 top-2 rounded bg-ink/75 px-2 py-0.5 font-mono text-xs font-bold uppercase text-white">
+      <span className="pointer-events-none absolute left-2 top-2 rounded bg-panel/75 px-2 py-0.5 font-mono text-xs font-bold uppercase text-white">
         {beforeLabel}
       </span>
-      <span className="pointer-events-none absolute right-2 top-2 rounded bg-signal/90 px-2 py-0.5 font-mono text-xs font-bold uppercase text-white">
+      <span className="pointer-events-none absolute right-2 top-2 rounded bg-accent-strong/90 px-2 py-0.5 font-mono text-xs font-bold uppercase text-white">
         {afterLabel}
       </span>
 
@@ -51,7 +53,13 @@ export function BeforeAfterSlider({
         min={0}
         max={100}
         value={pos}
-        onChange={(e) => setPos(Number(e.target.value))}
+        onChange={(e) => {
+          setPos(Number(e.target.value));
+          if (!tracked.current) {
+            tracked.current = true;
+            track("before_after_drag", { label: alt.slice(0, 60) });
+          }
+        }}
         aria-label={sliderLabel}
         className="absolute inset-0 h-full w-full cursor-ew-resize opacity-0"
       />

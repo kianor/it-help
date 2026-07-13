@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { site } from "@/config/site";
 import { locales, type Locale } from "@/i18n/config";
 import { p, PAGE_SLUGS } from "@/i18n/slugs.mjs";
@@ -18,6 +18,7 @@ export function Header({
   gameMode,
   menuOpen,
   menuClose,
+  volgLabel,
 }: {
   lang: Locale;
   nav: NavLabels;
@@ -25,9 +26,20 @@ export function Header({
   gameMode: string;
   menuOpen: string;
   menuClose: string;
+  volgLabel: string;
 }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    function onScroll() {
+      setScrolled(window.scrollY > 8);
+    }
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const items = [
     { href: p(lang, "pc-bouwen"), label: nav.pc },
@@ -52,25 +64,33 @@ export function Header({
     }
     return `/${to}${rest}`;
   }
-  function onSwitch(to: Locale) {
+  function onSwitch(e: React.MouseEvent, to: Locale) {
     document.cookie = `lang=${to};path=/;max-age=31536000;samesite=lax`;
     setOpen(false);
+    // querystring behouden (bv. ?code=RIT-... op de volg-pagina)
+    if (window.location.search) {
+      e.preventDefault();
+      window.location.href = switchHref(to) + window.location.search;
+    }
   }
 
   return (
-    <header className="sticky top-0 z-40 border-b border-ink/10 bg-paper/95 backdrop-blur">
+    <header className={`sticky top-0 z-40 border-b border-ink/10 bg-paper/95 backdrop-blur transition-shadow duration-300 ${scrolled ? "header-scrolled" : ""}`}>
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-4">
         <Link href={`/${lang}`} className="font-display text-lg font-bold" onClick={() => setOpen(false)}>
           {site.name}
-          <span className="text-signal">.</span>
+          <span className="text-accent">.</span>
         </Link>
 
-        <nav className="hidden items-center gap-5 lg:flex" aria-label="Navigatie">
+        <nav className="hidden items-center gap-5 xl:flex" aria-label="Navigatie">
           {items.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className={`text-sm font-medium transition hover:text-cobalt ${
+              data-track="nav_click"
+              data-track-label={item.label}
+              aria-current={pathname === item.href ? "page" : undefined}
+              className={`nav-link text-sm font-medium transition hover:text-cobalt ${
                 pathname === item.href ? "text-cobalt" : "text-ink"
               }`}
             >
@@ -85,7 +105,9 @@ export function Header({
               <Link
                 key={l}
                 href={switchHref(l)}
-                onClick={() => onSwitch(l)}
+                onClick={(e) => onSwitch(e, l)}
+                data-track="language_switch"
+                data-track-label={l}
                 aria-current={l === lang ? "true" : undefined}
                 className={`rounded-md px-2 py-1 font-bold uppercase transition ${
                   l === lang ? "bg-ink text-paper" : "text-steel hover:text-ink"
@@ -98,6 +120,8 @@ export function Header({
           <Link
             href={p(lang, "account")}
             title={nav.account}
+            data-track="nav_click"
+            data-track-label="account"
             className="hidden h-10 w-10 items-center justify-center rounded-lg border border-ink/15 text-steel transition hover:text-ink sm:inline-flex"
           >
             <span className="sr-only">{nav.account}</span>
@@ -109,14 +133,16 @@ export function Header({
           <GameModeToggle label={gameMode} />
           <a
             href={`tel:${site.phone}`}
-            className="hidden items-center gap-2 rounded-lg bg-signal px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#d95b12] md:inline-flex"
+            data-track="cta_call_click"
+            data-track-label="header"
+            className="hidden items-center gap-2 rounded-lg bg-accent-strong px-4 py-2 text-sm font-semibold text-white transition hover:brightness-110 md:inline-flex"
           >
             <PhoneIcon />
             {callCta}
           </a>
           <button
             type="button"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-ink/15 lg:hidden"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-ink/15 xl:hidden"
             aria-expanded={open}
             aria-label={open ? menuClose : menuOpen}
             onClick={() => setOpen(!open)}
@@ -129,11 +155,13 @@ export function Header({
       </div>
 
       {open && (
-        <nav className="border-t border-ink/10 bg-paper px-4 py-3 lg:hidden" aria-label="Menu">
-          {items.map((item) => (
+        <nav className="border-t border-ink/10 bg-paper px-4 py-3 xl:hidden" aria-label="Menu">
+          {[...items, { href: p(lang, "volg"), label: volgLabel }, { href: p(lang, "account"), label: nav.account }].map((item) => (
             <Link
               key={item.href}
               href={item.href}
+              data-track="nav_click"
+              data-track-label={item.label}
               className={`block rounded-lg px-3 py-2.5 font-medium ${
                 pathname === item.href ? "bg-cobalt/10 text-cobalt" : "text-ink"
               }`}
@@ -147,7 +175,7 @@ export function Header({
               <Link
                 key={l}
                 href={switchHref(l)}
-                onClick={() => onSwitch(l)}
+                onClick={(e) => onSwitch(e, l)}
                 className={`rounded-md px-2.5 py-1.5 font-bold uppercase ${
                   l === lang ? "bg-ink text-paper" : "text-steel"
                 }`}

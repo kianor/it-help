@@ -8,6 +8,8 @@ import { pageMetadata } from "@/i18n/metadata";
 import { p } from "@/i18n/slugs.mjs";
 import { PcCalculator } from "@/components/PcCalculator";
 
+export const revalidate = 3600; // uur-refresh; promo-acties revalideren direct
+
 export function generateMetadata({ params }: { params: { lang: string } }): Metadata {
   return pageMetadata(params.lang, "pc-bouwen", (d) => d.meta.pc);
 }
@@ -19,7 +21,7 @@ export default function PcBouwenPage({ params }: { params: { lang: string } }) {
 
   return (
     <div className="mx-auto max-w-6xl px-4 pt-14">
-      <div className="max-w-3xl">
+      <div className="max-w-3xl" data-reveal>
         <h1 className="text-4xl font-bold">{t.title}</h1>
         <p className="mt-4 text-lg text-ink/80">{t.intro}</p>
       </div>
@@ -28,16 +30,16 @@ export default function PcBouwenPage({ params }: { params: { lang: string } }) {
         <ServiceList group={dict.services.pcBouwen} />
       </div>
 
-      <section className="pt-16">
+      <section className="pt-16" data-reveal>
         <PcCalculator labels={dict.calculator} contactHref={p(lang, "contact")} />
       </section>
 
-      <section className="pt-16">
+      <section className="pt-16" data-reveal>
         <h2 className="text-2xl font-bold">{t.stepsTitle}</h2>
         <ol className="mt-6 space-y-4">
           {t.steps.map((s, i) => (
-            <li key={s.title} className="flex gap-4 rounded-xl border border-ink/10 bg-white p-4">
-              <span className="font-mono text-sm font-bold text-signal">{String(i + 1).padStart(2, "0")}</span>
+            <li key={s.title} className="flex gap-4 rounded-xl border border-ink/10 bg-surface p-4">
+              <span className="font-mono text-sm font-bold text-accent-strong">{String(i + 1).padStart(2, "0")}</span>
               <div>
                 <h3 className="font-bold">{s.title}</h3>
                 <p className="mt-1 text-sm text-ink/80">{s.text}</p>
@@ -47,14 +49,14 @@ export default function PcBouwenPage({ params }: { params: { lang: string } }) {
         </ol>
       </section>
 
-      <section className="pt-16">
+      <section className="pt-16" data-reveal>
         <h2 className="text-2xl font-bold">{t.faqTitle}</h2>
         <div className="mt-6 space-y-3">
           {t.faq.map((f) => (
-            <details key={f.q} className="group rounded-xl border border-ink/10 bg-white p-4">
+            <details key={f.q} className="group rounded-xl border border-ink/10 bg-surface p-4">
               <summary className="cursor-pointer list-none font-semibold marker:hidden">
-                <span className="mr-2 font-mono text-signal group-open:hidden">+</span>
-                <span className="mr-2 hidden font-mono text-signal group-open:inline">−</span>
+                <span className="mr-2 font-mono text-accent-strong group-open:hidden">+</span>
+                <span className="mr-2 hidden font-mono text-accent-strong group-open:inline">−</span>
                 {f.q}
               </summary>
               <p className="mt-3 text-ink/80">{f.a}</p>
@@ -78,7 +80,7 @@ export default function PcBouwenPage({ params }: { params: { lang: string } }) {
         }}
       />
 
-      <section className="pt-16">
+      <section className="pt-16" data-reveal>
         <div className="flex flex-wrap items-center gap-4 rounded-2xl bg-cobalt/5 p-8">
           <div className="flex-1">
             <h2 className="text-xl font-bold">{t.ctaTitle}</h2>

@@ -1,8 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { site } from "@/config/site";
 import type { Dict } from "@/i18n";
 import type { DaySlots } from "@/lib/appointments";
+import { track } from "@/lib/analytics";
 
 type Status = "idle" | "busy" | "sent" | "error";
 
@@ -13,6 +16,7 @@ export function AppointmentPicker({
   form,
   serviceOptions,
   htmlLang,
+  callCta,
 }: {
   lang: string;
   days: DaySlots[];
@@ -20,11 +24,13 @@ export function AppointmentPicker({
   form: Dict["contactPage"]["form"];
   serviceOptions: readonly string[];
   htmlLang: string;
+  callCta: string;
 }) {
   const [day, setDay] = useState<string | null>(days[0]?.day ?? null);
   const [slot, setSlot] = useState<string | null>(null);
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
+  const router = useRouter();
 
   const selectedDay = days.find((d) => d.day === day);
 
@@ -47,9 +53,16 @@ export function AppointmentPicker({
       });
       if (res.ok) {
         setStatus("sent");
+        track("appointment_request");
       } else {
         const body = await res.json().catch(() => null);
-        setError(body?.error === "slot" ? labels.slotTakenError : body?.error || form.error);
+        if (body?.error === "slot") {
+          setError(labels.slotTakenError);
+          setSlot(null);
+          router.refresh(); // verse slots ophalen, het bezette slot verdwijnt
+        } else {
+          setError(form.error);
+        }
         setStatus("error");
       }
     } catch {
@@ -62,13 +75,25 @@ export function AppointmentPicker({
     return (
       <div className="rounded-xl border border-cobalt/30 bg-cobalt/5 p-8 text-center" role="status">
         <p className="font-display text-2xl font-bold">{labels.sentTitle}</p>
+        {slot && (
+          <p className="mt-3 font-mono text-lg font-bold">
+            {dayLabel(slot.slice(0, 10))} · {slot.slice(11)}
+          </p>
+        )}
         <p className="mt-2 text-lg">{labels.sentText}</p>
       </div>
     );
   }
 
   if (days.length === 0) {
-    return <p className="rounded-lg bg-signal/10 px-4 py-3 font-medium text-signal">{labels.noSlots}</p>;
+    return (
+      <div className="rounded-lg bg-accent-strong/10 p-5">
+        <p className="font-medium text-accent-strong">{labels.noSlots}</p>
+        <a href={`tel:${site.phone}`} data-track="cta_call_click" data-track-label="afspraak-vol" className="btn-primary mt-4">
+          {callCta}
+        </a>
+      </div>
+    );
   }
 
   return (
@@ -84,6 +109,7 @@ export function AppointmentPicker({
               onClick={() => {
                 setDay(d.day);
                 setSlot(null);
+                track("appointment_day_select", { label: d.day });
               }}
               className={`rounded-lg border px-3 py-2 font-mono text-sm font-bold transition ${
                 day === d.day ? "border-cobalt bg-cobalt text-white" : "border-ink/15 hover:border-cobalt hover:text-cobalt"
@@ -103,9 +129,12 @@ export function AppointmentPicker({
                   key={s}
                   type="button"
                   aria-pressed={slot === s}
-                  onClick={() => setSlot(s)}
+                  onClick={() => {
+                    setSlot(s);
+                    track("appointment_slot_select", { label: s });
+                  }}
                   className={`rounded-lg border px-3 py-2 font-mono text-sm font-bold transition ${
-                    slot === s ? "border-signal bg-signal text-white" : "border-ink/15 hover:border-signal hover:text-signal"
+                    slot === s ? "border-signal bg-accent-strong text-white" : "border-ink/15 hover:border-signal hover:text-accent-strong"
                   }`}
                 >
                   {s.slice(11)}
@@ -134,8 +163,8 @@ export function AppointmentPicker({
           </div>
         </div>
         <div>
-          <label className="label" htmlFor="a-email">{form.email}</label>
-          <input className="input" id="a-email" name="email" type="email" maxLength={200} autoComplete="email" />
+          <label className="label" htmlFor="a-email">{labels.emailLabel}</label>
+          <input className="input" id="a-email" name="email" type="email" required maxLength={200} autoComplete="email" />
         </div>
         <div>
           <label className="label" htmlFor="a-service">{form.service}</label>
@@ -155,7 +184,7 @@ export function AppointmentPicker({
           <input id="a-website" name="website" type="text" tabIndex={-1} autoComplete="off" />
         </div>
         {status === "error" && (
-          <p className="rounded-lg bg-signal/10 px-4 py-3 text-sm font-medium text-signal" role="alert">{error}</p>
+          <p className="rounded-lg bg-accent-strong/10 px-4 py-3 text-sm font-medium text-accent-strong" role="alert">{error}</p>
         )}
         <button type="submit" className="btn-primary w-full sm:w-auto" disabled={status === "busy" || !slot}>
           {status === "busy" ? labels.sending : labels.submit}

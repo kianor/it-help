@@ -60,13 +60,13 @@ export default function VolgPage({
       </form>
 
       {code && !job && (
-        <p className="mt-6 rounded-lg bg-signal/10 px-4 py-3 font-medium text-signal" role="alert">
+        <p className="mt-6 rounded-lg bg-accent-strong/10 px-4 py-3 font-medium text-accent-strong" role="alert">
           {fill(t.notFound, { phone: site.phoneDisplay })}
         </p>
       )}
 
       {job && (
-        <div className="mt-8 rounded-xl border border-ink/10 bg-white p-6">
+        <div className="mt-8 rounded-xl border border-ink/10 bg-surface p-6">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
               <p className="label">{t.deviceLabel}</p>
@@ -75,7 +75,7 @@ export default function VolgPage({
             </div>
             <div className="text-right">
               <p className="label">{t.codeLabel}</p>
-              <p className="font-mono font-bold">{job.code}</p>
+              <p className="font-mono font-bold" data-track-copy="volgcode">{job.code}</p>
               {job.price && (
                 <p className="mt-1 font-mono text-sm">
                   {t.priceLabel}: <strong>{job.price}</strong>
@@ -99,7 +99,7 @@ export default function VolgPage({
                   )}
                   <span
                     className={`relative z-10 mt-0.5 h-5 w-5 shrink-0 rounded-full border-2 ${
-                      done ? "border-cobalt bg-cobalt" : "border-steel/40 bg-white"
+                      done ? "border-cobalt bg-cobalt" : "border-steel/40 bg-surface"
                     }`}
                     aria-hidden="true"
                   />

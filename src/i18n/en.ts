@@ -379,6 +379,7 @@ const en: Dict = {
     sending: "Working...",
     sentTitle: "Requested!",
     sentText: "You'll get a confirmation by email as soon as possible. Only then is the appointment final.",
+    emailLabel: "Email * (your confirmation goes here)",
     slotTakenError: "That moment was just taken. Please pick another time.",
     yourSlot: "Your pick",
   },
@@ -400,8 +401,15 @@ const en: Dict = {
     newsletterOn: "You are subscribed.",
     newsletterOff: "You are not subscribed.",
     logout: "Log out",
+    newsletterOffCta: "Unsubscribe me",
     track: "View status",
     statusWord: "status",
+  },
+
+  consent: {
+    text: "May I use anonymous visit statistics via Google Analytics to improve this site? If you decline, only my own cookie-free counting is used.",
+    accept: "That's fine",
+    decline: "Rather not",
   },
 
   konami: {

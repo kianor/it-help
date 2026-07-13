@@ -17,7 +17,7 @@ export default function AdminJobsPage() {
         krijgt automatisch een volgcode en mails bij elke statusupdate.
       </p>
 
-      <details className="mt-6 rounded-xl border border-ink/10 bg-white p-5" open={jobs.length === 0}>
+      <details className="mt-6 rounded-xl border border-ink/10 bg-surface p-5" open={jobs.length === 0}>
         <summary className="cursor-pointer font-bold text-cobalt">+ Nieuwe herstelling</summary>
         <form action={createJobAction} className="mt-4 grid gap-4 sm:grid-cols-2">
           <div>
@@ -75,7 +75,7 @@ function JobTable({ jobs }: { jobs: ReturnType<typeof listJobs> }) {
   if (jobs.length === 0) return <p className="mt-3 text-sm text-steel">Niets hier.</p>;
   const lastIdx = JOB_STATUSES.length - 1;
   return (
-    <div className="mt-3 overflow-x-auto rounded-xl border border-ink/10 bg-white">
+    <div className="mt-3 overflow-x-auto rounded-xl border border-ink/10 bg-surface">
       <table className="w-full text-left text-sm">
         <thead>
           <tr className="border-b border-ink/10 text-xs uppercase text-steel">

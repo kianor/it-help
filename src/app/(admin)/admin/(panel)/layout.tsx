@@ -35,7 +35,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           ))}
         </nav>
         <form action={logoutAction}>
-          <button type="submit" className="text-sm text-steel underline hover:text-signal">
+          <button type="submit" className="text-sm text-steel underline hover:text-accent-strong">
             Uitloggen
           </button>
         </form>

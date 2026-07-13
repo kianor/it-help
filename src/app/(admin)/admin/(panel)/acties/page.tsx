@@ -15,14 +15,14 @@ export default function AdminPromosPage() {
         Zet &quot;gebruikt&quot; één hoger; vol is vol en de balk verdwijnt vanzelf.
       </p>
 
-      <details className="mt-6 rounded-xl border border-ink/10 bg-white p-5" open={promos.length === 0}>
+      <details className="mt-6 rounded-xl border border-ink/10 bg-surface p-5" open={promos.length === 0}>
         <summary className="cursor-pointer font-bold text-cobalt">+ Nieuwe actie</summary>
         <PromoForm />
       </details>
 
       <div className="mt-8 space-y-4">
         {promos.map((promo) => (
-          <details key={promo.id} className={`rounded-xl border bg-white p-5 ${promo.active ? "border-signal/50" : "border-ink/10 opacity-60"}`}>
+          <details key={promo.id} className={`rounded-xl border bg-surface p-5 ${promo.active ? "border-signal/50" : "border-ink/10 opacity-60"}`}>
             <summary className="cursor-pointer">
               <span className="font-semibold">{promo.text_nl}</span>{" "}
               <span className="font-mono text-xs text-steel">
@@ -33,7 +33,7 @@ export default function AdminPromosPage() {
             <PromoForm promo={promo} />
             <form action={deletePromoAction} className="mt-2">
               <input type="hidden" name="id" value={promo.id} />
-              <button type="submit" className="text-sm text-signal underline">Verwijder deze actie</button>
+              <button type="submit" className="text-sm text-accent-strong underline">Verwijder deze actie</button>
             </form>
           </details>
         ))}

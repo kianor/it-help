@@ -8,7 +8,7 @@ export default function AdminSettingsPage() {
     <div className="max-w-xl">
       <h1 className="text-2xl font-bold">Instellingen</h1>
 
-      <div className="mt-6 rounded-xl border border-ink/10 bg-white p-5">
+      <div className="mt-6 rounded-xl border border-ink/10 bg-surface p-5">
         <h2 className="font-bold">Video&apos;s op de homepagina</h2>
         <p className="mt-1 text-sm text-steel">
           Plak hier YouTube-links (één per lijn, ook Shorts). De eerste drie
@@ -27,7 +27,7 @@ export default function AdminSettingsPage() {
         </form>
       </div>
 
-      <div className="mt-6 rounded-xl border border-ink/10 bg-white p-5 text-sm">
+      <div className="mt-6 rounded-xl border border-ink/10 bg-surface p-5 text-sm">
         <h2 className="font-bold">Waar staat de rest?</h2>
         <ul className="mt-2 list-disc space-y-1 pl-5 text-ink/80">
           <li>Launch-actie en kortingen: tabblad <strong>Acties</strong></li>

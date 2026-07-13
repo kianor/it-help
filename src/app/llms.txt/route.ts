@@ -48,6 +48,10 @@ ${serviceLines}
 - ${base}/nl — Nederlands (hoofdtaal)
 - ${base}/en — English
 - ${base}/fr — Français
+- ${base}/nl/pc-bouwen — custom pc builds (EN: /en/pc-builds, FR: /fr/pc-sur-mesure)
+- ${base}/nl/herstel — pc- en laptopherstel (EN: /en/repairs, FR: /fr/reparations)
+- ${base}/nl/consoles — console- en controllerherstel
+- ${base}/nl/voor-zaken — IT-support voor kleine ondernemingen (EN: /en/for-business, FR: /fr/entreprises)
 - ${base}/nl/prijzen — alle vaste prijzen
 - ${base}/nl/afspraak — online een afspraak maken
 - ${base}/nl/contact — contact

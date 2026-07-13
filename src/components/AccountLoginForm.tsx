@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { Dict } from "@/i18n";
+import { track } from "@/lib/analytics";
 
 export function AccountLoginForm({
   lang,
@@ -23,6 +24,7 @@ export function AccountLoginForm({
         body: JSON.stringify({ ...data, lang }),
       });
       setStatus(res.ok ? "sent" : "error");
+      if (res.ok) track("login_link_request");
     } catch {
       setStatus("error");
     }

@@ -7,6 +7,8 @@ import { getDict } from "@/i18n";
 import { pageMetadata } from "@/i18n/metadata";
 import { p } from "@/i18n/slugs.mjs";
 
+export const revalidate = 3600; // uur-refresh; promo-acties revalideren direct
+
 export function generateMetadata({ params }: { params: { lang: string } }): Metadata {
   return pageMetadata(params.lang, "herstel", (d) => d.meta.herstel);
 }
@@ -18,19 +20,19 @@ export default function HerstelPage({ params }: { params: { lang: string } }) {
 
   return (
     <div className="mx-auto max-w-6xl px-4 pt-14">
-      <div className="max-w-3xl">
+      <div className="max-w-3xl" data-reveal>
         <h1 className="text-4xl font-bold">{t.title}</h1>
         <p className="mt-4 text-lg text-ink/80">{t.intro}</p>
       </div>
 
-      <section className="pt-10">
+      <section className="pt-10" data-reveal>
         <h2 className="text-2xl font-bold">{t.repairTitle}</h2>
         <div className="mt-5">
           <ServiceList group={dict.services.herstel} />
         </div>
       </section>
 
-      <section className="pt-14">
+      <section className="pt-14" data-reveal>
         <h2 className="text-2xl font-bold">{t.homeTitle}</h2>
         <p className="mt-2 max-w-2xl text-ink/80">{t.homeIntro}</p>
         <div className="mt-5">
@@ -41,7 +43,7 @@ export default function HerstelPage({ params }: { params: { lang: string } }) {
         </p>
       </section>
 
-      <section className="pt-16">
+      <section className="pt-16" data-reveal>
         <div className="flex flex-wrap items-center gap-4 rounded-2xl bg-cobalt/5 p-8">
           <div className="flex-1">
             <h2 className="text-xl font-bold">{t.ctaTitle}</h2>

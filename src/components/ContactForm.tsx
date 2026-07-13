@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { Dict } from "@/i18n";
+import { track } from "@/lib/analytics";
 import type { Locale } from "@/i18n/config";
 
 type Status = "idle" | "busy" | "sent" | "error";
@@ -34,10 +35,10 @@ export function ContactForm({
       });
       if (res.ok) {
         setStatus("sent");
+        track("contact_submit");
         form.reset();
       } else {
-        const body = await res.json().catch(() => null);
-        setError(body?.error || labels.error);
+        setError(labels.error);
         setStatus("error");
       }
     } catch {
@@ -102,7 +103,7 @@ export function ContactForm({
       </div>
 
       {status === "error" && (
-        <p className="rounded-lg bg-signal/10 px-4 py-3 text-sm font-medium text-signal" role="alert">
+        <p className="rounded-lg bg-accent-strong/10 px-4 py-3 text-sm font-medium text-accent-strong" role="alert">
           {error}
         </p>
       )}

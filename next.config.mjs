@@ -2,6 +2,16 @@ import { slugRewrites, slugRedirects } from "./src/i18n/slugs.mjs";
 
 /** @type {import('next').NextConfig} */
 
+// GA4 is opt-in: de CSP laat Google-domeinen alleen toe als er een
+// measurement-ID geconfigureerd is (NEXT_PUBLIC_GA4_ID in .env bij build).
+const ga = process.env.NEXT_PUBLIC_GA4_ID
+  ? {
+      script: " https://www.googletagmanager.com",
+      connect: " https://*.google-analytics.com https://www.googletagmanager.com",
+      img: " https://*.google-analytics.com",
+    }
+  : { script: "", connect: "", img: "" };
+
 const securityHeaders = [
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "X-Frame-Options", value: "DENY" },
@@ -15,11 +25,11 @@ const securityHeaders = [
     key: "Content-Security-Policy",
     value: [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline'",
+      `script-src 'self' 'unsafe-inline'${ga.script}`,
       "style-src 'self' 'unsafe-inline'",
-      "img-src 'self' data: blob: https://i.ytimg.com",
+      `img-src 'self' data: blob: https://i.ytimg.com${ga.img}`,
       "font-src 'self'",
-      "connect-src 'self'",
+      `connect-src 'self'${ga.connect}`,
       // Alleen video-embeds van deze spelers zijn toegelaten
       "frame-src https://www.youtube-nocookie.com https://www.tiktok.com",
       "frame-ancestors 'none'",
@@ -30,6 +40,7 @@ const securityHeaders = [
 ];
 
 const nextConfig = {
+  poweredByHeader: false,
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },

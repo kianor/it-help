@@ -23,7 +23,7 @@ export default function AdminAppointmentsPage() {
       <h1 className="text-2xl font-bold">
         Afspraken{" "}
         {open.length > 0 && (
-          <span className="ml-1 rounded-full bg-signal px-2.5 py-0.5 text-sm text-white">
+          <span className="ml-1 rounded-full bg-accent-strong px-2.5 py-0.5 text-sm text-white">
             {open.length} nieuw
           </span>
         )}
@@ -35,7 +35,7 @@ export default function AdminAppointmentsPage() {
 
       <div className="mt-6 space-y-3">
         {[...open, ...rest].map((a) => (
-          <div key={a.id} className={`rounded-xl border bg-white p-4 ${a.status === "aangevraagd" ? "border-signal/50" : "border-ink/10"} ${a.status === "geannuleerd" ? "opacity-50" : ""}`}>
+          <div key={a.id} className={`rounded-xl border bg-surface p-4 ${a.status === "aangevraagd" ? "border-signal/50" : "border-ink/10"} ${a.status === "geannuleerd" ? "opacity-50" : ""}`}>
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <p className="font-mono font-bold">{a.slot_start}</p>
@@ -49,14 +49,14 @@ export default function AdminAppointmentsPage() {
                 {a.message && <p className="mt-1 text-sm text-ink/80">{a.message}</p>}
               </div>
               <div className="flex items-center gap-2">
-                <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${a.status === "bevestigd" ? "bg-cobalt/10 text-cobalt" : a.status === "geannuleerd" ? "bg-ink/10 text-steel" : "bg-signal/10 text-signal"}`}>
+                <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${a.status === "bevestigd" ? "bg-cobalt/10 text-cobalt" : a.status === "geannuleerd" ? "bg-ink/10 text-steel" : "bg-accent-strong/10 text-accent-strong"}`}>
                   {a.status}
                 </span>
                 {a.status !== "bevestigd" && (
                   <form action={setAppointmentStatusAction}>
                     <input type="hidden" name="id" value={a.id} />
                     <input type="hidden" name="status" value="bevestigd" />
-                    <button type="submit" className="rounded-lg bg-signal px-3 py-1.5 text-sm font-semibold text-white">
+                    <button type="submit" className="rounded-lg bg-accent-strong px-3 py-1.5 text-sm font-semibold text-white">
                       Bevestig
                     </button>
                   </form>
@@ -65,7 +65,7 @@ export default function AdminAppointmentsPage() {
                   <form action={setAppointmentStatusAction}>
                     <input type="hidden" name="id" value={a.id} />
                     <input type="hidden" name="status" value="geannuleerd" />
-                    <button type="submit" className="rounded-lg border border-ink/15 px-3 py-1.5 text-sm hover:border-signal hover:text-signal">
+                    <button type="submit" className="rounded-lg border border-ink/15 px-3 py-1.5 text-sm hover:border-signal hover:text-accent-strong">
                       Annuleer
                     </button>
                   </form>
@@ -77,7 +77,7 @@ export default function AdminAppointmentsPage() {
         {appointments.length === 0 && <p className="text-sm text-steel">Nog geen afspraken.</p>}
       </div>
 
-      <details className="mt-10 rounded-xl border border-ink/10 bg-white p-5">
+      <details className="mt-10 rounded-xl border border-ink/10 bg-surface p-5">
         <summary className="cursor-pointer font-bold text-cobalt">Beschikbaarheid instellen</summary>
         <form action={saveAvailabilityAction} className="mt-4 space-y-4">
           <div className="grid gap-3 sm:grid-cols-2">

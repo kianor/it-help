@@ -23,7 +23,7 @@ export default function AdminNewsletterPage() {
         Alleen bevestigde adressen krijgen mails (dubbele opt-in, GDPR).
       </p>
 
-      <div className="mt-6 rounded-xl border border-ink/10 bg-white p-5">
+      <div className="mt-6 rounded-xl border border-ink/10 bg-surface p-5">
         <h2 className="font-bold">Nieuwsbrief opstellen en versturen</h2>
         <CampaignForm counts={counts} />
       </div>
@@ -33,7 +33,7 @@ export default function AdminNewsletterPage() {
           <h2 className="font-bold">Verstuurde nieuwsbrieven</h2>
           <ul className="mt-3 space-y-2">
             {campaigns.map((c) => (
-              <li key={c.id} className="rounded-lg border border-ink/10 bg-white px-4 py-2.5 text-sm">
+              <li key={c.id} className="rounded-lg border border-ink/10 bg-surface px-4 py-2.5 text-sm">
                 <span className="font-semibold">{c.subject}</span>{" "}
                 <span className="font-mono text-xs text-steel">
                   → {c.sent_to} abonnees ({c.lang_filter}) · {c.created_at.slice(0, 16)}
@@ -44,7 +44,7 @@ export default function AdminNewsletterPage() {
         </div>
       )}
 
-      <div className="mt-8 overflow-x-auto rounded-xl border border-ink/10 bg-white">
+      <div className="mt-8 overflow-x-auto rounded-xl border border-ink/10 bg-surface">
         <table className="w-full text-left text-sm">
           <thead>
             <tr className="border-b border-ink/10 text-xs uppercase text-steel">

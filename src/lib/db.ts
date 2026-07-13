@@ -108,6 +108,18 @@ function migrate(db: Database.Database) {
       created_at TEXT NOT NULL DEFAULT (datetime('now'))
     );
     CREATE INDEX IF NOT EXISTS idx_hits_day ON hits(day);
+    CREATE TABLE IF NOT EXISTS events (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      day TEXT NOT NULL,
+      name TEXT NOT NULL,
+      label TEXT,
+      value INTEGER,
+      path TEXT,
+      lang TEXT,
+      visitor TEXT NOT NULL,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+    CREATE INDEX IF NOT EXISTS idx_events_day ON events(day);
     CREATE TABLE IF NOT EXISTS campaigns (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       subject TEXT NOT NULL,
@@ -644,8 +656,8 @@ export function recordHit(h: {
   d.prepare(
     "INSERT INTO hits (day, path, lang, ref, device, visitor) VALUES (?, ?, ?, ?, ?, ?)"
   ).run(day, h.path.slice(0, 200), h.lang || null, h.ref?.slice(0, 200) || null, h.device, h.visitor);
-  // bewaar maximaal 90 dagen
-  d.prepare("DELETE FROM hits WHERE day < date('now', '-90 days')").run();
+  // bewaar maximaal 90 dagen; opruimen gesampled zodat niet elke pageview schrijft
+  if (Math.random() < 0.01) d.prepare("DELETE FROM hits WHERE day < date('now', '-90 days')").run();
 }
 
 export function statsOverview(days = 30) {
@@ -698,4 +710,45 @@ export function listCampaigns() {
     sent_to: number;
     created_at: string;
   }[];
+}
+
+// ---------- events (cookievrije interactie-metingen) ----------
+export function recordEvent(e: {
+  name: string;
+  label?: string;
+  value?: number;
+  path?: string;
+  lang?: string;
+  visitor: string;
+}) {
+  const d = getDb();
+  const day = new Date().toISOString().slice(0, 10);
+  d.prepare(
+    "INSERT INTO events (day, name, label, value, path, lang, visitor) VALUES (?, ?, ?, ?, ?, ?, ?)"
+  ).run(
+    day,
+    e.name.slice(0, 40),
+    e.label?.slice(0, 100) || null,
+    e.value ?? null,
+    e.path?.slice(0, 200) || null,
+    e.lang || null,
+    e.visitor
+  );
+  if (Math.random() < 0.01) d.prepare("DELETE FROM events WHERE day < date('now', '-90 days')").run();
+}
+
+export function eventStats(days = 30) {
+  const d = getDb();
+  const since = `date('now', '-${Math.max(1, Math.min(90, days))} days')`;
+  const byName = d
+    .prepare(
+      `SELECT name, count(*) count, count(DISTINCT visitor) uniques FROM events WHERE day >= ${since} GROUP BY name ORDER BY count DESC`
+    )
+    .all() as { name: string; count: number; uniques: number }[];
+  const topLabels = d
+    .prepare(
+      `SELECT name, label, count(*) count FROM events WHERE day >= ${since} AND label IS NOT NULL GROUP BY name, label ORDER BY count DESC LIMIT 20`
+    )
+    .all() as { name: string; label: string; count: number }[];
+  return { byName, topLabels };
 }

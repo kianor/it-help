@@ -35,7 +35,7 @@ export function CampaignForm({ counts }: { counts: { all: number; nl: number; en
         </select>
       </div>
       {state?.error && (
-        <p className="rounded-lg bg-signal/10 px-4 py-3 text-sm font-medium text-signal" role="alert">{state.error}</p>
+        <p className="rounded-lg bg-accent-strong/10 px-4 py-3 text-sm font-medium text-accent-strong" role="alert">{state.error}</p>
       )}
       {state?.done != null && (
         <p className="rounded-lg bg-cobalt/5 px-4 py-3 text-sm font-medium" role="status">

@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
+import sharp from "sharp";
 import {
   addJobUpdate,
   createJob,
@@ -40,6 +41,21 @@ import {
   mailReviewRequest,
 } from "@/lib/mail";
 import { siteUrl } from "@/config/site";
+import { locales } from "@/i18n/config";
+import { p as pagePath } from "@/i18n/slugs.mjs";
+
+/** Revalideert een publieke pagina in alle talen (ISR-cache verversen). */
+function revalidatePublic(page: "" | "consoles") {
+  for (const lang of locales) revalidatePath(pagePath(lang, page));
+}
+
+/** De actie-balk staat op elke pagina: bij promo-wijzigingen alles verversen. */
+const PUBLIC_PAGES = ["", "pc-bouwen", "herstel", "consoles", "voor-zaken", "prijzen", "contact", "privacy", "voorwaarden"] as const;
+function revalidateAllPublic() {
+  for (const lang of locales) {
+    for (const page of PUBLIC_PAGES) revalidatePath(pagePath(lang, page as never));
+  }
+}
 
 async function requireAdmin() {
   if (!(await isAdmin())) redirect("/admin/login");
@@ -169,14 +185,26 @@ const IMG_TYPES: Record<string, string> = {
 };
 const MAX_IMG_BYTES = 8 * 1024 * 1024;
 
+/**
+ * Foto's van telefoons zijn vaak 4-12 MB; op de site is dat pure ballast.
+ * Elke upload wordt daarom geschaald naar max 1600px en als WebP (~80%)
+ * bewaard: doorgaans 90-98% kleiner zonder zichtbaar verlies.
+ */
 async function saveUpload(file: File): Promise<string | null> {
-  const ext = IMG_TYPES[file.type];
-  if (!ext || file.size === 0 || file.size > MAX_IMG_BYTES) return null;
-  const name = `${crypto.randomBytes(12).toString("hex")}${ext}`;
+  if (!IMG_TYPES[file.type] || file.size === 0 || file.size > MAX_IMG_BYTES) return null;
+  const name = `${crypto.randomBytes(12).toString("hex")}.webp`;
   fs.mkdirSync(UPLOADS_DIR, { recursive: true });
-  const buf = Buffer.from(await file.arrayBuffer());
-  fs.writeFileSync(path.join(UPLOADS_DIR, name), buf);
-  return name;
+  try {
+    const optimized = await sharp(Buffer.from(await file.arrayBuffer()))
+      .rotate() // EXIF-oriëntatie toepassen
+      .resize({ width: 1600, height: 1600, fit: "inside", withoutEnlargement: true })
+      .webp({ quality: 80 })
+      .toBuffer();
+    fs.writeFileSync(path.join(UPLOADS_DIR, name), optimized);
+    return name;
+  } catch {
+    return null; // corrupt bestand: stil weigeren
+  }
 }
 
 export async function addGalleryAction(formData: FormData) {
@@ -192,7 +220,7 @@ export async function addGalleryAction(formData: FormData) {
 
   insertGalleryItem(title, beforeFile, afterFile);
   revalidatePath("/admin/galerij");
-  revalidatePath("/consoles");
+  revalidatePublic("consoles");
 }
 
 export async function deleteGalleryAction(formData: FormData) {
@@ -206,7 +234,7 @@ export async function deleteGalleryAction(formData: FormData) {
     if (fs.existsSync(p)) fs.unlinkSync(p);
   }
   revalidatePath("/admin/galerij");
-  revalidatePath("/consoles");
+  revalidatePublic("consoles");
 }
 
 
@@ -220,6 +248,7 @@ export async function addReviewAction(formData: FormData) {
   if (!author || !text) return;
   insertReview({ author, rating, text, source });
   revalidatePath("/admin/reviews");
+  revalidatePublic("");
 }
 
 export async function toggleReviewAction(formData: FormData) {
@@ -227,6 +256,7 @@ export async function toggleReviewAction(formData: FormData) {
   const id = Number(formData.get("id"));
   if (id) toggleReview(id);
   revalidatePath("/admin/reviews");
+  revalidatePublic("");
 }
 
 export async function deleteReviewAction(formData: FormData) {
@@ -234,6 +264,7 @@ export async function deleteReviewAction(formData: FormData) {
   const id = Number(formData.get("id"));
   if (id) deleteReview(id);
   revalidatePath("/admin/reviews");
+  revalidatePublic("");
 }
 
 // ---------- afspraken ----------
@@ -284,6 +315,7 @@ export async function savePromoAction2(formData: FormData) {
     used: Math.max(0, Number(formData.get("used")) || 0),
   });
   revalidatePath("/admin/acties");
+  revalidateAllPublic();
 }
 
 export async function deletePromoAction(formData: FormData) {
@@ -291,6 +323,7 @@ export async function deletePromoAction(formData: FormData) {
   const id = Number(formData.get("id"));
   if (id) deletePromo(id);
   revalidatePath("/admin/acties");
+  revalidateAllPublic();
 }
 
 // ---------- instellingen: video's ----------
@@ -298,6 +331,7 @@ export async function saveVideosAction(formData: FormData) {
   await requireAdmin();
   setSetting("social_videos", String(formData.get("social_videos") || "").trim());
   revalidatePath("/admin/instellingen");
+  revalidatePublic("");
 }
 
 // ---------- nieuwsbrief versturen ----------

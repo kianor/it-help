@@ -32,7 +32,7 @@ export default function AdminLoginPage() {
           />
         </div>
         {state?.error && (
-          <p className="rounded-lg bg-signal/10 px-4 py-3 text-sm font-medium text-signal" role="alert">
+          <p className="rounded-lg bg-accent-strong/10 px-4 py-3 text-sm font-medium text-accent-strong" role="alert">
             {state.error}
           </p>
         )}
