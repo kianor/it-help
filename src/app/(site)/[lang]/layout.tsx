@@ -14,6 +14,7 @@ import { p } from "@/i18n/slugs.mjs";
 import { HitBeacon } from "@/components/HitBeacon";
 import { AnalyticsListener } from "@/components/AnalyticsListener";
 import { Ga4Consent } from "@/components/Ga4Consent";
+import { RevealObserver } from "@/components/RevealObserver";
 
 export function generateStaticParams() {
   return locales.map((lang) => ({ lang }));
@@ -72,7 +73,7 @@ function LocalBusinessJsonLd({ lang }: { lang: Locale }) {
 }
 
 /** Zet de game-modus-klasse vóór hydration zodat er geen flits is. */
-const gameModeScript = `try{if(localStorage.getItem('ritsit-game')==='1')document.documentElement.classList.add('game')}catch(e){}`;
+const gameModeScript = `document.documentElement.classList.add('js');try{if(localStorage.getItem('ritsit-game')==='1')document.documentElement.classList.add('game')}catch(e){}`;
 
 export default function SiteLayout({
   children,
@@ -112,6 +113,7 @@ export default function SiteLayout({
         <LocalBusinessJsonLd lang={lang} />
         <HitBeacon lang={lang} />
         <AnalyticsListener />
+        <RevealObserver />
         <Ga4Consent text={dict.consent.text} accept={dict.consent.accept} decline={dict.consent.decline} />
       </body>
     </html>

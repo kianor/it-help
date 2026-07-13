@@ -85,14 +85,26 @@ html.game {
   }
 
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-accent-strong px-6 py-3 font-semibold text-white transition hover:brightness-110;
+    @apply relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-lg bg-accent-strong px-6 py-3 font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg hover:brightness-110 active:translate-y-0 active:scale-[0.98];
+  }
+  /* shine-sweep over primaire knoppen */
+  .btn-primary::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-130%) skewX(-18deg);
+    background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.35), transparent);
+    transition: transform 0.65s ease;
+  }
+  .btn-primary:hover::before {
+    transform: translateX(130%);
   }
   html.game .btn-primary {
     @apply text-panel hover:brightness-125;
     box-shadow: 0 0 18px rgb(var(--c-accent) / 0.35);
   }
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 rounded-lg border-2 border-link px-6 py-3 font-semibold text-link transition hover:bg-link hover:text-surface;
+    @apply inline-flex items-center justify-center gap-2 rounded-lg border-2 border-link px-6 py-3 font-semibold text-link transition hover:-translate-y-0.5 hover:bg-link hover:text-surface hover:shadow-md active:translate-y-0 active:scale-[0.98];
   }
   .input {
     @apply w-full rounded-lg border border-muted/40 bg-surface px-4 py-3 text-foreground placeholder:text-muted focus:border-link;
@@ -147,13 +159,154 @@ html.game img {
   filter: brightness(0.95);
 }
 
+/*
+ * ==========================================================================
+ * MOTION — scroll-reveals en micro-interacties.
+ * Alles is progressive enhancement: zonder JavaScript (geen .js op <html>)
+ * is alle content gewoon zichtbaar; prefers-reduced-motion schakelt alles
+ * uit via het blok onderaan dit bestand.
+ * ==========================================================================
+ */
+
+/* Scroll-reveal: elementen met data-reveal glijden in zodra ze in beeld komen */
+.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(22px);
+  transition:
+    opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.js [data-reveal].is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Hero: woord-voor-woord titel */
+.js .hero-word {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(0.6em) rotate(2deg);
+  animation: word-rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+@keyframes word-rise {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Hero: blueprint-raster + zacht zwevende kleurvlekken */
+.hero-grid {
+  background-image: radial-gradient(rgb(var(--c-text) / 0.09) 1px, transparent 1.5px);
+  background-size: 24px 24px;
+  mask-image: linear-gradient(to bottom, black 55%, transparent);
+}
+.blob {
+  border-radius: 9999px;
+  filter: blur(72px);
+  animation: blob-float 16s ease-in-out infinite alternate;
+  will-change: transform;
+}
+@keyframes blob-float {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  to {
+    transform: translate3d(36px, -26px, 0) scale(1.1);
+  }
+}
+
+/* Merksignatuur: rits-divider die dichtritst zodra hij in beeld komt */
+.zipper {
+  position: relative;
+  height: 16px;
+  background: repeating-linear-gradient(
+    90deg,
+    rgb(var(--c-text) / 0.22) 0 5px,
+    transparent 5px 11px
+  );
+  background-size: 100% 6px;
+  background-position: 0 5px;
+  background-repeat: no-repeat;
+  mask-image: linear-gradient(90deg, transparent, black 12%, black 88%, transparent);
+}
+.zipper-pull {
+  position: absolute;
+  left: 8%;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgb(var(--c-accent));
+}
+.js [data-reveal].is-visible .zipper-pull {
+  animation: zip-close 1.4s cubic-bezier(0.55, 0, 0.3, 1) 0.15s both;
+}
+@keyframes zip-close {
+  from {
+    left: 8%;
+  }
+  to {
+    left: 88%;
+  }
+}
+
+/* Navigatie: onderstreep glijdt in */
+.nav-link {
+  position: relative;
+}
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -6px;
+  height: 2px;
+  border-radius: 2px;
+  background: rgb(var(--c-accent));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s ease;
+}
+.nav-link:hover::after,
+.nav-link[aria-current="page"]::after {
+  transform: scaleX(1);
+}
+
+/* Header krijgt diepte zodra er gescrold is (klasse via Header.tsx) */
+.header-scrolled {
+  box-shadow: 0 4px 24px rgb(var(--c-text) / 0.08);
+}
+html.game .header-scrolled {
+  box-shadow: 0 4px 24px rgb(0 0 0 / 0.5);
+}
+
+/* Tekstselectie in merkkleur */
+::selection {
+  background: rgb(var(--c-accent) / 0.25);
+}
+
+/* Game-modus: subtiel tech-raster over de achtergrond */
+html.game body {
+  background-image:
+    linear-gradient(rgb(255 255 255 / 0.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 0.022) 1px, transparent 1px);
+  background-size: 34px 34px;
+  background-attachment: fixed;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
+  .js [data-reveal] {
+    opacity: 1;
+    transform: none;
   }
 }

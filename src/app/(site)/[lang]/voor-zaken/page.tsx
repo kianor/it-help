@@ -20,13 +20,13 @@ export default function VoorZakenPage({ params }: { params: { lang: string } }) 
 
   return (
     <div className="mx-auto max-w-6xl px-4 pt-14">
-      <div className="max-w-3xl">
+      <div className="max-w-3xl" data-reveal>
         <h1 className="text-4xl font-bold">{t.title}</h1>
         <p className="mt-4 text-lg text-ink/80">{t.intro}</p>
       </div>
 
       {/* Hoofd-CTA: gratis IT-check */}
-      <section className="pt-10">
+      <section className="pt-10" data-reveal>
         <div className="rounded-2xl bg-panel p-8 text-white sm:p-10">
           <p className="font-mono text-sm font-bold text-accent-soft">{t.checkKicker}</p>
           <h2 className="mt-2 text-3xl font-bold">{t.checkTitle}</h2>
@@ -43,14 +43,14 @@ export default function VoorZakenPage({ params }: { params: { lang: string } }) 
         </div>
       </section>
 
-      <section className="pt-14">
+      <section className="pt-14" data-reveal>
         <h2 className="text-2xl font-bold">{t.packagesTitle}</h2>
         <div className="mt-5">
           <ServiceList group={dict.services.voorZaken} />
         </div>
       </section>
 
-      <section className="pt-10">
+      <section className="pt-10" data-reveal>
         <div className="rounded-xl border-l-4 border-cobalt bg-surface p-6">
           <p className="label">{t.promiseLabel}</p>
           <p className="text-lg font-semibold">{dict.common.responsePromise}</p>

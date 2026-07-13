@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { site } from "@/config/site";
 import { locales, type Locale } from "@/i18n/config";
 import { p, PAGE_SLUGS } from "@/i18n/slugs.mjs";
@@ -30,6 +30,16 @@ export function Header({
 }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    function onScroll() {
+      setScrolled(window.scrollY > 8);
+    }
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const items = [
     { href: p(lang, "pc-bouwen"), label: nav.pc },
@@ -65,7 +75,7 @@ export function Header({
   }
 
   return (
-    <header className="sticky top-0 z-40 border-b border-ink/10 bg-paper/95 backdrop-blur">
+    <header className={`sticky top-0 z-40 border-b border-ink/10 bg-paper/95 backdrop-blur transition-shadow duration-300 ${scrolled ? "header-scrolled" : ""}`}>
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-4">
         <Link href={`/${lang}`} className="font-display text-lg font-bold" onClick={() => setOpen(false)}>
           {site.name}
@@ -79,7 +89,8 @@ export function Header({
               href={item.href}
               data-track="nav_click"
               data-track-label={item.label}
-              className={`text-sm font-medium transition hover:text-cobalt ${
+              aria-current={pathname === item.href ? "page" : undefined}
+              className={`nav-link text-sm font-medium transition hover:text-cobalt ${
                 pathname === item.href ? "text-cobalt" : "text-ink"
               }`}
             >

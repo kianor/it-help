@@ -23,7 +23,7 @@ export default function ConsolesPage({ params }: { params: { lang: string } }) {
 
   return (
     <div className="mx-auto max-w-6xl px-4 pt-14">
-      <div className="max-w-3xl">
+      <div className="max-w-3xl" data-reveal>
         <h1 className="text-4xl font-bold">{t.title}</h1>
         <p className="mt-4 text-lg text-ink/80">{t.intro}</p>
       </div>
@@ -33,7 +33,7 @@ export default function ConsolesPage({ params }: { params: { lang: string } }) {
       </div>
 
       {gallery.length > 0 && (
-        <section className="pt-16">
+        <section className="pt-16" data-reveal>
           <h2 className="text-2xl font-bold">{t.galleryTitle}</h2>
           <p className="mt-2 max-w-2xl text-ink/80">{t.galleryIntro}</p>
           <div className="mt-6 grid gap-6 sm:grid-cols-2">
@@ -54,7 +54,7 @@ export default function ConsolesPage({ params }: { params: { lang: string } }) {
         </section>
       )}
 
-      <section className="pt-16">
+      <section className="pt-16" data-reveal>
         <div className="rounded-2xl border border-ink/10 bg-surface p-8">
           <h2 className="text-2xl font-bold">{t.parentsTitle}</h2>
           <p className="mt-3 max-w-2xl text-ink/80">{t.parentsText}</p>
@@ -64,7 +64,7 @@ export default function ConsolesPage({ params }: { params: { lang: string } }) {
         </div>
       </section>
 
-      <section className="pt-16">
+      <section className="pt-16" data-reveal>
         <div className="flex flex-wrap items-center gap-4 rounded-2xl bg-cobalt/5 p-8">
           <div className="flex-1">
             <h2 className="text-xl font-bold">{t.ctaTitle}</h2>

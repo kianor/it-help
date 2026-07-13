@@ -21,7 +21,7 @@ export default function ContactPage({ params }: { params: { lang: string } }) {
 
   return (
     <div className="mx-auto max-w-6xl px-4 pt-14">
-      <div className="max-w-3xl">
+      <div className="max-w-3xl" data-reveal>
         <h1 className="text-4xl font-bold">{t.title}</h1>
         <p className="mt-4 text-lg text-ink/80">{t.intro}</p>
         <div className="mt-6 flex flex-wrap gap-3">
