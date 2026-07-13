@@ -1,7 +1,8 @@
 import { site, siteUrl } from "@/config/site";
+import { getSite } from "@/lib/site-config";
 import { getDict } from "@/i18n";
 
-export const dynamic = "force-static";
+export const revalidate = 3600;
 
 /**
  * llms.txt: gestructureerde samenvatting voor AI-assistenten en -crawlers
@@ -10,6 +11,7 @@ export const dynamic = "force-static";
  */
 export async function GET() {
   const nl = getDict("nl");
+  const cfg = getSite();
   const base = siteUrl();
 
   const serviceLines = Object.values(nl.services)
@@ -31,8 +33,8 @@ export async function GET() {
 ## Kerninfo
 
 - Regio: ${site.region} (verplaatsing gratis binnen 10 km van Herent)
-- Telefoon/WhatsApp: ${site.phoneDisplay}
-- E-mail: ${site.email}
+- Telefoon/WhatsApp: ${cfg.phoneDisplay}
+- E-mail: ${cfg.email}
 - Bereikbaarheid: weekdagen 's avonds en zaterdag
 - Reactiebelofte: ${nl.common.responsePromise}
 - Bijzonderheid: bij pc-builds bestelt de klant de onderdelen zelf

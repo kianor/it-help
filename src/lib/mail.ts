@@ -1,5 +1,6 @@
 import { Resend } from "resend";
 import { site, siteUrl } from "@/config/site";
+import { getSite } from "./site-config";
 import { p } from "@/i18n/slugs.mjs";
 
 /**
@@ -22,7 +23,7 @@ function getResend(): Resend | null {
 
 async function send(to: string, subject: string, html: string) {
   const resend = getResend();
-  const from = process.env.MAIL_FROM || `${site.name} <onboarding@resend.dev>`;
+  const from = getSite().mailFrom || `${site.name} <onboarding@resend.dev>`;
   if (!resend) {
     console.log(`[mail] RESEND_API_KEY ontbreekt — mail niet verstuurd: "${subject}" naar ${to}`);
     return;
@@ -53,11 +54,14 @@ function layout(body: string, footer: string): string {
 const btn = (href: string, label: string) =>
   `<a href="${href}" style="display:inline-block;background:#F26B1D;color:#ffffff;text-decoration:none;padding:12px 22px;border-radius:8px;font-weight:bold;margin:12px 0;">${label}</a>`;
 
-const footers: Record<MailLang, string> = {
-  nl: `Vragen? Bel of app ${site.phoneDisplay} of mail ${site.email}.`,
-  en: `Questions? Call or WhatsApp ${site.phoneDisplay} or email ${site.email}.`,
-  fr: `Des questions ? Appelez ou envoyez un WhatsApp au ${site.phoneDisplay} ou un mail à ${site.email}.`,
-};
+function footers(l: MailLang): string {
+  const cfg = getSite();
+  return {
+    nl: `Vragen? Bel of app ${cfg.phoneDisplay} of mail ${cfg.email}.`,
+    en: `Questions? Call or WhatsApp ${cfg.phoneDisplay} or email ${cfg.email}.`,
+    fr: `Des questions ? Appelez ou envoyez un WhatsApp au ${cfg.phoneDisplay} ou un mail à ${cfg.email}.`,
+  }[l];
+}
 
 // ---------- mails naar Kiano (altijd Nederlands) ----------
 export async function mailNewRequestToOwner(r: {
@@ -68,7 +72,7 @@ export async function mailNewRequestToOwner(r: {
   message: string;
   lang?: string;
 }) {
-  const to = process.env.MAIL_TO;
+  const to = getSite().mailTo;
   if (!to) return;
   await send(
     to,
@@ -84,7 +88,7 @@ export async function mailNewRequestToOwner(r: {
       <p style="white-space:pre-wrap;border-left:3px solid #2450A8;padding-left:12px;">${esc(r.message)}</p>
       <p>Beloofd op de site: vandaag nog terugbellen of appen.</p>
       `,
-      footers.nl
+      footers("nl")
     )
   );
 }
@@ -97,25 +101,25 @@ export async function mailRequestConfirmation(email: string, name: string, lang?
       subject: "Goed ontvangen. Ik bel of app je vandaag nog terug.",
       body: `<h2 style="margin-top:0;">Dag ${esc(name)},</h2>
         <p>Je aanvraag is goed aangekomen. Ik bel of app je vandaag nog terug om alles af te spreken: wat er moet gebeuren en wat de vaste prijs wordt. Geen verrassingen.</p>
-        <p>Dringend? Bel of app me gerust op <strong>${site.phoneDisplay}</strong>.</p>
+        <p>Dringend? Bel of app me gerust op <strong>${getSite().phoneDisplay}</strong>.</p>
         <p>Tot zo,<br>Kiano</p>`,
     },
     en: {
       subject: "Got it. I'll call or WhatsApp you back today.",
       body: `<h2 style="margin-top:0;">Hi ${esc(name)},</h2>
         <p>Your request arrived safely. I'll call or WhatsApp you back today to agree on everything: what needs to happen and what the fixed price will be. No surprises.</p>
-        <p>Urgent? Feel free to call or WhatsApp me on <strong>${site.phoneDisplay}</strong>.</p>
+        <p>Urgent? Feel free to call or WhatsApp me on <strong>${getSite().phoneDisplay}</strong>.</p>
         <p>Talk soon,<br>Kiano</p>`,
     },
     fr: {
       subject: "Bien reçu. Je vous rappelle ou vous écris aujourd'hui encore.",
       body: `<h2 style="margin-top:0;">Bonjour ${esc(name)},</h2>
         <p>Votre demande est bien arrivée. Je vous rappelle ou vous envoie un WhatsApp aujourd'hui encore pour tout convenir : ce qu'il faut faire et le prix fixe. Pas de surprises.</p>
-        <p>C'est urgent ? Appelez-moi ou envoyez un WhatsApp au <strong>${site.phoneDisplay}</strong>.</p>
+        <p>C'est urgent ? Appelez-moi ou envoyez un WhatsApp au <strong>${getSite().phoneDisplay}</strong>.</p>
         <p>À tout de suite,<br>Kiano</p>`,
     },
   }[l];
-  await send(email, t.subject, layout(t.body, footers[l]));
+  await send(email, t.subject, layout(t.body, footers(l)));
 }
 
 // ---------- herstelling aangemaakt (volgcode) ----------
@@ -164,7 +168,7 @@ export async function mailJobCreated(job: {
         <p>Cordialement,<br>Kiano</p>`,
     },
   }[l];
-  await send(job.customer_email, t.subject, layout(t.body, footers[l]));
+  await send(job.customer_email, t.subject, layout(t.body, footers(l)));
 }
 
 // ---------- statusupdate ----------
@@ -233,7 +237,7 @@ export async function mailJobStatusUpdate(job: {
         <p>Cordialement,<br>Kiano</p>`,
     },
   }[l];
-  await send(job.customer_email, t.subject, layout(t.body, footers[l]));
+  await send(job.customer_email, t.subject, layout(t.body, footers(l)));
 }
 
 // ---------- review-verzoek ----------
@@ -244,7 +248,7 @@ export async function mailReviewRequest(job: {
   lang?: string;
 }) {
   const l = asLang(job.lang);
-  const reviewUrl = site.googleReviewsUrl || siteUrl();
+  const reviewUrl = getSite().googleReviewsUrl || siteUrl();
   const t = {
     nl: {
       subject: "Alles nog in orde met je toestel?",
@@ -271,7 +275,7 @@ export async function mailReviewRequest(job: {
         <p>Merci !<br>Kiano</p>`,
     },
   }[l];
-  await send(job.customer_email, t.subject, layout(t.body, footers[l]));
+  await send(job.customer_email, t.subject, layout(t.body, footers(l)));
 }
 
 // ---------- nieuwsbrief (dubbele opt-in) ----------
@@ -301,7 +305,7 @@ export async function mailNewsletterConfirm(email: string, token: string, lang?:
         <p>Désinscription à tout moment en un clic au bas de chaque mail.</p>`,
     },
   }[l];
-  await send(email, t.subject, layout(t.body, footers[l]));
+  await send(email, t.subject, layout(t.body, footers(l)));
 }
 
 // ---------- afspraken ----------
@@ -313,7 +317,7 @@ export async function mailAppointmentToOwner(a: {
   slot_start: string;
   message?: string | null;
 }) {
-  const to = process.env.MAIL_TO;
+  const to = getSite().mailTo;
   if (!to) return;
   await send(
     to,
@@ -327,7 +331,7 @@ export async function mailAppointmentToOwner(a: {
       <strong>Dienst:</strong> ${esc(a.service)}</p>
       ${a.message ? `<p style="white-space:pre-wrap;border-left:3px solid #2450A8;padding-left:12px;">${esc(a.message)}</p>` : ""}
       <p>Bevestig of weiger in het admin-paneel (Afspraken).</p>`,
-      footers.nl
+      footers("nl")
     )
   );
 }
@@ -363,7 +367,7 @@ export async function mailAppointmentRequested(a: {
         <p>À bientôt,<br>Kiano</p>`,
     },
   }[l];
-  await send(a.email, t.subject, layout(t.body, footers[l]));
+  await send(a.email, t.subject, layout(t.body, footers(l)));
 }
 
 export async function mailAppointmentConfirmed(a: {
@@ -397,7 +401,7 @@ export async function mailAppointmentConfirmed(a: {
         <p>À bientôt,<br>Kiano</p>`,
     },
   }[l];
-  await send(a.email, t.subject, layout(t.body, footers[l]));
+  await send(a.email, t.subject, layout(t.body, footers(l)));
 }
 
 // ---------- klantaccount: magic link ----------
@@ -426,7 +430,7 @@ export async function mailMagicLink(email: string, url: string, lang?: string) {
         <p>Vous n'avez rien demandé ? Ignorez simplement ce mail.</p>`,
     },
   }[l];
-  await send(email, t.subject, layout(t.body, footers[l]));
+  await send(email, t.subject, layout(t.body, footers(l)));
 }
 
 // ---------- nieuwsbriefcampagne ----------
@@ -441,7 +445,7 @@ export async function mailCampaign(
   const unsubLabel = { nl: "Uitschrijven", en: "Unsubscribe", fr: "Se désinscrire" }[l];
   const html = layout(
     `<div style="white-space:pre-wrap;">${esc(bodyText)}</div>`,
-    `${footers[l]}<br><a href="${unsubscribeUrl}" style="color:#8A94A6;">${unsubLabel}</a>`
+    `${footers(l)}<br><a href="${unsubscribeUrl}" style="color:#8A94A6;">${unsubLabel}</a>`
   );
   await send(to, subject, html);
 }

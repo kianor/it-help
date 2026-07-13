@@ -109,26 +109,28 @@ Zet er een reverse proxy met HTTPS voor (nginx/Caddy). Belangrijk:
 
 ## Alles aanpassen op één plek
 
-- **Naam, telefoon, e-mail, KBO, socials, Google-reviewslink:** `src/config/site.ts`
+- **Telefoon, WhatsApp, e-mail, KBO, review-links, socials, video's, mailadressen:** admin-paneel → **Instellingen** (staat meteen live, geen code of deploy nodig)
+- **Kortingsacties en de teller:** admin-paneel → **Acties**
+- **Openingsuren en geblokkeerde dagen:** admin-paneel → **Afspraken**
 - **Alle teksten, diensten en prijzen per taal:** `src/i18n/nl.ts`, `src/i18n/en.ts`, `src/i18n/fr.ts`
 - **Mailteksten:** `src/lib/mail.ts`
-- **Launch-actie:** via het admin-paneel, Instellingen
+- **Code-defaults van de zaakgegevens** (fallback als er niets in het admin-paneel staat): `src/config/site.ts`
+- **Geheimen** (admin-wachtwoord, Resend API-key, AUTH_SECRET): `.env` op de server — bewust niet via de browser aanpasbaar
 
-## Vóór livegang invullen (checklist uit de briefing)
+## Vóór livegang invullen (checklist — staat ook op het admin-dashboard)
 
-1. Definitieve bedrijfsnaam + domeinnaam → `src/config/site.ts`
-2. Telefoonnummer (tel + WhatsApp) → `src/config/site.ts`
-2b. Domeinnaam checken (ritsit.be) en registreren
-3. Zakelijk e-mailadres op eigen domein → `src/config/site.ts` en Resend
-4. KBO-nummer (na Acerta) → `src/config/site.ts` (site pas live mét KBO + BA-verzekering)
-5. 3 à 5 echte foto's van builds/werkplek → galerij of pagina's
+1. Telefoonnummer (tel + WhatsApp) → admin → Instellingen
+2. Domeinnaam checken (ritsit.be) en registreren
+3. Zakelijk e-mailadres op eigen domein → admin → Instellingen, plus Resend-key in `.env`
+4. KBO-nummer (na Acerta) → admin → Instellingen (site pas live mét KBO + BA-verzekering)
+5. 3 à 5 echte foto's van builds/werkplek → admin → Voor/na-galerij
 6. Algemene voorwaarden laten nalezen (UNIZO/Acerta-model) → `src/app/voorwaarden/page.tsx`
-7. Google Business Profile aanmaken → link in `src/config/site.ts`
-8. Trustpilot-profiel aanmaken → link in `src/config/site.ts`
+7. Google Business Profile aanmaken → link in admin → Instellingen
+8. Trustpilot-profiel aanmaken → link in admin → Instellingen
+
+Het admin-dashboard toont een "Nog in te stellen"-checklist zolang een van deze punten openstaat, en de Instellingen-pagina heeft een testmail-knop om de mailconfiguratie te controleren.
 
 ## Fase 2 (voorzien, nog niet gebouwd)
 
 - Stick drift herstel & Hall-effect upgrade op de consolepagina (na soldeer-fase)
-- Echte Google-reviews in de reviews-sectie
-- Cal.com-embed voor afspraken zodra het volume dat vraagt
-- Nieuwsbrief-campagnes rechtstreeks vanuit het admin-paneel
+- Echte Google-reviews automatisch inladen in de reviews-sectie

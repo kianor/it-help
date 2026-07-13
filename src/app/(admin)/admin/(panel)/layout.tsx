@@ -1,46 +1,39 @@
-import type { Metadata } from "next";
-import Link from "next/link";
+import { getDb } from "@/lib/db";
+import { site } from "@/config/site";
+import { AdminNav } from "./AdminNav";
 import { logoutAction } from "../actions";
 
-export const metadata: Metadata = {
-  title: "Admin",
-  robots: { index: false, follow: false },
-};
+export const dynamic = "force-dynamic";
 
-const nav = [
-  { href: "/admin", label: "Aanvragen" },
-  { href: "/admin/afspraken", label: "Afspraken" },
-  { href: "/admin/herstellingen", label: "Herstellingen" },
-  { href: "/admin/galerij", label: "Galerij" },
-  { href: "/admin/reviews", label: "Reviews" },
-  { href: "/admin/nieuwsbrief", label: "Nieuwsbrief" },
-  { href: "/admin/acties", label: "Acties" },
-  { href: "/admin/stats", label: "Statistieken" },
-  { href: "/admin/instellingen", label: "Instellingen" },
-];
-
+/** Admin-shell: zijbalk op desktop, uitklapbaar menu op mobiel, met badges. */
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  const d = getDb();
+  const badges = {
+    aanvragen: (d.prepare("SELECT count(*) c FROM requests WHERE status = 'nieuw'").get() as { c: number }).c,
+    afspraken: (d.prepare("SELECT count(*) c FROM appointments WHERE status = 'aangevraagd'").get() as { c: number }).c,
+    herstellingen: (d.prepare("SELECT count(*) c FROM jobs WHERE status != 'afgerond'").get() as { c: number }).c,
+  };
+
   return (
-    <div className="mx-auto max-w-6xl px-4 pt-8">
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-ink/10 pb-4">
-        <nav className="flex flex-wrap gap-1" aria-label="Admin-navigatie">
-          {nav.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="rounded-lg px-3 py-1.5 text-sm font-medium hover:bg-cobalt/10 hover:text-cobalt"
-            >
-              {item.label}
-            </Link>
-          ))}
-        </nav>
-        <form action={logoutAction}>
-          <button type="submit" className="text-sm text-steel underline hover:text-accent-strong">
-            Uitloggen
-          </button>
-        </form>
-      </div>
-      <div className="pb-16 pt-6">{children}</div>
+    <div className="min-h-screen lg:grid lg:grid-cols-[240px_1fr]">
+      <aside className="border-b border-ink/10 bg-surface lg:sticky lg:top-0 lg:h-screen lg:overflow-y-auto lg:border-b-0 lg:border-r">
+        <div className="px-5 py-4">
+          <p className="font-display text-xl font-bold">
+            {site.name}
+            <span className="text-accent">.</span>
+          </p>
+          <p className="font-mono text-[11px] uppercase tracking-wide text-muted">werkbank-beheer</p>
+        </div>
+        <AdminNav badges={badges} />
+        <div className="border-t border-ink/10 px-5 py-4">
+          <form action={logoutAction}>
+            <button type="submit" className="text-sm text-muted underline transition hover:text-accent-strong">
+              Uitloggen
+            </button>
+          </form>
+        </div>
+      </aside>
+      <div className="min-w-0 px-4 pb-16 pt-6 sm:px-8">{children}</div>
     </div>
   );
 }

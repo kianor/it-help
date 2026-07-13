@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { site } from "@/config/site";
+import { getSite } from "@/lib/site-config";
 import { ContactForm } from "@/components/ContactForm";
 import { NewsletterForm } from "@/components/NewsletterForm";
 import { CallButton, WhatsAppButton } from "@/components/CtaButtons";
@@ -17,6 +17,7 @@ export function generateMetadata({ params }: { params: { lang: string } }): Meta
 export default function ContactPage({ params }: { params: { lang: string } }) {
   const lang = isLocale(params.lang) ? params.lang : "nl";
   const dict = getDict(lang);
+  const cfg = getSite();
   const t = dict.contactPage;
 
   return (
@@ -29,7 +30,7 @@ export default function ContactPage({ params }: { params: { lang: string } }) {
           <WhatsAppButton label={dict.common.whatsappCta} />
         </div>
         <p className="mt-3 font-mono text-sm text-steel">
-          {site.phoneDisplay} · {dict.common.openingInfo.toLowerCase()}
+          {cfg.phoneDisplay} · {dict.common.openingInfo.toLowerCase()}
         </p>
       </div>
 

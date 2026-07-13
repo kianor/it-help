@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import QRCode from "qrcode";
 import { getJobById } from "@/lib/db";
 import { site, siteUrl } from "@/config/site";
+import { getSite } from "@/lib/site-config";
 import { p } from "@/i18n/slugs.mjs";
 import { PrintButton } from "./PrintButton";
 
@@ -14,6 +15,7 @@ export const dynamic = "force-dynamic";
 export default async function BonPage({ params }: { params: { id: string } }) {
   const job = getJobById(Number(params.id));
   if (!job) notFound();
+  const cfg = getSite();
 
   const url = `${siteUrl()}${p(job.lang, "volg")}?code=${encodeURIComponent(job.code)}`;
   const qr = await QRCode.toDataURL(url, { width: 240, margin: 1, color: { dark: "#16324F" } });
@@ -47,7 +49,7 @@ export default async function BonPage({ params }: { params: { id: string } }) {
         </div>
 
         <p className="mt-4 text-center font-mono text-xs text-steel">
-          {site.phoneDisplay} · {site.email}
+          {cfg.phoneDisplay} · {cfg.email}
         </p>
       </div>
 

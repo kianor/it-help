@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { site } from "@/config/site";
 import { locales, type Locale } from "@/i18n/config";
 import { p, PAGE_SLUGS } from "@/i18n/slugs.mjs";
-import { PhoneIcon } from "./CtaButtons";
+import { PhoneIcon } from "./Icons";
 import { GameModeToggle } from "./GameModeToggle";
 
 type NavLabels = { pc: string; herstel: string; consoles: string; zaken: string; prijzen: string; contact: string; afspraak: string; account: string };
@@ -19,6 +19,7 @@ export function Header({
   menuOpen,
   menuClose,
   volgLabel,
+  phone,
 }: {
   lang: Locale;
   nav: NavLabels;
@@ -27,6 +28,7 @@ export function Header({
   menuOpen: string;
   menuClose: string;
   volgLabel: string;
+  phone: string;
 }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
@@ -132,7 +134,7 @@ export function Header({
           </Link>
           <GameModeToggle label={gameMode} />
           <a
-            href={`tel:${site.phone}`}
+            href={`tel:${phone}`}
             data-track="cta_call_click"
             data-track-label="header"
             className="hidden items-center gap-2 rounded-lg bg-accent-strong px-4 py-2 text-sm font-semibold text-white transition hover:brightness-110 md:inline-flex"

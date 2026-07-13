@@ -10,6 +10,7 @@ import { pageMetadata } from "@/i18n/metadata";
 import { p, type PageKey } from "@/i18n/slugs.mjs";
 import { listReviews, reviewStats, getSetting } from "@/lib/db";
 import { site, siteUrl } from "@/config/site";
+import { getSite } from "@/lib/site-config";
 import { fill } from "@/i18n";
 
 // ISR: statisch geserveerd en elke 5 min ververst; admin-acties op reviews,
@@ -169,6 +170,7 @@ function Stars({ rating }: { rating: number }) {
 
 function ReviewsSection({ lang }: { lang: "nl" | "en" | "fr" }) {
   const dict = getDict(lang);
+  const cfg = getSite();
   const t = dict.reviewsSection;
   const reviews = listReviews(true).slice(0, 6);
   const stats = reviewStats();
@@ -215,12 +217,12 @@ function ReviewsSection({ lang }: { lang: "nl" | "en" | "fr" }) {
           />
         </>
       )}
-      {site.trustpilotUrl && (
+      {cfg.trustpilotUrl && (
         <p className="mt-4 flex flex-wrap gap-4 text-sm">
-          <a href={site.trustpilotUrl} target="_blank" rel="noopener noreferrer" className="font-semibold text-cobalt hover:underline">
+          <a href={cfg.trustpilotUrl} target="_blank" rel="noopener noreferrer" className="font-semibold text-cobalt hover:underline">
             {t.readAll} →
           </a>
-          <a href={site.trustpilotUrl} target="_blank" rel="noopener noreferrer" className="text-steel hover:text-cobalt hover:underline">
+          <a href={cfg.trustpilotUrl} target="_blank" rel="noopener noreferrer" className="text-steel hover:text-cobalt hover:underline">
             {t.write}
           </a>
         </p>
@@ -231,12 +233,13 @@ function ReviewsSection({ lang }: { lang: "nl" | "en" | "fr" }) {
 
 function SocialSection({ lang }: { lang: "nl" | "en" | "fr" }) {
   const dict = getDict(lang);
+  const cfg = getSite();
   const t = dict.socialSection;
   const raw = (getSetting("social_videos") || "").split("\n").map((l) => l.trim()).filter(Boolean);
   const socials = [
-    { label: "TikTok", url: site.socials.tiktok },
-    { label: "Instagram", url: site.socials.instagram },
-    { label: "YouTube", url: site.socials.youtube },
+    { label: "TikTok", url: cfg.socials.tiktok },
+    { label: "Instagram", url: cfg.socials.instagram },
+    { label: "YouTube", url: cfg.socials.youtube },
   ].filter((s) => s.url);
   if (raw.length === 0 && socials.length === 0) return null;
 

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { AppointmentPicker } from "@/components/AppointmentPicker";
 import { availableSlots } from "@/lib/appointments";
+import { getSite } from "@/lib/site-config";
 import { isLocale, htmlLang } from "@/i18n/config";
 import { getDict } from "@/i18n";
 import { pageMetadata } from "@/i18n/metadata";
@@ -32,6 +33,7 @@ export default function AfspraakPage({ params }: { params: { lang: string } }) {
           serviceOptions={dict.contactPage.serviceOptions}
           htmlLang={htmlLang[lang]}
           callCta={dict.common.callCta}
+          phone={getSite().phone}
         />
       </div>
     </div>

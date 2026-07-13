@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getJobByCode, listJobUpdates, JOB_STATUSES } from "@/lib/db";
-import { site } from "@/config/site";
+import { getSite } from "@/lib/site-config";
 import { isLocale, htmlLang } from "@/i18n/config";
 import { getDict, fill } from "@/i18n";
 
@@ -33,6 +33,7 @@ export default function VolgPage({
 }) {
   const lang = isLocale(params.lang) ? params.lang : "nl";
   const dict = getDict(lang);
+  const cfg = getSite();
   const t = dict.volgPage;
 
   const code = (searchParams.code || "").trim();
@@ -61,7 +62,7 @@ export default function VolgPage({
 
       {code && !job && (
         <p className="mt-6 rounded-lg bg-accent-strong/10 px-4 py-3 font-medium text-accent-strong" role="alert">
-          {fill(t.notFound, { phone: site.phoneDisplay })}
+          {fill(t.notFound, { phone: cfg.phoneDisplay })}
         </p>
       )}
 
@@ -137,7 +138,7 @@ export default function VolgPage({
 
           <p className="mt-6 rounded-lg bg-cobalt/5 px-4 py-3 text-sm">
             {t.questions}{" "}
-            <a href={`tel:${site.phone}`} className="font-semibold underline">{site.phoneDisplay}</a>.
+            <a href={`tel:${cfg.phone}`} className="font-semibold underline">{cfg.phoneDisplay}</a>.
           </p>
         </div>
       )}
