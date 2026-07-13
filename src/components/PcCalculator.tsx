@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { track } from "@/lib/analytics";
 import type { Dict } from "@/i18n";
 
 /**
@@ -18,6 +19,20 @@ export function PcCalculator({
   const [budget, setBudget] = useState(1000);
   const [use, setUse] = useState(0);
   const [res, setRes] = useState(0); // 0=1080p 1=1440p 2=4K
+
+  // Meet gebruik pas na een korte rustpauze, niet bij elke schuifbeweging
+  const firstRender = useRef(true);
+  useEffect(() => {
+    if (firstRender.current) {
+      firstRender.current = false;
+      return;
+    }
+    const timer = setTimeout(
+      () => track("calculator_use", { label: `${["1080p", "1440p", "4K"][res]}/gebruik-${use}`, value: budget }),
+      1200
+    );
+    return () => clearTimeout(timer);
+  }, [budget, use, res]);
 
   const isGaming = use === 0 || use === 1;
   const isCreator = use === 3;
@@ -40,7 +55,7 @@ export function PcCalculator({
   const show4kWarning = res === 2 && budget < 1500;
 
   return (
-    <div className="gamer-card rounded-2xl border border-ink/10 bg-white p-6 sm:p-8">
+    <div className="gamer-card rounded-2xl border border-ink/10 bg-surface p-6 sm:p-8">
       <h2 className="text-2xl font-bold">{labels.title}</h2>
       <p className="mt-2 text-ink/80">{labels.intro}</p>
 
@@ -95,7 +110,7 @@ export function PcCalculator({
                   onClick={() => setRes(i)}
                   aria-pressed={res === i}
                   className={`rounded-lg border px-4 py-1.5 font-mono text-sm font-bold transition ${
-                    res === i ? "border-signal bg-signal text-white" : "border-ink/15 text-steel hover:text-ink"
+                    res === i ? "border-signal bg-accent-strong text-white" : "border-ink/15 text-steel hover:text-ink"
                   }`}
                 >
                   {r}
@@ -110,7 +125,7 @@ export function PcCalculator({
             <p className="label">{labels.verdictLabel}</p>
             <p className="text-ink/90">{tier}</p>
             {show4kWarning && (
-              <p className="mt-2 rounded-lg bg-signal/10 px-3 py-2 text-sm font-medium text-signal">
+              <p className="mt-2 rounded-lg bg-accent-strong/10 px-3 py-2 text-sm font-medium text-accent-strong">
                 {labels.warn4k}
               </p>
             )}
@@ -125,7 +140,7 @@ export function PcCalculator({
               </p>
             </div>
           </div>
-          <Link href={contactHref} className="btn-primary mt-6 text-center">
+          <Link href={contactHref} data-track="calculator_cta_click" className="btn-primary mt-6 text-center">
             {labels.cta}
           </Link>
         </div>

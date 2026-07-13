@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import "../../globals.css";
+import { fontClasses } from "../../fonts";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { StickyCallBar } from "@/components/StickyCallBar";
@@ -11,6 +12,8 @@ import { locales, isLocale, htmlLang, type Locale } from "@/i18n/config";
 import { getDict } from "@/i18n";
 import { p } from "@/i18n/slugs.mjs";
 import { HitBeacon } from "@/components/HitBeacon";
+import { AnalyticsListener } from "@/components/AnalyticsListener";
+import { Ga4Consent } from "@/components/Ga4Consent";
 
 export function generateStaticParams() {
   return locales.map((lang) => ({ lang }));
@@ -83,12 +86,12 @@ export default function SiteLayout({
   const dict = getDict(lang);
 
   return (
-    <html lang={htmlLang[lang]}>
+    <html lang={htmlLang[lang]} className={fontClasses}>
       <body>
         <script dangerouslySetInnerHTML={{ __html: gameModeScript }} />
         <a
           href="#inhoud"
-          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-white focus:px-4 focus:py-2"
+          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-surface focus:px-4 focus:py-2"
         >
           {dict.common.skipToContent}
         </a>
@@ -100,6 +103,7 @@ export default function SiteLayout({
           gameMode={dict.common.gameMode}
           menuOpen={dict.common.menuOpen}
           menuClose={dict.common.menuClose}
+          volgLabel={dict.footer.links.volg}
         />
         <main id="inhoud">{children}</main>
         <Footer lang={lang} dict={dict} />
@@ -107,6 +111,8 @@ export default function SiteLayout({
         <KonamiEgg title={dict.konami.title} text={dict.konami.text} close={dict.konami.close} />
         <LocalBusinessJsonLd lang={lang} />
         <HitBeacon lang={lang} />
+        <AnalyticsListener />
+        <Ga4Consent text={dict.consent.text} accept={dict.consent.accept} decline={dict.consent.decline} />
       </body>
     </html>
   );

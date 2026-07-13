@@ -7,6 +7,8 @@ import { getDict } from "@/i18n";
 import { pageMetadata } from "@/i18n/metadata";
 import { p } from "@/i18n/slugs.mjs";
 
+export const revalidate = 3600; // uur-refresh; promo-acties revalideren direct
+
 export function generateMetadata({ params }: { params: { lang: string } }): Metadata {
   return pageMetadata(params.lang, "voor-zaken", (d) => d.meta.zaken);
 }
@@ -25,8 +27,8 @@ export default function VoorZakenPage({ params }: { params: { lang: string } }) 
 
       {/* Hoofd-CTA: gratis IT-check */}
       <section className="pt-10">
-        <div className="rounded-2xl bg-ink p-8 text-white sm:p-10">
-          <p className="font-mono text-sm font-bold text-signal">{t.checkKicker}</p>
+        <div className="rounded-2xl bg-panel p-8 text-white sm:p-10">
+          <p className="font-mono text-sm font-bold text-accent-soft">{t.checkKicker}</p>
           <h2 className="mt-2 text-3xl font-bold">{t.checkTitle}</h2>
           <p className="mt-3 max-w-2xl text-white/85">{t.checkText}</p>
           <div className="mt-6 flex flex-wrap gap-3">
@@ -35,7 +37,7 @@ export default function VoorZakenPage({ params }: { params: { lang: string } }) 
             </Link>
             <CallButton
               label={dict.common.callCta}
-              className="inline-flex items-center justify-center gap-2 rounded-lg border-2 border-white/70 px-6 py-3 font-semibold text-white transition hover:bg-white hover:text-ink"
+              className="inline-flex items-center justify-center gap-2 rounded-lg border-2 border-white/70 px-6 py-3 font-semibold text-white transition hover:bg-surface hover:text-ink"
             />
           </div>
         </div>
@@ -49,7 +51,7 @@ export default function VoorZakenPage({ params }: { params: { lang: string } }) 
       </section>
 
       <section className="pt-10">
-        <div className="rounded-xl border-l-4 border-cobalt bg-white p-6">
+        <div className="rounded-xl border-l-4 border-cobalt bg-surface p-6">
           <p className="label">{t.promiseLabel}</p>
           <p className="text-lg font-semibold">{dict.common.responsePromise}</p>
         </div>

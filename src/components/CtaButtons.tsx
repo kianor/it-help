@@ -8,7 +8,7 @@ export function CallButton({
   className?: string;
 }) {
   return (
-    <a href={`tel:${site.phone}`} className={className}>
+    <a href={`tel:${site.phone}`} data-track="cta_call_click" className={className}>
       <PhoneIcon />
       {label}
     </a>
@@ -27,6 +27,7 @@ export function WhatsAppButton({
       href={`https://wa.me/${site.whatsapp}`}
       target="_blank"
       rel="noopener noreferrer"
+      data-track="cta_whatsapp_click"
       className={className}
     >
       <WhatsAppIcon />

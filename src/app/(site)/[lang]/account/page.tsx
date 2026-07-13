@@ -9,13 +9,14 @@ import {
 import { AccountLoginForm } from "@/components/AccountLoginForm";
 import { isLocale } from "@/i18n/config";
 import { getDict } from "@/i18n";
-import { pageMetadata } from "@/i18n/metadata";
 import { p } from "@/i18n/slugs.mjs";
 import { logoutCustomerAction, toggleNewsletterAction } from "./actions";
 
 export function generateMetadata({ params }: { params: { lang: string } }): Metadata {
-  const meta = pageMetadata(params.lang, "account", (d) => d.meta.account);
-  return { ...meta, robots: { index: false } };
+  const lang = isLocale(params.lang) ? params.lang : "nl";
+  const meta = getDict(lang).meta.account;
+  // bewust géén canonical/hreflang: noindex + alternates spreken elkaar tegen
+  return { title: meta.title, description: meta.description, robots: { index: false } };
 }
 
 export const dynamic = "force-dynamic";
@@ -39,7 +40,7 @@ export default async function AccountPage({
         <h2 className="mt-6 text-xl font-bold">{t.loginTitle}</h2>
         <p className="mt-2 text-ink/80">{t.loginIntro}</p>
         {searchParams.fout === "link" && (
-          <p className="mt-4 rounded-lg bg-signal/10 px-4 py-3 text-sm font-medium text-signal" role="alert">
+          <p className="mt-4 rounded-lg bg-accent-strong/10 px-4 py-3 text-sm font-medium text-accent-strong" role="alert">
             {t.verifyFail}
           </p>
         )}
@@ -67,7 +68,7 @@ export default async function AccountPage({
         </div>
         <form action={logoutCustomerAction}>
           <input type="hidden" name="lang" value={lang} />
-          <button type="submit" className="text-sm text-steel underline hover:text-signal">
+          <button type="submit" className="text-sm text-steel underline hover:text-accent-strong">
             {t.logout}
           </button>
         </form>
@@ -80,7 +81,7 @@ export default async function AccountPage({
         ) : (
           <ul className="mt-4 space-y-3">
             {jobs.map((job) => (
-              <li key={job.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-ink/10 bg-white p-4">
+              <li key={job.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-ink/10 bg-surface p-4">
                 <div>
                   <p className="font-bold">{job.device}</p>
                   <p className="text-sm text-steel">{job.service}</p>
@@ -114,12 +115,12 @@ export default async function AccountPage({
         ) : (
           <ul className="mt-4 space-y-3">
             {appointments.map((a) => (
-              <li key={a.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-ink/10 bg-white p-4">
+              <li key={a.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-ink/10 bg-surface p-4">
                 <div>
                   <p className="font-mono font-bold">{a.slot_start}</p>
                   <p className="text-sm text-steel">{a.service}</p>
                 </div>
-                <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${a.status === "bevestigd" ? "bg-cobalt/10 text-cobalt" : a.status === "geannuleerd" ? "bg-ink/10 text-steel" : "bg-signal/10 text-signal"}`}>
+                <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${a.status === "bevestigd" ? "bg-cobalt/10 text-cobalt" : a.status === "geannuleerd" ? "bg-ink/10 text-steel" : "bg-accent-strong/10 text-accent-strong"}`}>
                   {a.status}
                 </span>
               </li>
@@ -130,12 +131,12 @@ export default async function AccountPage({
 
       <section className="mt-10">
         <h2 className="text-2xl font-bold">{t.newsletterTitle}</h2>
-        <div className="mt-3 flex flex-wrap items-center gap-4 rounded-xl border border-ink/10 bg-white p-4">
+        <div className="mt-3 flex flex-wrap items-center gap-4 rounded-xl border border-ink/10 bg-surface p-4">
           <p className="flex-1 text-sm">{newsletterOn ? t.newsletterOn : t.newsletterOff}</p>
           <form action={toggleNewsletterAction}>
             <input type="hidden" name="lang" value={lang} />
             <button type="submit" className="btn-secondary text-sm">
-              {newsletterOn ? "✕" : "✓"} {dict.newsletter.submit}
+              {newsletterOn ? t.newsletterOffCta : dict.newsletter.submit}
             </button>
           </form>
         </div>

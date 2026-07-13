@@ -7,6 +7,8 @@ import { getDict } from "@/i18n";
 import { pageMetadata } from "@/i18n/metadata";
 import { p } from "@/i18n/slugs.mjs";
 
+export const revalidate = 3600; // uur-refresh; promo-acties revalideren direct
+
 export function generateMetadata({ params }: { params: { lang: string } }): Metadata {
   return pageMetadata(params.lang, "prijzen", (d) => d.meta.prijzen);
 }

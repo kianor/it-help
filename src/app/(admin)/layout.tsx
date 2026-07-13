@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "../globals.css";
+import { fontClasses } from "../fonts";
 
 export const metadata: Metadata = {
   title: "Admin | RitsIT",
@@ -9,7 +10,7 @@ export const metadata: Metadata = {
 /** Root layout voor het admin-gedeelte. Admin blijft Nederlands. */
 export default function AdminRootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="nl-BE">
+    <html lang="nl-BE" className={fontClasses}>
       <body>{children}</body>
     </html>
   );

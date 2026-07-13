@@ -1,18 +1,12 @@
-"use client";
-
 import Link from "next/link";
-import { useEffect, useState } from "react";
-
-type Promo = {
-  active: boolean;
-  left: number | null;
-  total: number | null;
-  texts?: { nl: string; en: string; fr: string };
-};
+import { getActivePromo } from "@/lib/db";
+import { PromoDismiss } from "./PromoDismiss";
 
 /**
- * Actie-balk. De actieve actie komt uit het admin-paneel (Acties) en wordt
- * client-side opgehaald zodat de pagina's zelf statisch en snel blijven.
+ * Actie-balk, server-side gerenderd: geen client-fetch, dus geen layout
+ * shift bij het eerste bezoek en geen hydration-mismatch. Statische
+ * pagina's exporteren `revalidate` en de acties in het admin-paneel
+ * revalideren alle publieke pagina's direct, dus de teller blijft kloppen.
  */
 export function PromoBanner({
   lang,
@@ -22,25 +16,17 @@ export function PromoBanner({
   many,
   contactHref,
 }: {
-  lang: string;
+  lang: "nl" | "en" | "fr";
   label: string;
   template: string;
   one: string;
   many: string;
   contactHref: string;
 }) {
-  const [promo, setPromo] = useState<Promo | null>(null);
+  const promo = getActivePromo();
+  if (!promo) return null;
 
-  useEffect(() => {
-    fetch("/api/promo", { cache: "no-store" })
-      .then((r) => (r.ok ? r.json() : null))
-      .then(setPromo)
-      .catch(() => setPromo(null));
-  }, []);
-
-  if (!promo?.active || !promo.texts) return null;
-
-  const text = promo.texts[lang as "nl" | "en" | "fr"] ?? promo.texts.nl;
+  const text = { nl: promo.text_nl, en: promo.text_en, fr: promo.text_fr }[lang] ?? promo.text_nl;
   const counter =
     promo.total != null && promo.left != null
       ? " " +
@@ -50,12 +36,16 @@ export function PromoBanner({
       : " →";
 
   return (
-    <Link
-      href={contactHref}
-      className="block bg-ink px-4 py-2.5 text-center text-sm font-medium text-white transition hover:bg-cobalt"
-    >
-      <span className="font-mono font-bold text-signal">{label}</span> {text}
-      {counter}
-    </Link>
+    <div className="relative bg-panel text-white" data-promo-banner>
+      <Link
+        href={contactHref}
+        data-track="promo_banner_click"
+        className="block px-10 py-2.5 text-center text-sm font-medium transition hover:brightness-125"
+      >
+        <span className="font-mono font-bold text-accent-soft">{label}</span> {text}
+        {counter}
+      </Link>
+      <PromoDismiss />
+    </div>
   );
 }

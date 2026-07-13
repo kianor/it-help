@@ -379,6 +379,7 @@ const fr: Dict = {
     sending: "En cours...",
     sentTitle: "Demandé !",
     sentText: "Vous recevrez une confirmation par mail dès que possible. Le rendez-vous n'est définitif qu'à ce moment-là.",
+    emailLabel: "E-mail * (la confirmation y sera envoyée)",
     slotTakenError: "Ce créneau vient d'être pris. Choisissez une autre heure.",
     yourSlot: "Votre choix",
   },
@@ -400,8 +401,15 @@ const fr: Dict = {
     newsletterOn: "Vous êtes inscrit.",
     newsletterOff: "Vous n'êtes pas inscrit.",
     logout: "Se déconnecter",
+    newsletterOffCta: "Désinscrivez-moi",
     track: "Voir le statut",
     statusWord: "statut",
+  },
+
+  consent: {
+    text: "Puis-je utiliser des statistiques de visite anonymes via Google Analytics pour améliorer ce site ? Si vous refusez, seul mon propre comptage sans cookies est utilisé.",
+    accept: "D'accord",
+    decline: "Plutôt pas",
   },
 
   konami: {

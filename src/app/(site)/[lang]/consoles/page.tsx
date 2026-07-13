@@ -13,7 +13,7 @@ export function generateMetadata({ params }: { params: { lang: string } }): Meta
   return pageMetadata(params.lang, "consoles", (d) => d.meta.consoles);
 }
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 
 export default function ConsolesPage({ params }: { params: { lang: string } }) {
   const lang = isLocale(params.lang) ? params.lang : "nl";
@@ -38,7 +38,7 @@ export default function ConsolesPage({ params }: { params: { lang: string } }) {
           <p className="mt-2 max-w-2xl text-ink/80">{t.galleryIntro}</p>
           <div className="mt-6 grid gap-6 sm:grid-cols-2">
             {gallery.map((item) => (
-              <figure key={item.id} className="gamer-card rounded-xl border border-ink/10 bg-white p-4">
+              <figure key={item.id} className="gamer-card rounded-xl border border-ink/10 bg-surface p-4">
                 <BeforeAfterSlider
                   beforeSrc={`/api/uploads/${item.before_file}`}
                   afterSrc={`/api/uploads/${item.after_file}`}
@@ -55,7 +55,7 @@ export default function ConsolesPage({ params }: { params: { lang: string } }) {
       )}
 
       <section className="pt-16">
-        <div className="rounded-2xl border border-ink/10 bg-white p-8">
+        <div className="rounded-2xl border border-ink/10 bg-surface p-8">
           <h2 className="text-2xl font-bold">{t.parentsTitle}</h2>
           <p className="mt-3 max-w-2xl text-ink/80">{t.parentsText}</p>
           <p className="mt-4">

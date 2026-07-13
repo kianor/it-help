@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { siteUrl } from "@/config/site";
 
-const disallow = ["/admin", "/*/volg", "/*/track", "/*/suivi", "/*/nieuwsbrief", "/*/account", "/*/compte"];
+const disallow = ["/admin", "/api", "/*/volg", "/*/track", "/*/suivi", "/*/nieuwsbrief", "/*/account", "/*/compte"];
 
 // AI-crawlers expliciet toelaten zodat de zaak vindbaar is in ChatGPT,
 // Claude, Perplexity en co (GEO: generative engine optimization).

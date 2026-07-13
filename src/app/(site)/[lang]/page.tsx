@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { CallButton } from "@/components/CtaButtons";
 import { PriceTag } from "@/components/PriceTag";
+import { LiteYouTube } from "@/components/LiteYouTube";
 import { isLocale } from "@/i18n/config";
 import { getDict } from "@/i18n";
 import { pageMetadata } from "@/i18n/metadata";
@@ -10,7 +11,9 @@ import { listReviews, reviewStats, getSetting } from "@/lib/db";
 import { site, siteUrl } from "@/config/site";
 import { fill } from "@/i18n";
 
-export const dynamic = "force-dynamic";
+// ISR: statisch geserveerd en elke 5 min ververst; admin-acties op reviews,
+// video's en acties revalideren direct (zie admin/actions.ts).
+export const revalidate = 300;
 
 export function generateMetadata({ params }: { params: { lang: string } }): Metadata {
   const meta = pageMetadata(params.lang, "", (d) => d.meta.home);
@@ -32,7 +35,7 @@ export default function HomePage({ params }: { params: { lang: string } }) {
       {/* Hero */}
       <section className="mx-auto max-w-6xl px-4 pb-16 pt-14 sm:pt-20">
         <div className="max-w-3xl">
-          <p className="font-mono text-sm font-bold uppercase tracking-wide text-signal">{t.kicker}</p>
+          <p className="font-mono text-sm font-bold uppercase tracking-wide text-accent-strong">{t.kicker}</p>
           <h1 className="mt-3 text-4xl font-bold leading-tight sm:text-5xl">
             {t.heroTitle} <span className="text-cobalt">{t.heroAccent}</span>
           </h1>
@@ -53,10 +56,12 @@ export default function HomePage({ params }: { params: { lang: string } }) {
             <Link
               key={blockPages[i]}
               href={p(lang, blockPages[i])}
-              className={`group animate-reveal rounded-xl border border-ink/10 bg-white p-6 transition hover:-translate-y-0.5 hover:border-cobalt/50 hover:shadow-md ${
+              data-track="nav_click"
+              data-track-label={blockPages[i]}
+              className={`group animate-reveal rounded-xl border border-ink/10 bg-surface p-6 transition hover:-translate-y-0.5 hover:border-cobalt/50 hover:shadow-md ${
                 gamerBlocks.has(i) ? "gamer-card" : ""
               }`}
-              style={{ animationDelay: `${i * 80}ms` }}
+              style={{ animationDelay: `${i * 50}ms` }}
             >
               <div className="flex items-start justify-between gap-4">
                 <h2 className="text-xl font-bold group-hover:text-cobalt">{b.title}</h2>
@@ -74,8 +79,8 @@ export default function HomePage({ params }: { params: { lang: string } }) {
         <h2 className="text-3xl font-bold">{t.howTitle}</h2>
         <div className="mt-8 grid gap-6 sm:grid-cols-3">
           {t.steps.map((s, i) => (
-            <div key={s.title} className="rounded-xl border border-ink/10 bg-white p-6">
-              <span className="font-mono text-sm font-bold text-signal">
+            <div key={s.title} className="rounded-xl border border-ink/10 bg-surface p-6">
+              <span className="font-mono text-sm font-bold text-accent-strong">
                 {t.stepLabel} {i + 1}
               </span>
               <h3 className="mt-2 text-lg font-bold">{s.title}</h3>
@@ -91,7 +96,7 @@ export default function HomePage({ params }: { params: { lang: string } }) {
         <div className="mt-8 grid gap-x-10 gap-y-6 sm:grid-cols-2">
           {t.why.map((w) => (
             <div key={w.title} className="flex gap-4">
-              <div className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full bg-signal" aria-hidden="true" />
+              <div className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full bg-accent-strong" aria-hidden="true" />
               <div>
                 <h3 className="font-bold">{w.title}</h3>
                 <p className="mt-1 text-ink/80">{w.text}</p>
@@ -109,7 +114,7 @@ export default function HomePage({ params }: { params: { lang: string } }) {
 
       {/* Afsluitende CTA */}
       <section className="mx-auto max-w-6xl px-4 pt-20">
-        <div className="rounded-2xl bg-ink p-8 text-white sm:p-12">
+        <div className="rounded-2xl bg-panel p-8 text-white sm:p-12">
           <h2 className="text-3xl font-bold">{t.ctaTitle}</h2>
           <p className="mt-3 max-w-2xl text-white/85">
             {t.ctaText} {dict.common.travel}
@@ -118,7 +123,7 @@ export default function HomePage({ params }: { params: { lang: string } }) {
             <CallButton label={dict.common.callCta} />
             <Link
               href={p(lang, "contact")}
-              className="inline-flex items-center justify-center rounded-lg border-2 border-white/70 px-6 py-3 font-semibold text-white transition hover:bg-white hover:text-ink"
+              className="inline-flex items-center justify-center rounded-lg border-2 border-white/70 px-6 py-3 font-semibold text-white transition hover:bg-surface hover:text-ink"
             >
               {dict.common.sendMessage}
             </Link>
@@ -131,7 +136,7 @@ export default function HomePage({ params }: { params: { lang: string } }) {
 
 function Stars({ rating }: { rating: number }) {
   return (
-    <span className="font-mono text-signal" aria-label={`${rating}/5`}>
+    <span className="font-mono text-accent" aria-label={`${rating}/5`}>
       {"★".repeat(Math.round(rating))}
       <span className="text-steel/40">{"★".repeat(5 - Math.round(rating))}</span>
     </span>
@@ -148,7 +153,7 @@ function ReviewsSection({ lang }: { lang: "nl" | "en" | "fr" }) {
     <section className="mx-auto max-w-6xl px-4 pt-20">
       <h2 className="text-3xl font-bold">{t.title}</h2>
       {reviews.length === 0 ? (
-        <div className="mt-6 rounded-xl border border-dashed border-steel/50 bg-white p-8 text-center">
+        <div className="mt-6 rounded-xl border border-dashed border-steel/50 bg-surface p-8 text-center">
           <p className="mx-auto max-w-xl text-ink/80">{t.empty}</p>
         </div>
       ) : (
@@ -158,7 +163,7 @@ function ReviewsSection({ lang }: { lang: "nl" | "en" | "fr" }) {
           </p>
           <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {reviews.map((r) => (
-              <figure key={r.id} className="rounded-xl border border-ink/10 bg-white p-5">
+              <figure key={r.id} className="rounded-xl border border-ink/10 bg-surface p-5">
                 <Stars rating={r.rating} />
                 <blockquote className="mt-2 text-sm text-ink/90">{r.text}</blockquote>
                 <figcaption className="mt-3 text-sm font-semibold">
@@ -226,15 +231,8 @@ function SocialSection({ lang }: { lang: "nl" | "en" | "fr" }) {
       {embeds.length > 0 && (
         <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {embeds.map((v) => (
-            <div key={v.id} className="gamer-card overflow-hidden rounded-xl border border-ink/10 bg-white">
-              <iframe
-                src={`https://www.youtube-nocookie.com/embed/${v.id}`}
-                title="Video"
-                className="aspect-video w-full"
-                allow="accelerometer; encrypted-media; picture-in-picture"
-                allowFullScreen
-                loading="lazy"
-              />
+            <div key={v.id} className="gamer-card overflow-hidden rounded-xl border border-ink/10 bg-surface">
+              <LiteYouTube id={v.id} title={t.title} />
             </div>
           ))}
         </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { track } from "@/lib/analytics";
 
 /**
  * Schakelt de donkere game-modus in en uit (klasse "game" op <html>).
@@ -21,6 +22,7 @@ export function GameModeToggle({ label }: { label: string }) {
     try {
       localStorage.setItem("ritsit-game", next ? "1" : "0");
     } catch {}
+    track("game_mode_toggle", { label: next ? "on" : "off" });
   }
 
   return (
@@ -31,7 +33,7 @@ export function GameModeToggle({ label }: { label: string }) {
       title={label}
       className={`inline-flex h-10 w-10 items-center justify-center rounded-lg border transition ${
         on
-          ? "border-signal bg-ink text-signal shadow-[0_0_12px_rgba(242,107,29,0.5)]"
+          ? "border-accent bg-ink text-accent-soft shadow-[0_0_12px_rgba(242,107,29,0.5)]"
           : "border-ink/15 text-steel hover:text-ink"
       }`}
     >

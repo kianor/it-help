@@ -14,7 +14,9 @@ als signatuur. Volledig drietalig: Nederlands, Engels en Frans.
 - Launch-actie-balk: -50% voor de eerste 5 klanten in ruil voor een eerlijke
   Google-review, met live teller
 - Voor/na-galerij met interactieve sleep-slider op de consolepagina
-- Game-modus: opt-in donker neon-thema via de gamepad-knop in de header
+- Game-modus: opt-in donker thema via de gamepad-knop; theming loopt volledig
+  via semantische CSS custom properties (WCAG AA in beide thema's, geverifieerd
+  met `node scripts/check-contrast.mjs`; extra thema = één CSS-blok)
 - RGB-glow op de gamer-blokken + Konami-code easter egg (↑↑↓↓←→←→BA = €5 korting)
 - Nieuwsbrief met dubbele opt-in
 - `/afspraak` — eigen afsprakensysteem: klant kiest een vrij slot, jij bevestigt
@@ -49,6 +51,12 @@ als signatuur. Volledig drietalig: Nederlands, Engels en Frans.
 - Statusupdate-mail bij elke stap
 - Review-verzoek na afronding (handmatig triggeren vanuit admin)
 - Nieuwsbrief-bevestigingsmail (dubbele opt-in)
+
+**Metingen** (zie `docs/TRACKING.md` voor het volledige meetplan)
+- Cookievrije pageview- én event-tracking (navigatie, CTA's, scroll-diepte,
+  calculator, afspraken, video's) in admin → Statistieken
+- Optionele GA4-koppeling: zet `NEXT_PUBLIC_GA4_ID`, dan verschijnt een
+  consent-banner en laadt gtag pas na toestemming (Consent Mode)
 
 **Beveiliging**
 - Admin achter wachtwoord + ondertekende sessiecookie (7 dagen), middleware-guard

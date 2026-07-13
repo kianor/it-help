@@ -14,21 +14,21 @@ export function Footer({ lang, dict }: { lang: Locale; dict: Dict }) {
   ].filter((s) => s.url);
 
   return (
-    <footer className="mt-20 border-t border-ink/10 bg-white pb-24 md:pb-0">
+    <footer className="mt-20 border-t border-ink/10 bg-surface pb-24 md:pb-0">
       <div className="mx-auto grid max-w-6xl gap-8 px-4 py-12 md:grid-cols-3">
         <div>
           <p className="font-display text-lg font-bold">
             {site.name}
-            <span className="text-signal">.</span>
+            <span className="text-accent">.</span>
           </p>
-          <p className="mt-1 font-mono text-xs text-signal">{site.tagline}</p>
+          <p className="mt-1 font-mono text-xs text-accent-strong">{site.tagline}</p>
           <p className="mt-2 text-sm text-steel">
             {dict.common.region}
             <br />
             {dict.common.openingInfo}
           </p>
           <p className="mt-2 font-mono text-sm">
-            <a href={`tel:${site.phone}`} className="hover:text-cobalt">
+            <a href={`tel:${site.phone}`} data-track="footer_click" className="hover:text-cobalt">
               {site.phoneDisplay}
             </a>
           </p>
@@ -46,25 +46,25 @@ export function Footer({ lang, dict }: { lang: Locale; dict: Dict }) {
         <div className="text-sm">
           <p className="label">{f.servicesLabel}</p>
           <ul className="space-y-1.5">
-            <li><Link href={p(lang, "pc-bouwen")} className="hover:text-cobalt">{f.links.pc}</Link></li>
-            <li><Link href={p(lang, "herstel")} className="hover:text-cobalt">{f.links.herstel}</Link></li>
-            <li><Link href={p(lang, "consoles")} className="hover:text-cobalt">{f.links.consoles}</Link></li>
-            <li><Link href={p(lang, "voor-zaken")} className="hover:text-cobalt">{f.links.zaken}</Link></li>
-            <li><Link href={p(lang, "volg")} className="hover:text-cobalt">{f.links.volg}</Link></li>
-            <li><Link href={p(lang, "afspraak")} className="hover:text-cobalt">{f.links.afspraak}</Link></li>
-            <li><Link href={p(lang, "account")} className="hover:text-cobalt">{dict.nav.account}</Link></li>
+            <li><Link href={p(lang, "pc-bouwen")} data-track="footer_click" className="hover:text-cobalt">{f.links.pc}</Link></li>
+            <li><Link href={p(lang, "herstel")} data-track="footer_click" className="hover:text-cobalt">{f.links.herstel}</Link></li>
+            <li><Link href={p(lang, "consoles")} data-track="footer_click" className="hover:text-cobalt">{f.links.consoles}</Link></li>
+            <li><Link href={p(lang, "voor-zaken")} data-track="footer_click" className="hover:text-cobalt">{f.links.zaken}</Link></li>
+            <li><Link href={p(lang, "volg")} data-track="footer_click" className="hover:text-cobalt">{f.links.volg}</Link></li>
+            <li><Link href={p(lang, "afspraak")} data-track="footer_click" className="hover:text-cobalt">{f.links.afspraak}</Link></li>
+            <li><Link href={p(lang, "account")} data-track="footer_click" className="hover:text-cobalt">{dict.nav.account}</Link></li>
           </ul>
         </div>
 
         <div className="text-sm">
           <p className="label">{f.practicalLabel}</p>
           <ul className="space-y-1.5">
-            <li><Link href={p(lang, "prijzen")} className="hover:text-cobalt">{f.links.prijzen}</Link></li>
-            <li><Link href={p(lang, "voorwaarden")} className="hover:text-cobalt">{f.links.voorwaarden}</Link></li>
-            <li><Link href={p(lang, "privacy")} className="hover:text-cobalt">{f.links.privacy}</Link></li>
+            <li><Link href={p(lang, "prijzen")} data-track="footer_click" className="hover:text-cobalt">{f.links.prijzen}</Link></li>
+            <li><Link href={p(lang, "voorwaarden")} data-track="footer_click" className="hover:text-cobalt">{f.links.voorwaarden}</Link></li>
+            <li><Link href={p(lang, "privacy")} data-track="footer_click" className="hover:text-cobalt">{f.links.privacy}</Link></li>
             {site.googleReviewsUrl && (
               <li>
-                <a href={site.googleReviewsUrl} target="_blank" rel="noopener noreferrer" className="hover:text-cobalt">
+                <a href={site.googleReviewsUrl} target="_blank" rel="noopener noreferrer" data-track="footer_click" className="hover:text-cobalt">
                   {f.links.reviews}
                 </a>
               </li>

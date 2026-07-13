@@ -4,6 +4,8 @@ import { isLocale } from "@/i18n/config";
 import { getDict, fill } from "@/i18n";
 import { pageMetadata } from "@/i18n/metadata";
 
+export const revalidate = 3600; // uur-refresh; promo-acties revalideren direct
+
 export function generateMetadata({ params }: { params: { lang: string } }): Metadata {
   return pageMetadata(params.lang, "privacy", (d) => d.meta.privacy);
 }

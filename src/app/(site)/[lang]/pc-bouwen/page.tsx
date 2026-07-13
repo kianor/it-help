@@ -8,6 +8,8 @@ import { pageMetadata } from "@/i18n/metadata";
 import { p } from "@/i18n/slugs.mjs";
 import { PcCalculator } from "@/components/PcCalculator";
 
+export const revalidate = 3600; // uur-refresh; promo-acties revalideren direct
+
 export function generateMetadata({ params }: { params: { lang: string } }): Metadata {
   return pageMetadata(params.lang, "pc-bouwen", (d) => d.meta.pc);
 }
@@ -36,8 +38,8 @@ export default function PcBouwenPage({ params }: { params: { lang: string } }) {
         <h2 className="text-2xl font-bold">{t.stepsTitle}</h2>
         <ol className="mt-6 space-y-4">
           {t.steps.map((s, i) => (
-            <li key={s.title} className="flex gap-4 rounded-xl border border-ink/10 bg-white p-4">
-              <span className="font-mono text-sm font-bold text-signal">{String(i + 1).padStart(2, "0")}</span>
+            <li key={s.title} className="flex gap-4 rounded-xl border border-ink/10 bg-surface p-4">
+              <span className="font-mono text-sm font-bold text-accent-strong">{String(i + 1).padStart(2, "0")}</span>
               <div>
                 <h3 className="font-bold">{s.title}</h3>
                 <p className="mt-1 text-sm text-ink/80">{s.text}</p>
@@ -51,10 +53,10 @@ export default function PcBouwenPage({ params }: { params: { lang: string } }) {
         <h2 className="text-2xl font-bold">{t.faqTitle}</h2>
         <div className="mt-6 space-y-3">
           {t.faq.map((f) => (
-            <details key={f.q} className="group rounded-xl border border-ink/10 bg-white p-4">
+            <details key={f.q} className="group rounded-xl border border-ink/10 bg-surface p-4">
               <summary className="cursor-pointer list-none font-semibold marker:hidden">
-                <span className="mr-2 font-mono text-signal group-open:hidden">+</span>
-                <span className="mr-2 hidden font-mono text-signal group-open:inline">−</span>
+                <span className="mr-2 font-mono text-accent-strong group-open:hidden">+</span>
+                <span className="mr-2 hidden font-mono text-accent-strong group-open:inline">−</span>
                 {f.q}
               </summary>
               <p className="mt-3 text-ink/80">{f.a}</p>

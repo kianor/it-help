@@ -31,6 +31,7 @@ export default function AfspraakPage({ params }: { params: { lang: string } }) {
           form={dict.contactPage.form}
           serviceOptions={dict.contactPage.serviceOptions}
           htmlLang={htmlLang[lang]}
+          callCta={dict.common.callCta}
         />
       </div>
     </div>

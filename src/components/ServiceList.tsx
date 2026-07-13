@@ -10,7 +10,7 @@ export type ServiceGroupData = {
 export function ServiceList({ group, accent = false }: { group: ServiceGroupData; accent?: boolean }) {
   return (
     <div>
-      <ul className="divide-y divide-ink/10 rounded-xl border border-ink/10 bg-white">
+      <ul className="divide-y divide-ink/10 rounded-xl border border-ink/10 bg-surface">
         {group.services.map((s) => (
           <li
             key={s.name}

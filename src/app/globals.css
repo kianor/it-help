@@ -1,38 +1,81 @@
-@import "@fontsource-variable/bricolage-grotesque";
-@import "@fontsource-variable/instrument-sans";
-@import "@fontsource/jetbrains-mono/400.css";
-@import "@fontsource/jetbrains-mono/700.css";
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/*
+ * ==========================================================================
+ * THEMING — semantische kleurtokens als RGB-tripletten (voor alpha-support).
+ *
+ * Licht is de standaard en werkt zonder JavaScript. Het donkere thema
+ * activeert via de klasse "game" op <html> (gezet vóór hydration door een
+ * inline script, dus zonder flits). Een extra thema toevoegen = één extra
+ * blok zoals html.game dat dezelfde tokens herdefinieert; markup en
+ * Tailwind-config blijven onaangeroerd.
+ *
+ * Contrast (WCAG AA, geverifieerd met scripts/check-contrast.mjs):
+ *   --c-text        op page/surface  → ≥ 4.5:1 in beide thema's
+ *   --c-text-muted  op page/surface  → ≥ 4.5:1 in beide thema's
+ *   --c-link        op page/surface  → ≥ 4.5:1 in beide thema's
+ *   --c-accent-strong op page/surface → ≥ 4.5:1 (kleine tekst, prijzen)
+ *   wit             op accent-strong → ≥ 4.5:1 (primaire knoppen)
+ *   --c-accent-soft op panel         → ≥ 4.5:1 (labels op donkere vlakken)
+ *   --c-accent is decoratief: alleen voor grote/vette koppen, glows en lijnen.
+ * ==========================================================================
+ */
+:root {
+  --c-page: 250 250 247; /*      #FAFAF7 werkblad-wit */
+  --c-surface: 255 255 255; /*   #FFFFFF kaarten */
+  --c-text: 22 50 79; /*         #16324F inktblauw */
+  --c-text-muted: 84 100 120; /* #546478 staalgrijs, AA-gecorrigeerd */
+  --c-link: 30 71 156; /*        #1E479C kobalt, AA-gecorrigeerd */
+  --c-accent: 230 97 16; /*      #E66110 signaal-oranje (decoratief, ≥3:1) */
+  --c-accent-strong: 186 74 6; /* #BA4A06 oranje voor kleine tekst/knoppen */
+  --c-accent-soft: 255 160 100; /* #FFA064 oranje óp donkere vlakken */
+  --c-panel: 22 50 79; /*        #16324F omgekeerd vlak */
+}
+
+/* Donker thema: "game-modus" (opt-in via toggle in de header) */
+html.game {
+  --c-page: 11 16 32; /*         #0B1020 */
+  --c-surface: 20 27 48; /*      #141B30 */
+  --c-text: 230 234 242; /*      #E6EAF2 */
+  --c-text-muted: 154 166 188; /* #9AA6BC */
+  --c-link: 143 176 255; /*      #8FB0FF */
+  --c-accent: 242 107 29;
+  --c-accent-strong: 255 138 72; /* #FF8A48 op donker juist lichter */
+  --c-accent-soft: 255 160 100;
+  --c-panel: 5 7 15; /*          #05070F */
+}
 
 @layer base {
   html {
     scroll-behavior: smooth;
   }
   body {
-    @apply bg-paper text-ink font-body antialiased;
+    @apply bg-page text-foreground font-body antialiased;
   }
   h1, h2, h3, h4 {
     @apply font-display;
   }
   :focus-visible {
-    @apply outline-none ring-2 ring-cobalt ring-offset-2 ring-offset-paper;
+    @apply outline-none ring-2 ring-link ring-offset-2 ring-offset-page;
   }
 }
 
 @layer components {
   /* Werkplaats-prijskaartje: het signatuur-element */
   .price-tag {
-    @apply relative inline-flex items-center gap-2 rounded-lg border border-ink/15 bg-white py-1.5 pl-6 pr-3 font-mono text-sm font-bold text-ink shadow-sm transition-transform duration-200;
+    @apply relative inline-flex items-center gap-2 rounded-lg border border-foreground/15 bg-surface py-1.5 pl-6 pr-3 font-mono text-sm font-bold text-foreground shadow-sm transition-transform duration-200;
   }
   .price-tag::before {
     content: "";
-    @apply absolute left-2 top-1/2 h-2.5 w-2.5 -translate-y-1/2 rounded-full border border-ink/25 bg-paper;
+    @apply absolute left-2 top-1/2 h-2.5 w-2.5 -translate-y-1/2 rounded-full border border-foreground/25 bg-page;
   }
   .price-tag--accent {
-    @apply border-signal/40 text-signal;
+    @apply border-accent/40 text-accent-strong;
+  }
+  html.game .price-tag {
+    box-shadow: 0 0 10px rgb(var(--c-accent) / 0.15);
   }
   @media (hover: hover) {
     a:hover .price-tag,
@@ -40,28 +83,30 @@
       transform: rotate(-2deg) translateY(-1px);
     }
   }
+
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-signal px-6 py-3 font-semibold text-white transition hover:bg-[#d95b12];
+    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-accent-strong px-6 py-3 font-semibold text-white transition hover:brightness-110;
+  }
+  html.game .btn-primary {
+    @apply text-panel hover:brightness-125;
+    box-shadow: 0 0 18px rgb(var(--c-accent) / 0.35);
   }
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 rounded-lg border-2 border-cobalt px-6 py-3 font-semibold text-cobalt transition hover:bg-cobalt hover:text-white;
+    @apply inline-flex items-center justify-center gap-2 rounded-lg border-2 border-link px-6 py-3 font-semibold text-link transition hover:bg-link hover:text-surface;
   }
   .input {
-    @apply w-full rounded-lg border border-steel/40 bg-white px-4 py-3 text-ink placeholder:text-steel focus:border-cobalt;
+    @apply w-full rounded-lg border border-muted/40 bg-surface px-4 py-3 text-foreground placeholder:text-muted focus:border-link;
   }
   .label {
-    @apply mb-1.5 block font-mono text-xs font-bold uppercase tracking-wide text-steel;
+    @apply mb-1.5 block font-mono text-xs font-bold uppercase tracking-wide text-muted;
   }
-}
 
-@layer components {
   /*
    * Gamer-accent: subtiele RGB-glow rond de kaart bij hover
    * (en permanent zichtbaar in game-modus).
    */
   .gamer-card {
     position: relative;
-    --card-bg: #ffffff;
   }
   /* Dekkende laag onder de inhoud zodat de glow alleen als rand zichtbaar is */
   .gamer-card::before {
@@ -70,7 +115,7 @@
     inset: 0;
     z-index: -1;
     border-radius: 11px;
-    background: var(--card-bg);
+    background: rgb(var(--c-surface));
   }
   .gamer-card::after {
     content: "";
@@ -98,56 +143,9 @@
   }
 }
 
-/*
- * GAME-MODUS — donker neon-thema, opt-in via de gamepad-knop in de header.
- * Overschrijft de kernutilities zodat de bestaande markup ongewijzigd blijft.
- */
-html.game body {
-  background-color: #0b1020;
-  color: #e6eaf2;
+html.game img {
+  filter: brightness(0.95);
 }
-html.game .bg-paper { background-color: #0b1020; }
-html.game .bg-paper\/95 { background-color: rgba(11, 16, 32, 0.95); }
-html.game .bg-white { background-color: #141b30; }
-html.game .bg-ink { background-color: #05070f; }
-html.game .bg-cobalt\/5 { background-color: rgba(90, 130, 255, 0.08); }
-html.game .bg-cobalt\/10 { background-color: rgba(90, 130, 255, 0.15); }
-html.game .bg-signal\/10 { background-color: rgba(242, 107, 29, 0.15); }
-html.game .text-ink { color: #e6eaf2; }
-html.game .text-ink\/80 { color: rgba(230, 234, 242, 0.8); }
-html.game .text-ink\/90 { color: rgba(230, 234, 242, 0.9); }
-html.game .text-cobalt { color: #7ea2ff; }
-html.game .text-steel { color: #94a0b8; }
-html.game .border-ink\/10 { border-color: rgba(230, 234, 242, 0.12); }
-html.game .border-ink\/15 { border-color: rgba(230, 234, 242, 0.18); }
-html.game .border-ink\/25 { border-color: rgba(230, 234, 242, 0.3); }
-html.game .divide-ink\/10 > * + * { border-color: rgba(230, 234, 242, 0.1); }
-html.game .border-steel\/40,
-html.game .border-steel\/50 { border-color: rgba(148, 160, 184, 0.4); }
-html.game .gamer-card { --card-bg: #141b30; }
-html.game .price-tag {
-  background-color: #0b1020;
-  color: #e6eaf2;
-  border-color: rgba(230, 234, 242, 0.2);
-  box-shadow: 0 0 10px rgba(242, 107, 29, 0.15);
-}
-html.game .price-tag::before {
-  background-color: #141b30;
-  border-color: rgba(230, 234, 242, 0.3);
-}
-html.game .price-tag--accent { color: #ff8a48; border-color: rgba(242, 107, 29, 0.5); }
-html.game .btn-primary { box-shadow: 0 0 18px rgba(242, 107, 29, 0.35); }
-html.game .btn-secondary { border-color: #7ea2ff; color: #7ea2ff; }
-html.game .btn-secondary:hover { background-color: #7ea2ff; color: #0b1020; }
-html.game .input {
-  background-color: #0b1020;
-  color: #e6eaf2;
-  border-color: rgba(148, 160, 184, 0.4);
-}
-html.game .input::placeholder { color: #5c6880; }
-html.game .hover\:bg-white:hover { background-color: #e6eaf2; }
-html.game .text-white\/85 { color: rgba(230, 234, 242, 0.85); }
-html.game img { filter: brightness(0.95); }
 
 @media (prefers-reduced-motion: reduce) {
   html {

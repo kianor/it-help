@@ -34,10 +34,10 @@ export default function AdminJobDetailPage({ params }: { params: { id: string } 
             {job.customer_phone && <a href={`tel:${job.customer_phone}`} className="font-mono text-cobalt hover:underline">{job.customer_phone}</a>}
             {job.customer_phone && job.customer_email && " · "}
             {job.customer_email && <a href={`mailto:${job.customer_email}`} className="text-cobalt hover:underline">{job.customer_email}</a>}
-            {!job.customer_email && <span className="text-signal"> Geen e-mail: klant krijgt geen automatische updates.</span>}
+            {!job.customer_email && <span className="text-accent-strong"> Geen e-mail: klant krijgt geen automatische updates.</span>}
           </p>
         </div>
-        <div className="rounded-lg border border-ink/10 bg-white px-4 py-2 text-right">
+        <div className="rounded-lg border border-ink/10 bg-surface px-4 py-2 text-right">
           <p className="label">Volgcode voor de klant</p>
           <p className="font-mono font-bold">{job.code}</p>
           <p className="flex gap-3 text-xs">
@@ -51,7 +51,7 @@ export default function AdminJobDetailPage({ params }: { params: { id: string } 
         </div>
       </div>
 
-      <div className="mt-8 rounded-xl border border-ink/10 bg-white p-5">
+      <div className="mt-8 rounded-xl border border-ink/10 bg-surface p-5">
         <h2 className="font-bold">Status bijwerken</h2>
         <p className="mt-1 text-xs text-steel">
           De klant krijgt automatisch een mail bij elke update (als er een e-mailadres is).
@@ -85,7 +85,7 @@ export default function AdminJobDetailPage({ params }: { params: { id: string } 
       </div>
 
       {job.status === "afgerond" && job.customer_email && (
-        <div className="mt-4 rounded-xl border border-signal/40 bg-white p-5">
+        <div className="mt-4 rounded-xl border border-signal/40 bg-surface p-5">
           <h2 className="font-bold">Review vragen</h2>
           {job.review_requested_at ? (
             <p className="mt-1 text-sm text-steel">Review-verzoek al verstuurd.</p>
@@ -107,7 +107,7 @@ export default function AdminJobDetailPage({ params }: { params: { id: string } 
         <h2 className="font-bold">Geschiedenis</h2>
         <ul className="mt-3 space-y-2">
           {[...updates].reverse().map((u) => (
-            <li key={u.id} className="rounded-lg border border-ink/10 bg-white px-4 py-2.5 text-sm">
+            <li key={u.id} className="rounded-lg border border-ink/10 bg-surface px-4 py-2.5 text-sm">
               <span className="font-mono text-xs text-steel">{formatDate(u.created_at)}</span>{" "}
               <span className="font-semibold">{u.status}</span>
               {u.message && <p className="mt-0.5 text-ink/80">{u.message}</p>}

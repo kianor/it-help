@@ -16,7 +16,7 @@ export default function AdminReviewsPage() {
         Nu: {stats.count} gepubliceerd, gemiddeld {stats.avg}/5.
       </p>
 
-      <form action={addReviewAction} className="mt-6 grid gap-4 rounded-xl border border-ink/10 bg-white p-5 sm:grid-cols-2">
+      <form action={addReviewAction} className="mt-6 grid gap-4 rounded-xl border border-ink/10 bg-surface p-5 sm:grid-cols-2">
         <div>
           <label className="label" htmlFor="author">Naam klant *</label>
           <input className="input" id="author" name="author" required maxLength={80} />
@@ -50,11 +50,11 @@ export default function AdminReviewsPage() {
 
       <div className="mt-8 space-y-3">
         {reviews.map((r) => (
-          <div key={r.id} className={`rounded-xl border bg-white p-4 ${r.published ? "border-ink/10" : "border-ink/10 opacity-50"}`}>
+          <div key={r.id} className={`rounded-xl border bg-surface p-4 ${r.published ? "border-ink/10" : "border-ink/10 opacity-50"}`}>
             <div className="flex flex-wrap items-center justify-between gap-2">
               <p className="font-bold">
                 {r.author}{" "}
-                <span className="font-mono text-signal">{"★".repeat(r.rating)}</span>{" "}
+                <span className="font-mono text-accent-strong">{"★".repeat(r.rating)}</span>{" "}
                 <span className="text-xs font-normal text-steel">via {r.source}</span>
               </p>
               <div className="flex gap-3 text-sm">
@@ -66,7 +66,7 @@ export default function AdminReviewsPage() {
                 </form>
                 <form action={deleteReviewAction}>
                   <input type="hidden" name="id" value={r.id} />
-                  <button type="submit" className="text-signal underline">Verwijder</button>
+                  <button type="submit" className="text-accent-strong underline">Verwijder</button>
                 </form>
               </div>
             </div>

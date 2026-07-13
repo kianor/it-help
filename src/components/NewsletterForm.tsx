@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { Dict } from "@/i18n";
+import { track } from "@/lib/analytics";
 import type { Locale } from "@/i18n/config";
 
 type Status = "idle" | "busy" | "sent" | "error";
@@ -27,7 +28,10 @@ export function NewsletterForm({
         body: JSON.stringify({ ...data, lang }),
       });
       setStatus(res.ok ? "sent" : "error");
-      if (res.ok) form.reset();
+      if (res.ok) {
+        track("newsletter_subscribe");
+        form.reset();
+      }
     } catch {
       setStatus("error");
     }
@@ -62,7 +66,7 @@ export function NewsletterForm({
         {status === "busy" ? labels.busy : labels.submit}
       </button>
       {status === "error" && (
-        <p className="text-sm text-signal" role="alert">{labels.error}</p>
+        <p className="text-sm text-accent-strong" role="alert">{labels.error}</p>
       )}
     </form>
   );

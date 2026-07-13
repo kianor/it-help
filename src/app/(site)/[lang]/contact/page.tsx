@@ -8,6 +8,8 @@ import { getDict } from "@/i18n";
 import { pageMetadata } from "@/i18n/metadata";
 import { p } from "@/i18n/slugs.mjs";
 
+export const revalidate = 3600; // uur-refresh; promo-acties revalideren direct
+
 export function generateMetadata({ params }: { params: { lang: string } }): Metadata {
   return pageMetadata(params.lang, "contact", (d) => d.meta.contact);
 }
@@ -42,16 +44,16 @@ export default function ContactPage({ params }: { params: { lang: string } }) {
         </div>
 
         <aside className="space-y-6">
-          <div className="rounded-xl border border-ink/10 bg-white p-6">
+          <div className="rounded-xl border border-ink/10 bg-surface p-6">
             <p className="label">{t.aside.regionLabel}</p>
             <p className="font-semibold">{dict.common.region}</p>
             <p className="mt-2 text-sm text-ink/80">{dict.common.travel}</p>
           </div>
-          <div className="rounded-xl border border-ink/10 bg-white p-6">
+          <div className="rounded-xl border border-ink/10 bg-surface p-6">
             <p className="label">{t.aside.expectLabel}</p>
             <p className="text-sm text-ink/80">{dict.common.responsePromise}</p>
           </div>
-          <div className="rounded-xl border border-ink/10 bg-white p-6">
+          <div className="rounded-xl border border-ink/10 bg-surface p-6">
             <p className="label">{t.aside.newsletterLabel}</p>
             <p className="mb-3 text-sm text-ink/80">{t.aside.newsletterText}</p>
             <NewsletterForm lang={lang} labels={dict.newsletter} />

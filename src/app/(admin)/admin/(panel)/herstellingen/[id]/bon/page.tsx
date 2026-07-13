@@ -25,7 +25,7 @@ export default async function BonPage({ params }: { params: { id: string } }) {
           <div>
             <p className="font-display text-2xl font-bold">
               {site.name}
-              <span className="text-signal">.</span>
+              <span className="text-accent">.</span>
             </p>
             <p className="font-mono text-xs text-steel">{site.tagline}</p>
           </div>

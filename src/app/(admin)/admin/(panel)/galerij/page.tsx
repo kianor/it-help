@@ -15,7 +15,7 @@ export default function AdminGalleryPage() {
         Vraag de klant altijd even toestemming.
       </p>
 
-      <form action={addGalleryAction} className="mt-6 grid gap-4 rounded-xl border border-ink/10 bg-white p-5 sm:grid-cols-3">
+      <form action={addGalleryAction} className="mt-6 grid gap-4 rounded-xl border border-ink/10 bg-surface p-5 sm:grid-cols-3">
         <div className="sm:col-span-3">
           <label className="label" htmlFor="title">Titel *</label>
           <input className="input" id="title" name="title" required maxLength={120} placeholder="PS4 na 6 jaar zonder schoonmaak" />
@@ -35,7 +35,7 @@ export default function AdminGalleryPage() {
 
       <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((item) => (
-          <div key={item.id} className="rounded-xl border border-ink/10 bg-white p-4">
+          <div key={item.id} className="rounded-xl border border-ink/10 bg-surface p-4">
             <div className="grid grid-cols-2 gap-2">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={`/api/uploads/${item.before_file}`} alt={`Voor: ${item.title}`} className="aspect-square w-full rounded-lg object-cover" />
@@ -45,7 +45,7 @@ export default function AdminGalleryPage() {
             <p className="mt-2 font-semibold">{item.title}</p>
             <form action={deleteGalleryAction} className="mt-2">
               <input type="hidden" name="id" value={item.id} />
-              <button type="submit" className="text-sm text-signal underline">Verwijderen</button>
+              <button type="submit" className="text-sm text-accent-strong underline">Verwijderen</button>
             </form>
           </div>
         ))}
