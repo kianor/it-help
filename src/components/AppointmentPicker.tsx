@@ -5,8 +5,12 @@ import { useRouter } from "next/navigation";
 import type { Dict } from "@/i18n";
 import type { DaySlots } from "@/lib/appointments";
 import { track } from "@/lib/analytics";
+import { fieldError as validate, type Field } from "@/lib/validation";
 
 type Status = "idle" | "busy" | "sent" | "error";
+
+// Op het afspraakformulier is e-mail verplicht (bevestiging), bericht optioneel.
+const FIELD_ORDER: Field[] = ["name", "phone", "email", "service"];
 
 export function AppointmentPicker({
   lang,
@@ -31,9 +35,26 @@ export function AppointmentPicker({
   const [slot, setSlot] = useState<string | null>(null);
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
+  const [errors, setErrors] = useState<Partial<Record<Field, string>>>({});
   const router = useRouter();
 
   const selectedDay = days.find((d) => d.day === day);
+
+  const fieldError = (field: Field, value: string) =>
+    validate(field, value, form.errors, { emailRequired: true });
+  const onBlur = (field: Field) => (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) =>
+    setErrors((prev) => ({ ...prev, [field]: fieldError(field, e.target.value) }));
+  const clearIfFixed = (field: Field, value: string) => {
+    if (errors[field]) setErrors((prev) => ({ ...prev, [field]: fieldError(field, value) }));
+  };
+  const errorProps = (field: Field) =>
+    errors[field] ? { "aria-invalid": true as const, "aria-describedby": `a-${field}-error` } : {};
+  const FieldError = ({ field }: { field: Field }) =>
+    errors[field] ? (
+      <p id={`a-${field}-error`} className="mt-1 text-xs font-medium text-accent-strong" role="alert">
+        {errors[field]}
+      </p>
+    ) : null;
 
   function dayLabel(dayStr: string): string {
     const date = new Date(dayStr + "T12:00:00");
@@ -43,9 +64,20 @@ export function AppointmentPicker({
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!slot) return;
+    const data = Object.fromEntries(new FormData(e.currentTarget).entries()) as Record<string, string>;
+
+    // Volledige validatie vóór verzenden; bij fouten focus het eerste veld.
+    const next: Partial<Record<Field, string>> = {};
+    for (const f of FIELD_ORDER) next[f] = fieldError(f, String(data[f] ?? ""));
+    setErrors(next);
+    const firstBad = FIELD_ORDER.find((f) => next[f]);
+    if (firstBad) {
+      document.getElementById(`a-${firstBad}`)?.focus();
+      return;
+    }
+
     setStatus("busy");
     setError("");
-    const data = Object.fromEntries(new FormData(e.currentTarget).entries());
     try {
       const res = await fetch("/api/afspraak", {
         method: "POST",
@@ -152,29 +184,74 @@ export function AppointmentPicker({
         )}
       </div>
 
-      <form onSubmit={onSubmit} className="space-y-4">
+      <form onSubmit={onSubmit} noValidate className="space-y-4">
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
             <label className="label" htmlFor="a-name">{form.name}</label>
-            <input className="input" id="a-name" name="name" required maxLength={100} autoComplete="name" />
+            <input
+              className="input"
+              id="a-name"
+              name="name"
+              required
+              maxLength={100}
+              autoComplete="name"
+              onBlur={onBlur("name")}
+              onChange={(e) => clearIfFixed("name", e.target.value)}
+              {...errorProps("name")}
+            />
+            <FieldError field="name" />
           </div>
           <div>
             <label className="label" htmlFor="a-phone">{form.phone}</label>
-            <input className="input" id="a-phone" name="phone" type="tel" required maxLength={30} autoComplete="tel" />
+            <input
+              className="input"
+              id="a-phone"
+              name="phone"
+              type="tel"
+              required
+              maxLength={30}
+              autoComplete="tel"
+              onBlur={onBlur("phone")}
+              onChange={(e) => clearIfFixed("phone", e.target.value)}
+              {...errorProps("phone")}
+            />
+            <FieldError field="phone" />
           </div>
         </div>
         <div>
           <label className="label" htmlFor="a-email">{labels.emailLabel}</label>
-          <input className="input" id="a-email" name="email" type="email" required maxLength={200} autoComplete="email" />
+          <input
+            className="input"
+            id="a-email"
+            name="email"
+            type="email"
+            required
+            maxLength={200}
+            autoComplete="email"
+            onBlur={onBlur("email")}
+            onChange={(e) => clearIfFixed("email", e.target.value)}
+            {...errorProps("email")}
+          />
+          <FieldError field="email" />
         </div>
         <div>
           <label className="label" htmlFor="a-service">{form.service}</label>
-          <select className="input" id="a-service" name="service" required defaultValue="">
+          <select
+            className="input"
+            id="a-service"
+            name="service"
+            required
+            defaultValue=""
+            onBlur={onBlur("service")}
+            onChange={(e) => clearIfFixed("service", e.target.value)}
+            {...errorProps("service")}
+          >
             <option value="" disabled>{form.servicePlaceholder}</option>
             {serviceOptions.map((o) => (
               <option key={o} value={o}>{o}</option>
             ))}
           </select>
+          <FieldError field="service" />
         </div>
         <div>
           <label className="label" htmlFor="a-message">{form.message}</label>

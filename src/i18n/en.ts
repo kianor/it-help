@@ -80,6 +80,8 @@ const en: Dict = {
     moreInfo: "More info →",
     viewPrices: "See fixed prices",
     toHome: "Back to the homepage",
+    home: "Home",
+    breadcrumb: "Breadcrumb",
     skipToContent: "Skip to content",
     gameMode: "Game mode",
     gameModeHint: "This is game mode: a dark theme for gamers. Click again to switch back.",
@@ -266,7 +268,7 @@ const en: Dict = {
       errors: {
         name: "Please enter your name (at least 2 characters).",
         phone: "Please enter a valid phone number.",
-        email: "This email address doesn't look right.",
+        email: "Please enter a valid email address.",
         service: "Please choose what it's about.",
         message: "Briefly describe what it's about (at least 5 characters).",
       },

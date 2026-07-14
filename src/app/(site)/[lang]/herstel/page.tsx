@@ -7,6 +7,7 @@ import { getDict } from "@/i18n";
 import { pageMetadata } from "@/i18n/metadata";
 import { p } from "@/i18n/slugs.mjs";
 import { JsonLd } from "@/components/JsonLd";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { breadcrumbLd, serviceLd } from "@/lib/structured-data";
 
 export const revalidate = 3600; // uur-refresh; promo-acties revalideren direct
@@ -24,6 +25,7 @@ export default function HerstelPage({ params }: { params: { lang: string } }) {
     <div className="mx-auto max-w-6xl px-4 pt-14">
       <JsonLd data={breadcrumbLd(lang, "herstel", dict.nav.herstel)} />
       <JsonLd data={serviceLd(lang, dict.services.herstel, t.title, t.intro, "herstel")} />
+      <Breadcrumbs lang={lang} page="herstel" label={dict.nav.herstel} homeLabel={dict.common.home} ariaLabel={dict.common.breadcrumb} />
       <div className="max-w-3xl" data-reveal>
         <h1 className="text-4xl font-bold">{t.title}</h1>
         <p className="mt-4 text-lg text-ink/80">{t.intro}</p>

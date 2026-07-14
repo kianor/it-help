@@ -4,12 +4,11 @@ import { useEffect, useState } from "react";
 import type { Dict } from "@/i18n";
 import { track } from "@/lib/analytics";
 import type { Locale } from "@/i18n/config";
+import { fieldError as validate, type Field } from "@/lib/validation";
 
 type Status = "idle" | "busy" | "sent" | "error";
-type Field = "name" | "phone" | "email" | "service" | "message";
 
 const FIELD_ORDER: Field[] = ["name", "phone", "email", "service", "message"];
-const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function ContactForm({
   lang,
@@ -41,22 +40,9 @@ export function ContactForm({
     }
   }, [serviceOptions]);
 
-  /** Geeft de foutmelding voor één veld, of "" als het in orde is. */
-  function fieldError(field: Field, value: string): string {
-    const v = value.trim();
-    switch (field) {
-      case "name":
-        return v.length < 2 ? labels.errors.name : "";
-      case "phone":
-        return v.length < 6 ? labels.errors.phone : "";
-      case "email":
-        return v && !emailRe.test(v) ? labels.errors.email : ""; // e-mail is optioneel
-      case "service":
-        return v.length < 1 ? labels.errors.service : "";
-      case "message":
-        return v.length < 5 ? labels.errors.message : "";
-    }
-  }
+  /** E-mail is optioneel op contact; bericht is verplicht. */
+  const fieldError = (field: Field, value: string) =>
+    validate(field, value, labels.errors, { messageRequired: true });
 
   const onBlur = (field: Field) => (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
     setErrors((prev) => ({ ...prev, [field]: fieldError(field, e.target.value) }));

@@ -9,6 +9,7 @@ import { getDict } from "@/i18n";
 import { pageMetadata } from "@/i18n/metadata";
 import { p } from "@/i18n/slugs.mjs";
 import { JsonLd } from "@/components/JsonLd";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { breadcrumbLd } from "@/lib/structured-data";
 
 export const revalidate = 3600; // uur-refresh; promo-acties revalideren direct
@@ -26,6 +27,7 @@ export default function ContactPage({ params }: { params: { lang: string } }) {
   return (
     <div className="mx-auto max-w-6xl px-4 pt-14">
       <JsonLd data={breadcrumbLd(lang, "contact", dict.nav.contact)} />
+      <Breadcrumbs lang={lang} page="contact" label={dict.nav.contact} homeLabel={dict.common.home} ariaLabel={dict.common.breadcrumb} />
       <div className="max-w-3xl" data-reveal>
         <h1 className="text-4xl font-bold">{t.title}</h1>
         <p className="mt-4 text-lg text-ink/80">{t.intro}</p>
