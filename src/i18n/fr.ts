@@ -80,6 +80,8 @@ const fr: Dict = {
     moreInfo: "Plus d'infos →",
     viewPrices: "Voir les prix fixes",
     toHome: "Vers la page d'accueil",
+    home: "Accueil",
+    breadcrumb: "Fil d'Ariane",
     skipToContent: "Aller au contenu",
     gameMode: "Mode gamer",
     gameModeHint: "C'est le mode gamer : un thème sombre pour les joueurs. Cliquez à nouveau pour revenir.",
@@ -266,7 +268,7 @@ const fr: Dict = {
       errors: {
         name: "Indiquez votre nom (au moins 2 caractères).",
         phone: "Indiquez un numéro de téléphone valide.",
-        email: "Cette adresse e-mail semble incorrecte.",
+        email: "Indiquez une adresse e-mail valide.",
         service: "Choisissez de quoi il s'agit.",
         message: "Décrivez brièvement de quoi il s'agit (au moins 5 caractères).",
       },

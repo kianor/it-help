@@ -80,6 +80,8 @@ const nl = {
     moreInfo: "Meer info →",
     viewPrices: "Bekijk vaste prijzen",
     toHome: "Naar de homepagina",
+    home: "Home",
+    breadcrumb: "Kruimelpad",
     skipToContent: "Ga naar inhoud",
     gameMode: "Game-modus",
     gameModeHint: "Dit is de game-modus: een donker thema voor gamers. Klik nog eens om terug te schakelen.",
@@ -267,7 +269,7 @@ const nl = {
       errors: {
         name: "Vul je naam in (minstens 2 tekens).",
         phone: "Vul een geldig telefoonnummer in.",
-        email: "Dit e-mailadres lijkt niet te kloppen.",
+        email: "Vul een geldig e-mailadres in.",
         service: "Kies waarover het gaat.",
         message: "Schrijf kort waarover het gaat (minstens 5 tekens).",
       },

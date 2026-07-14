@@ -9,6 +9,7 @@ import { getDict } from "@/i18n";
 import { pageMetadata } from "@/i18n/metadata";
 import { p } from "@/i18n/slugs.mjs";
 import { JsonLd } from "@/components/JsonLd";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { breadcrumbLd, serviceLd } from "@/lib/structured-data";
 
 export function generateMetadata({ params }: { params: { lang: string } }): Metadata {
@@ -27,6 +28,7 @@ export default function ConsolesPage({ params }: { params: { lang: string } }) {
     <div className="mx-auto max-w-6xl px-4 pt-14">
       <JsonLd data={breadcrumbLd(lang, "consoles", dict.nav.consoles)} />
       <JsonLd data={serviceLd(lang, dict.services.consoles, t.title, t.intro, "consoles")} />
+      <Breadcrumbs lang={lang} page="consoles" label={dict.nav.consoles} homeLabel={dict.common.home} ariaLabel={dict.common.breadcrumb} />
       <div className="max-w-3xl" data-reveal>
         <h1 className="text-4xl font-bold">{t.title}</h1>
         <p className="mt-4 text-lg text-ink/80">{t.intro}</p>

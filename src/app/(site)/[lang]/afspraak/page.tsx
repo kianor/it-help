@@ -6,6 +6,7 @@ import { isLocale, htmlLang } from "@/i18n/config";
 import { getDict } from "@/i18n";
 import { pageMetadata } from "@/i18n/metadata";
 import { JsonLd } from "@/components/JsonLd";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { breadcrumbLd } from "@/lib/structured-data";
 
 export function generateMetadata({ params }: { params: { lang: string } }): Metadata {
@@ -23,6 +24,7 @@ export default function AfspraakPage({ params }: { params: { lang: string } }) {
   return (
     <div className="mx-auto max-w-6xl px-4 pt-14">
       <JsonLd data={breadcrumbLd(lang, "afspraak", dict.nav.afspraak)} />
+      <Breadcrumbs lang={lang} page="afspraak" label={dict.nav.afspraak} homeLabel={dict.common.home} ariaLabel={dict.common.breadcrumb} />
       <div className="max-w-3xl" data-reveal>
         <h1 className="text-4xl font-bold">{t.title}</h1>
         <p className="mt-4 text-lg text-ink/80">{t.intro}</p>
