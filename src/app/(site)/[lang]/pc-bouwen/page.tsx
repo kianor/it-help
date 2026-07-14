@@ -7,6 +7,8 @@ import { getDict } from "@/i18n";
 import { pageMetadata } from "@/i18n/metadata";
 import { p } from "@/i18n/slugs.mjs";
 import { PcCalculator } from "@/components/PcCalculator";
+import { JsonLd } from "@/components/JsonLd";
+import { breadcrumbLd, serviceLd } from "@/lib/structured-data";
 
 export const revalidate = 3600; // uur-refresh; promo-acties revalideren direct
 
@@ -65,20 +67,19 @@ export default function PcBouwenPage({ params }: { params: { lang: string } }) {
         </div>
       </section>
 
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "FAQPage",
-            mainEntity: t.faq.map((f) => ({
-              "@type": "Question",
-              name: f.q,
-              acceptedAnswer: { "@type": "Answer", text: f.a },
-            })),
-          }),
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: t.faq.map((f) => ({
+            "@type": "Question",
+            name: f.q,
+            acceptedAnswer: { "@type": "Answer", text: f.a },
+          })),
         }}
       />
+      <JsonLd data={breadcrumbLd(lang, "pc-bouwen", dict.nav.pc)} />
+      <JsonLd data={serviceLd(lang, dict.services.pcBouwen, t.title, t.intro, "pc-bouwen")} />
 
       <section className="pt-16" data-reveal>
         <div className="flex flex-wrap items-center gap-4 rounded-2xl bg-cobalt/5 p-8">

@@ -9,13 +9,15 @@ import { PromoBanner } from "@/components/PromoBanner";
 import { KonamiEgg } from "@/components/KonamiEgg";
 import { site, siteUrl } from "@/config/site";
 import { getSite } from "@/lib/site-config";
-import { locales, isLocale, htmlLang, type Locale } from "@/i18n/config";
+import { locales, isLocale, htmlLang } from "@/i18n/config";
 import { getDict } from "@/i18n";
 import { p } from "@/i18n/slugs.mjs";
 import { HitBeacon } from "@/components/HitBeacon";
 import { AnalyticsListener } from "@/components/AnalyticsListener";
 import { Ga4Consent } from "@/components/Ga4Consent";
 import { RevealObserver } from "@/components/RevealObserver";
+import { JsonLd } from "@/components/JsonLd";
+import { localBusinessLd, webSiteLd } from "@/lib/structured-data";
 
 export function generateStaticParams() {
   return locales.map((lang) => ({ lang }));
@@ -24,6 +26,7 @@ export function generateStaticParams() {
 export function generateMetadata({ params }: { params: { lang: string } }): Metadata {
   const lang = isLocale(params.lang) ? params.lang : "nl";
   const dict = getDict(lang);
+  const ogLocale = lang === "nl" ? "nl_BE" : lang === "fr" ? "fr_BE" : "en_US";
   return {
     metadataBase: new URL(siteUrl()),
     title: {
@@ -33,45 +36,18 @@ export function generateMetadata({ params }: { params: { lang: string } }): Meta
     description: dict.meta.home.description,
     openGraph: {
       type: "website",
-      locale: lang === "nl" ? "nl_BE" : lang === "fr" ? "fr_BE" : "en_US",
+      locale: ogLocale,
+      url: `${siteUrl()}/${lang}`,
       siteName: site.name,
+      title: dict.meta.home.title,
+      description: dict.meta.home.description,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: dict.meta.home.title,
+      description: dict.meta.home.description,
     },
   };
-}
-
-function LocalBusinessJsonLd({ lang }: { lang: Locale }) {
-  const dict = getDict(lang);
-  const cfg = getSite();
-  const data = {
-    "@context": "https://schema.org",
-    "@type": "LocalBusiness",
-    name: site.name,
-    description: dict.meta.home.description,
-    url: `${siteUrl()}/${lang}`,
-    telephone: cfg.phone,
-    email: cfg.email,
-    areaServed: ["Herent", "Leuven"],
-    address: {
-      "@type": "PostalAddress",
-      addressLocality: site.address,
-      addressRegion: "Vlaams-Brabant",
-      addressCountry: "BE",
-    },
-    openingHoursSpecification: [
-      {
-        "@type": "OpeningHoursSpecification",
-        dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-        opens: "18:00",
-        closes: "21:30",
-      },
-      { "@type": "OpeningHoursSpecification", dayOfWeek: "Saturday", opens: "09:00", closes: "18:00" },
-    ],
-    priceRange: "€25 - €199",
-    inLanguage: htmlLang[lang],
-  };
-  return (
-    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }} />
-  );
 }
 
 /** Zet de game-modus-klasse vóór hydration zodat er geen flits is. */
@@ -113,7 +89,8 @@ export default function SiteLayout({
         <Footer lang={lang} dict={dict} />
         <StickyCallBar callMe={dict.common.callMe} />
         <KonamiEgg title={dict.konami.title} text={dict.konami.text} close={dict.konami.close} />
-        <LocalBusinessJsonLd lang={lang} />
+        <JsonLd data={localBusinessLd(lang)} />
+        <JsonLd data={webSiteLd(lang)} />
         <HitBeacon lang={lang} />
         <AnalyticsListener />
         <RevealObserver />

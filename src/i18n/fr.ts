@@ -272,6 +272,8 @@ const fr: Dict = {
       "Autre chose",
     ],
     aside: {
+      appointmentLabel: "Vous préférez réserver un créneau tout de suite ?",
+      appointmentText: "Choisissez vous-même un moment libre. Confirmation par e-mail, report gratuit jusqu'à 24 h à l'avance.",
       regionLabel: "Zone d'intervention",
       expectLabel: "À quoi vous attendre",
       newsletterLabel: "Un bon conseil de temps en temps ?",
@@ -356,6 +358,7 @@ const fr: Dict = {
     packageLabel: "Forfait adapté",
     partsLabel: "pièces (vous les commandez vous-même, sans marge d'intermédiaire)",
     cta: "Discuter de cette proposition avec moi",
+    prefill: "Je pense à un {pkg} (environ {budget} € de pièces), pour {use}, en {res}. Est-ce cohérent, et que recommandez-vous ?",
   },
   reviewsSection: {
     title: "Ce que disent les clients",

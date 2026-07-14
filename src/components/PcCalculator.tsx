@@ -54,6 +54,16 @@ export function PcCalculator({
 
   const show4kWarning = res === 2 && budget < 1500;
 
+  // Neem het resultaat mee naar het contactformulier: het bericht wordt
+  // voorgevuld met het advies, zodat de klant niet opnieuw hoeft te typen.
+  const resLabels = ["1080p", "1440p", "4K"];
+  const prefill = labels.prefill
+    .replace("{pkg}", pkg.name)
+    .replace("{budget}", String(budget))
+    .replace("{use}", labels.uses[use].toLowerCase())
+    .replace("{res}", resLabels[res]);
+  const contactWithContext = `${contactHref}?from=calculator&service=pc&msg=${encodeURIComponent(prefill)}`;
+
   return (
     <div className="gamer-card rounded-2xl border border-ink/10 bg-surface p-6 sm:p-8">
       <h2 className="text-2xl font-bold">{labels.title}</h2>
@@ -103,7 +113,7 @@ export function PcCalculator({
           <fieldset>
             <legend className="label">{labels.resLabel}</legend>
             <div className="flex gap-2">
-              {["1080p", "1440p", "4K"].map((r, i) => (
+              {resLabels.map((r, i) => (
                 <button
                   key={r}
                   type="button"
@@ -140,7 +150,7 @@ export function PcCalculator({
               </p>
             </div>
           </div>
-          <Link href={contactHref} data-track="calculator_cta_click" className="btn-primary mt-6 text-center">
+          <Link href={contactWithContext} data-track="calculator_cta_click" className="btn-primary mt-6 text-center">
             {labels.cta}
           </Link>
         </div>

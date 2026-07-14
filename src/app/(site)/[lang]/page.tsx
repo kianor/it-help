@@ -9,9 +9,10 @@ import { getDict } from "@/i18n";
 import { pageMetadata } from "@/i18n/metadata";
 import { p, type PageKey } from "@/i18n/slugs.mjs";
 import { listReviews, reviewStats, getSetting } from "@/lib/db";
-import { site, siteUrl } from "@/config/site";
 import { getSite } from "@/lib/site-config";
 import { fill } from "@/i18n";
+import { JsonLd } from "@/components/JsonLd";
+import { ratingLd } from "@/lib/structured-data";
 
 // ISR: statisch geserveerd en elke 5 min ververst; admin-acties op reviews,
 // video's en acties revalideren direct (zie admin/actions.ts).
@@ -198,23 +199,7 @@ function ReviewsSection({ lang }: { lang: "nl" | "en" | "fr" }) {
               </figure>
             ))}
           </div>
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{
-              __html: JSON.stringify({
-                "@context": "https://schema.org",
-                "@type": "LocalBusiness",
-                name: site.name,
-                url: `${siteUrl()}/${lang}`,
-                aggregateRating: {
-                  "@type": "AggregateRating",
-                  ratingValue: stats.avg,
-                  reviewCount: stats.count,
-                  bestRating: 5,
-                },
-              }),
-            }}
-          />
+          <JsonLd data={ratingLd(lang, stats.avg, stats.count)} />
         </>
       )}
       {cfg.trustpilotUrl && (

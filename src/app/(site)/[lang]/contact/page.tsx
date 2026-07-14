@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { getSite } from "@/lib/site-config";
 import { ContactForm } from "@/components/ContactForm";
 import { NewsletterForm } from "@/components/NewsletterForm";
@@ -7,6 +8,8 @@ import { isLocale } from "@/i18n/config";
 import { getDict } from "@/i18n";
 import { pageMetadata } from "@/i18n/metadata";
 import { p } from "@/i18n/slugs.mjs";
+import { JsonLd } from "@/components/JsonLd";
+import { breadcrumbLd } from "@/lib/structured-data";
 
 export const revalidate = 3600; // uur-refresh; promo-acties revalideren direct
 
@@ -22,6 +25,7 @@ export default function ContactPage({ params }: { params: { lang: string } }) {
 
   return (
     <div className="mx-auto max-w-6xl px-4 pt-14">
+      <JsonLd data={breadcrumbLd(lang, "contact", dict.nav.contact)} />
       <div className="max-w-3xl" data-reveal>
         <h1 className="text-4xl font-bold">{t.title}</h1>
         <p className="mt-4 text-lg text-ink/80">{t.intro}</p>
@@ -45,6 +49,13 @@ export default function ContactPage({ params }: { params: { lang: string } }) {
         </div>
 
         <aside className="space-y-6">
+          <div className="rounded-xl border border-cobalt/30 bg-cobalt/5 p-6">
+            <p className="label">{t.aside.appointmentLabel}</p>
+            <p className="mt-1 text-sm text-ink/80">{t.aside.appointmentText}</p>
+            <Link href={p(lang, "afspraak")} className="btn-secondary mt-4 w-full">
+              {dict.footer.links.afspraak}
+            </Link>
+          </div>
           <div className="rounded-xl border border-ink/10 bg-surface p-6">
             <p className="label">{t.aside.regionLabel}</p>
             <p className="font-semibold">{dict.common.region}</p>
