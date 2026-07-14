@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { getSite } from "@/lib/site-config";
 import { ContactForm } from "@/components/ContactForm";
 import { NewsletterForm } from "@/components/NewsletterForm";
@@ -48,6 +49,13 @@ export default function ContactPage({ params }: { params: { lang: string } }) {
         </div>
 
         <aside className="space-y-6">
+          <div className="rounded-xl border border-cobalt/30 bg-cobalt/5 p-6">
+            <p className="label">{t.aside.appointmentLabel}</p>
+            <p className="mt-1 text-sm text-ink/80">{t.aside.appointmentText}</p>
+            <Link href={p(lang, "afspraak")} className="btn-secondary mt-4 w-full">
+              {dict.footer.links.afspraak}
+            </Link>
+          </div>
           <div className="rounded-xl border border-ink/10 bg-surface p-6">
             <p className="label">{t.aside.regionLabel}</p>
             <p className="font-semibold">{dict.common.region}</p>

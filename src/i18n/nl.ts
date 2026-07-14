@@ -273,6 +273,8 @@ const nl = {
       "Iets anders",
     ],
     aside: {
+      appointmentLabel: "Liever meteen een moment prikken?",
+      appointmentText: "Kies zelf een vrij moment. Bevestiging per mail, gratis verzetten tot 24 u vooraf.",
       regionLabel: "Werkgebied",
       expectLabel: "Wat je mag verwachten",
       newsletterLabel: "Af en toe een slimme tip?",
@@ -357,6 +359,7 @@ const nl = {
     packageLabel: "Passend pakket",
     partsLabel: "onderdelen (jij bestelt zelf, zonder tussenmarge)",
     cta: "Bespreek dit voorstel met mij",
+    prefill: "Ik denk aan een {pkg} (rond €{budget} aan onderdelen), voor {use}, op {res}. Klopt dat, en wat raad je aan?",
   },
   reviewsSection: {
     title: "Wat klanten zeggen",

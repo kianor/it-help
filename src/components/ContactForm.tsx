@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Dict } from "@/i18n";
 import { track } from "@/lib/analytics";
 import type { Locale } from "@/i18n/config";
@@ -20,6 +20,19 @@ export function ContactForm({
 }) {
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
+  // Voorvullen vanuit de PC-calculator (?msg=…&service=pc). Client-side gelezen
+  // zodat de contactpagina statisch geserveerd blijft.
+  const [message, setMessage] = useState("");
+  const [service, setService] = useState("");
+
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search);
+    const msg = q.get("msg");
+    if (msg) setMessage(msg);
+    if (q.get("service") === "pc" && serviceOptions.length > 0) {
+      setService(serviceOptions[0]);
+    }
+  }, [serviceOptions]);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -82,7 +95,14 @@ export function ContactForm({
 
       <div>
         <label className="label" htmlFor="service">{labels.service}</label>
-        <select className="input" id="service" name="service" required defaultValue="">
+        <select
+          className="input"
+          id="service"
+          name="service"
+          required
+          value={service}
+          onChange={(e) => setService(e.target.value)}
+        >
           <option value="" disabled>{labels.servicePlaceholder}</option>
           {serviceOptions.map((o) => (
             <option key={o} value={o}>{o}</option>
@@ -99,6 +119,8 @@ export function ContactForm({
           required
           maxLength={3000}
           placeholder={labels.messagePlaceholder}
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
         />
       </div>
 

@@ -272,6 +272,8 @@ const en: Dict = {
       "Something else",
     ],
     aside: {
+      appointmentLabel: "Prefer to book a slot right away?",
+      appointmentText: "Pick a free moment yourself. Confirmation by email, free rescheduling up to 24h in advance.",
       regionLabel: "Service area",
       expectLabel: "What to expect",
       newsletterLabel: "A smart tip now and then?",
@@ -356,6 +358,7 @@ const en: Dict = {
     packageLabel: "Matching package",
     partsLabel: "parts (you order them yourself, no middleman margin)",
     cta: "Discuss this proposal with me",
+    prefill: "I'm thinking of a {pkg} (around €{budget} in parts), for {use}, at {res}. Does that add up, and what do you recommend?",
   },
   reviewsSection: {
     title: "What customers say",

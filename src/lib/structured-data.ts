@@ -44,41 +44,75 @@ function parsePrice(raw: string): number | null {
   return m ? Number(m[1].replace(",", ".")) : null;
 }
 
-/** Diensten uit de i18n-woordenlijst → OfferCatalog (machine-readable prijslijst). */
+type ServiceGroup = {
+  title: string;
+  services: { name: string; price: string; note?: string }[];
+};
+
+/** Eén dienstgroep → Offer-lijst (gedeeld door OfferCatalog en serviceLd). */
+function groupOffers(group: ServiceGroup) {
+  return group.services.map((s) => {
+    const value = parsePrice(s.price);
+    const offer: Record<string, unknown> = {
+      "@type": "Offer",
+      itemOffered: {
+        "@type": "Service",
+        name: s.name,
+        category: group.title,
+        ...(s.note ? { description: s.note } : {}),
+        provider: { "@id": businessId() },
+        areaServed: ["Herent", "Leuven"],
+      },
+    };
+    if (value !== null) {
+      offer.priceSpecification = {
+        "@type": "PriceSpecification",
+        price: value,
+        priceCurrency: "EUR",
+      };
+    }
+    return offer;
+  });
+}
+
+/** Alle diensten uit de i18n-woordenlijst → OfferCatalog (machine-readable prijslijst). */
 function offerCatalog(lang: Locale) {
   const dict = getDict(lang);
-  const groups = Object.values(dict.services) as {
-    title: string;
-    services: { name: string; price: string; note?: string }[];
-  }[];
-  const itemListElement = groups.flatMap((group) =>
-    group.services.map((s) => {
-      const value = parsePrice(s.price);
-      const offer: Record<string, unknown> = {
-        "@type": "Offer",
-        itemOffered: {
-          "@type": "Service",
-          name: s.name,
-          category: group.title,
-          ...(s.note ? { description: s.note } : {}),
-          provider: { "@id": businessId() },
-          areaServed: ["Herent", "Leuven"],
-        },
-      };
-      if (value !== null) {
-        offer.priceSpecification = {
-          "@type": "PriceSpecification",
-          price: value,
-          priceCurrency: "EUR",
-        };
-      }
-      return offer;
-    })
-  );
+  const groups = Object.values(dict.services) as ServiceGroup[];
   return {
     "@type": "OfferCatalog",
     name: dict.nav.prijzen,
-    itemListElement,
+    itemListElement: groups.flatMap(groupOffers),
+  };
+}
+
+/**
+ * Service-node voor één dienstpagina (pc-bouwen, herstel, …). Verankert de
+ * pagina als een concrete dienst van de zaak, met eigen OfferCatalog en
+ * vaste prijzen — page-level entity-signaal voor zoekmachines en AI.
+ */
+export function serviceLd(
+  lang: Locale,
+  group: ServiceGroup,
+  name: string,
+  description: string,
+  page: PageKey
+) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name,
+    description,
+    serviceType: group.title,
+    url: `${siteUrl()}${p(lang, page)}`,
+    provider: { "@id": businessId() },
+    areaServed: ["Herent", "Leuven"].map((n) => ({ "@type": "City", name: n })),
+    inLanguage: htmlLang[lang],
+    hasOfferCatalog: {
+      "@type": "OfferCatalog",
+      name: group.title,
+      itemListElement: groupOffers(group),
+    },
   };
 }
 
