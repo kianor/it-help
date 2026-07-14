@@ -82,6 +82,7 @@ const en: Dict = {
     toHome: "Back to the homepage",
     skipToContent: "Skip to content",
     gameMode: "Game mode",
+    gameModeHint: "This is game mode: a dark theme for gamers. Click again to switch back.",
     menuOpen: "Open menu",
     menuClose: "Close menu",
     travel: "Free within 10 km of Herent, €0.40/km beyond that.",
@@ -262,6 +263,13 @@ const en: Dict = {
       error: "Something went wrong. Feel free to call or WhatsApp me directly.",
       privacyNote: "Your details are only used to help you. See the",
       privacyLink: "privacy statement",
+      errors: {
+        name: "Please enter your name (at least 2 characters).",
+        phone: "Please enter a valid phone number.",
+        email: "This email address doesn't look right.",
+        service: "Please choose what it's about.",
+        message: "Briefly describe what it's about (at least 5 characters).",
+      },
     },
     serviceOptions: [
       "Custom PC build",

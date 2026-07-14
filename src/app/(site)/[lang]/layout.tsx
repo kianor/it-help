@@ -80,6 +80,7 @@ export default function SiteLayout({
           nav={dict.nav}
           callCta={dict.common.callCta}
           gameMode={dict.common.gameMode}
+          gameModeHint={dict.common.gameModeHint}
           menuOpen={dict.common.menuOpen}
           menuClose={dict.common.menuClose}
           volgLabel={dict.footer.links.volg}

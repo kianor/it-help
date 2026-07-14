@@ -82,6 +82,7 @@ const fr: Dict = {
     toHome: "Vers la page d'accueil",
     skipToContent: "Aller au contenu",
     gameMode: "Mode gamer",
+    gameModeHint: "C'est le mode gamer : un thème sombre pour les joueurs. Cliquez à nouveau pour revenir.",
     menuOpen: "Ouvrir le menu",
     menuClose: "Fermer le menu",
     travel: "Gratuit dans un rayon de 10 km autour de Herent, au-delà 0,40 €/km.",
@@ -262,6 +263,13 @@ const fr: Dict = {
       error: "Quelque chose a mal tourné. N'hésitez pas à m'appeler ou m'envoyer un WhatsApp directement.",
       privacyNote: "Vos données ne servent qu'à vous aider. Voir la",
       privacyLink: "déclaration de confidentialité",
+      errors: {
+        name: "Indiquez votre nom (au moins 2 caractères).",
+        phone: "Indiquez un numéro de téléphone valide.",
+        email: "Cette adresse e-mail semble incorrecte.",
+        service: "Choisissez de quoi il s'agit.",
+        message: "Décrivez brièvement de quoi il s'agit (au moins 5 caractères).",
+      },
     },
     serviceOptions: [
       "PC sur mesure",
