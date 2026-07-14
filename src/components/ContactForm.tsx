@@ -6,6 +6,10 @@ import { track } from "@/lib/analytics";
 import type { Locale } from "@/i18n/config";
 
 type Status = "idle" | "busy" | "sent" | "error";
+type Field = "name" | "phone" | "email" | "service" | "message";
+
+const FIELD_ORDER: Field[] = ["name", "phone", "email", "service", "message"];
+const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function ContactForm({
   lang,
@@ -24,6 +28,9 @@ export function ContactForm({
   // zodat de contactpagina statisch geserveerd blijft.
   const [message, setMessage] = useState("");
   const [service, setService] = useState("");
+  // Inline veldvalidatie: fout verschijnt náást het veld (bij blur of submit),
+  // spiegelt exact de server-side Zod-regels in /api/contact.
+  const [errors, setErrors] = useState<Partial<Record<Field, string>>>({});
 
   useEffect(() => {
     const q = new URLSearchParams(window.location.search);
@@ -34,12 +41,48 @@ export function ContactForm({
     }
   }, [serviceOptions]);
 
+  /** Geeft de foutmelding voor één veld, of "" als het in orde is. */
+  function fieldError(field: Field, value: string): string {
+    const v = value.trim();
+    switch (field) {
+      case "name":
+        return v.length < 2 ? labels.errors.name : "";
+      case "phone":
+        return v.length < 6 ? labels.errors.phone : "";
+      case "email":
+        return v && !emailRe.test(v) ? labels.errors.email : ""; // e-mail is optioneel
+      case "service":
+        return v.length < 1 ? labels.errors.service : "";
+      case "message":
+        return v.length < 5 ? labels.errors.message : "";
+    }
+  }
+
+  const onBlur = (field: Field) => (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
+    setErrors((prev) => ({ ...prev, [field]: fieldError(field, e.target.value) }));
+
+  // Fout live wegwerken zodra het veld geldig wordt (maar niet vroegtijdig tonen).
+  const clearIfFixed = (field: Field, value: string) => {
+    if (errors[field]) setErrors((prev) => ({ ...prev, [field]: fieldError(field, value) }));
+  };
+
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    const form = e.currentTarget;
+    const data = Object.fromEntries(new FormData(form).entries()) as Record<string, string>;
+
+    // Volledige validatie vóór verzenden; bij fouten focus het eerste veld.
+    const next: Partial<Record<Field, string>> = {};
+    for (const f of FIELD_ORDER) next[f] = fieldError(f, String(data[f] ?? ""));
+    setErrors(next);
+    const firstBad = FIELD_ORDER.find((f) => next[f]);
+    if (firstBad) {
+      document.getElementById(firstBad)?.focus();
+      return;
+    }
+
     setStatus("busy");
     setError("");
-    const form = e.currentTarget;
-    const data = Object.fromEntries(new FormData(form).entries());
     try {
       const res = await fetch("/api/contact", {
         method: "POST",
@@ -69,8 +112,20 @@ export function ContactForm({
     );
   }
 
+  const errorProps = (field: Field) =>
+    errors[field]
+      ? { "aria-invalid": true as const, "aria-describedby": `${field}-error` }
+      : {};
+
+  const FieldError = ({ field }: { field: Field }) =>
+    errors[field] ? (
+      <p id={`${field}-error`} className="mt-1 text-xs font-medium text-accent-strong" role="alert">
+        {errors[field]}
+      </p>
+    ) : null;
+
   return (
-    <form onSubmit={onSubmit} className="space-y-4">
+    <form onSubmit={onSubmit} noValidate className="space-y-4">
       {/* Honeypot tegen spam: mensen zien dit veld niet */}
       <div className="absolute -left-[9999px]" aria-hidden="true">
         <label htmlFor="website">Website</label>
@@ -80,17 +135,51 @@ export function ContactForm({
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label className="label" htmlFor="name">{labels.name}</label>
-          <input className="input" id="name" name="name" required maxLength={100} autoComplete="name" />
+          <input
+            className="input"
+            id="name"
+            name="name"
+            required
+            maxLength={100}
+            autoComplete="name"
+            onBlur={onBlur("name")}
+            onChange={(e) => clearIfFixed("name", e.target.value)}
+            {...errorProps("name")}
+          />
+          <FieldError field="name" />
         </div>
         <div>
           <label className="label" htmlFor="phone">{labels.phone}</label>
-          <input className="input" id="phone" name="phone" type="tel" required maxLength={30} autoComplete="tel" />
+          <input
+            className="input"
+            id="phone"
+            name="phone"
+            type="tel"
+            required
+            maxLength={30}
+            autoComplete="tel"
+            onBlur={onBlur("phone")}
+            onChange={(e) => clearIfFixed("phone", e.target.value)}
+            {...errorProps("phone")}
+          />
+          <FieldError field="phone" />
         </div>
       </div>
 
       <div>
         <label className="label" htmlFor="email">{labels.email}</label>
-        <input className="input" id="email" name="email" type="email" maxLength={200} autoComplete="email" />
+        <input
+          className="input"
+          id="email"
+          name="email"
+          type="email"
+          maxLength={200}
+          autoComplete="email"
+          onBlur={onBlur("email")}
+          onChange={(e) => clearIfFixed("email", e.target.value)}
+          {...errorProps("email")}
+        />
+        <FieldError field="email" />
       </div>
 
       <div>
@@ -101,13 +190,19 @@ export function ContactForm({
           name="service"
           required
           value={service}
-          onChange={(e) => setService(e.target.value)}
+          onChange={(e) => {
+            setService(e.target.value);
+            clearIfFixed("service", e.target.value);
+          }}
+          onBlur={onBlur("service")}
+          {...errorProps("service")}
         >
           <option value="" disabled>{labels.servicePlaceholder}</option>
           {serviceOptions.map((o) => (
             <option key={o} value={o}>{o}</option>
           ))}
         </select>
+        <FieldError field="service" />
       </div>
 
       <div>
@@ -120,8 +215,14 @@ export function ContactForm({
           maxLength={3000}
           placeholder={labels.messagePlaceholder}
           value={message}
-          onChange={(e) => setMessage(e.target.value)}
+          onChange={(e) => {
+            setMessage(e.target.value);
+            clearIfFixed("message", e.target.value);
+          }}
+          onBlur={onBlur("message")}
+          {...errorProps("message")}
         />
+        <FieldError field="message" />
       </div>
 
       {status === "error" && (

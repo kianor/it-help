@@ -82,6 +82,7 @@ const nl = {
     toHome: "Naar de homepagina",
     skipToContent: "Ga naar inhoud",
     gameMode: "Game-modus",
+    gameModeHint: "Dit is de game-modus: een donker thema voor gamers. Klik nog eens om terug te schakelen.",
     menuOpen: "Menu openen",
     menuClose: "Menu sluiten",
     travel: "Gratis binnen 10 km van Herent, daarbuiten €0,40/km.",
@@ -263,6 +264,13 @@ const nl = {
       error: "Er ging iets mis. Bel of app me gerust rechtstreeks.",
       privacyNote: "Je gegevens worden alleen gebruikt om je te helpen. Zie de",
       privacyLink: "privacyverklaring",
+      errors: {
+        name: "Vul je naam in (minstens 2 tekens).",
+        phone: "Vul een geldig telefoonnummer in.",
+        email: "Dit e-mailadres lijkt niet te kloppen.",
+        service: "Kies waarover het gaat.",
+        message: "Schrijf kort waarover het gaat (minstens 5 tekens).",
+      },
     },
     serviceOptions: [
       "PC laten bouwen",

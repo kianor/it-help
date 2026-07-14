@@ -16,6 +16,7 @@ export function Header({
   nav,
   callCta,
   gameMode,
+  gameModeHint,
   menuOpen,
   menuClose,
   volgLabel,
@@ -25,6 +26,7 @@ export function Header({
   nav: NavLabels;
   callCta: string;
   gameMode: string;
+  gameModeHint: string;
   menuOpen: string;
   menuClose: string;
   volgLabel: string;
@@ -132,7 +134,7 @@ export function Header({
               <circle cx="12" cy="7" r="4" />
             </svg>
           </Link>
-          <GameModeToggle label={gameMode} />
+          <GameModeToggle label={gameMode} hint={gameModeHint} />
           <a
             href={`tel:${phone}`}
             data-track="cta_call_click"
